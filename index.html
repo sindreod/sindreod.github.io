@@ -9,14 +9,23 @@
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
    integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
    crossorigin=""></script>
+    <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
+    <link rel="stylesheet" href="index.css"/>
 </head>
 
 <body>
+<!-- Side navigation -->
+<div class="sidenav">
+    <a href="#">About</a>
+    <a href="#">Services</a>
+    <a href="#">Clients</a>
+    <a href="#">Contact</a>
+</div>
 
- <div id="mapid"></div>
- <style type="text/css">
- 	#mapid { height: 500px; }
- </style>
+<!-- Page content -->
+<div class="main">
+    <div id="mapid"></div>
+</div>
  <script type="text/javascript">
  	var mymap = L.map('mapid').setView([51.505, -0.09], 13);
  	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -25,6 +34,21 @@
     id: 'mapbox.streets',
     accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
 }).addTo(mymap);
+    //for the shapefiles in the folder called 'files' with the name vannf.shp
+    var geojsonfeature = shp("Files/vannf").then(function(geojson){
+        //do something with your geojson
+    });
+
+    function onEachFeature(feature, layer) {
+        // does this feature have a property named popupContent?
+        if (feature.properties && feature.properties.popupContent) {
+            layer.bindPopup(feature.properties.popupContent);
+        }
+    }
+
+    L.geoJSON(geojsonfeature, {
+        onEachFeature: onEachFeature
+    }).addTo(mymap);
  </script>
 
 </body>
