@@ -45,9 +45,7 @@
      document.getElementById('files').addEventListener('change', onchange, false);
 
      // Set background map
- 	var map = L.map('mapid').setView([63.305, 10.41], 8);
-
- 	L.tileLayer('https://api.mapbox.com/styles/v1/sdeisz/cjn34v557132q2rpekt69ygm4/wmts?access_token=pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw').addTo(map);
+     var map = L.map('mapid').setView([63.305, 10.41], 8);
 
      var southWest = L.latLng(63.18, 10.02),
          northEast = L.latLng(63.43, 10.8);
