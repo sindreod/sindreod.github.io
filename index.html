@@ -75,15 +75,15 @@
          style: myStyle
      }).addTo(map);
 
-     var waterLayer = new L.GeoJSON.AJAX("data/Water.geojson");
-     L.geoJSON(waterLayer, {
+     var waterLayer = new L.GeoJSON.AJAX("data/Water.geojson", {
          style: waterStyle
-     }).addTo(map);
+     });
+     waterLayer.addTo(map);
 
-     var oceanLayer = new L.GeoJSON.AJAX("data/Ocean.geojson");
-     L.geoJSON(oceanLayer, {
+     var oceanLayer = new L.GeoJSON.AJAX("data/Ocean.geojson", {
          style: waterStyle
-     }).addTo(map);
+     });
+     oceanLayer.addTo(map);
 
      var landLayer = new L.GeoJSON.AJAX("data/Land.geojson");
      landLayer.addTo(map);
