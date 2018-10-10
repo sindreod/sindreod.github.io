@@ -76,6 +76,7 @@
      });
 
      map.setMinZoom( map.getBoundsZoom( map.options.maxBounds ) );
+     map.options.maxZoom = 11;
 
      var waterLayer = new L.GeoJSON.AJAX("data/Water.geojson");
      waterLayer.addTo(map);
