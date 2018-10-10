@@ -66,8 +66,8 @@
     accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
     }).addTo(map);*/
 
-     var southWest = L.latLng(60, 8),
-         northEast = L.latLng(65, 14);
+     var southWest = L.latLng(63.18, 10.02),
+         northEast = L.latLng(63.43, 10.8);
      var bounds = L.latLngBounds(southWest, northEast);
 
      map.setMaxBounds(bounds);
@@ -85,8 +85,6 @@
 
      var landLayer = new L.GeoJSON.AJAX("data/Land.geojson");
      landLayer.addTo(map);
-
- 	//L.geoJSON(kantoJotho).addTo(map);
 
  	var onchange = function(e){
  	    var files = e.target.files;
@@ -106,30 +104,6 @@
             });
         }
     };
-/*
- 	var layer = L.geoJson(shapefile, {
- 	    style: function(feature){
- 	        return {color: feature.properties.color};
-        },
-        onEachFeature: function (feature, layer) {
-            layer.bindPopup(feature.properties.description);
-        }
-    }).addTo(map);*/
-
-     // create a red polyline from an array of LatLng points
-     var latlngs = [
-         [63.43, 10.40],
-         [63.43, 10.405],
-         [63.435, 10.405]
-     ];
-     var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
-     // zoom the map to the polyline
-     //mymap.fitBounds(polyline.getBounds());
-
-
-
- 	// Add workerpath for zip.js - library
-    // zip.workerScriptsPath = "/lib/";
 
  </script>
 
