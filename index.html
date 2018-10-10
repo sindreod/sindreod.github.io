@@ -6,20 +6,39 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
    crossorigin=""/>
+
+    <!-- Lib libraries -->
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
    integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-   crossorigin=""></script>
-    <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
+   crossorigin=""></script> <!-- Leaflet osv basemap -->
+    <script type="text/javascript" src="shapefile.js"></script>
+    <script type="text/javascript" src="stream.js"></script>
+
+    <script src="js/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
+
+    <!-- Ikke i bruk:
+    <!--<script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script> <!-- javascript js -->
+    <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> <!-- IndexedDB -->
+    <!--<script type="text/javascipt" src="js/jszip.min.js"></script> <!-- JSZip -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.3/proj4.js"></script>
+    <!--<script type="text/javascript" src="lib/zip.js"></script> <!-- ZIP.js -->
+
+    <!-- Eget -->
+    <!-- <script type="text/javascript" src="db.js"></script> <!-- DB-file-->
+    <script type="text/javascript" src="file.js"></script>
     <link rel="stylesheet" href="index.css"/>
 </head>
 
 <body>
 <!-- Side navigation -->
 <div class="sidenav">
+    <input type="file" id="files" name="files[]" multiple />
+    <output id="fileList"></output>
+
     <a href="#">About</a>
-    <a href="#">Services</a>
+<!--    <a href="#">Services</a>
     <a href="#">Clients</a>
-    <a href="#">Contact</a>
+    <a href="#">Contact</a> -->
 </div>
 
 <!-- Page content -->
@@ -27,28 +46,91 @@
     <div id="mapid"></div>
 </div>
  <script type="text/javascript">
- 	var mymap = L.map('mapid').setView([51.505, -0.09], 13);
- 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+
+     // Check for the various File API support.
+     if (window.File && window.FileReader && window.FileList && window.Blob) {
+         //alert('Great success! All the File APIs are supported.');
+     } else {
+         alert('The File APIs are not fully supported in this browser.');
+     }
+
+     document.getElementById('files').addEventListener('change', onchange, false);
+
+     // Set background map
+ 	var map = L.map('mapid').setView([63.43, 10.40], 13);
+
+ 	/*L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     id: 'mapbox.streets',
     accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
-}).addTo(mymap);
-    //for the shapefiles in the folder called 'files' with the name vannf.shp
-    var geojsonfeature = shp("Files/vannf").then(function(geojson){
-        //do something with your geojson
-    });
+    }).addTo(map);*/
 
-    function onEachFeature(feature, layer) {
-        // does this feature have a property named popupContent?
-        if (feature.properties && feature.properties.popupContent) {
-            layer.bindPopup(feature.properties.popupContent);
+     var southWest = L.latLng(60, 8),
+         northEast = L.latLng(65, 14);
+     var bounds = L.latLngBounds(southWest, northEast);
+
+     map.setMaxBounds(bounds);
+     map.on('drag', function() {
+         map.panInsideBounds(bounds, { animate: false });
+     });
+
+     map.setMinZoom( map.getBoundsZoom( map.options.maxBounds ) );
+
+     var waterLayer = new L.GeoJSON.AJAX("data/Water.geojson");
+     waterLayer.addTo(map);
+
+     var oceanLayer = new L.GeoJSON.AJAX("data/Ocean.geojson");
+     oceanLayer.addTo(map);
+
+     var landLayer = new L.GeoJSON.AJAX("data/Land.geojson");
+     landLayer.addTo(map);
+
+ 	//L.geoJSON(kantoJotho).addTo(map);
+
+ 	var onchange = function(e){
+ 	    var files = e.target.files;
+ 	    var shpFile;
+ 	    var dbfFile;
+ 	    for (i = 0; i < files.length; i++) {
+ 	        if (getFileExtension(files[i].name) == "shp") {
+ 	            shpFile = files[i];
+            } else if (getFileExtension(files[i].name) == "dbf") {
+ 	            dbfFile = files[i];
+            }
+        } if (shpFile && dbfFile) {
+ 	        shapefile = new Shapefile({shp: shpFile, dbf: dbfFile} , function (data) {
+ 	            console.log(data);
+                //var features = parser.read(data.geojson);
+                //layer.addData(features);
+            });
         }
-    }
+    };
+/*
+ 	var layer = L.geoJson(shapefile, {
+ 	    style: function(feature){
+ 	        return {color: feature.properties.color};
+        },
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup(feature.properties.description);
+        }
+    }).addTo(map);*/
 
-    L.geoJSON(geojsonfeature, {
-        onEachFeature: onEachFeature
-    }).addTo(mymap);
+     // create a red polyline from an array of LatLng points
+     var latlngs = [
+         [63.43, 10.40],
+         [63.43, 10.405],
+         [63.435, 10.405]
+     ];
+     var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+     // zoom the map to the polyline
+     //mymap.fitBounds(polyline.getBounds());
+
+
+
+ 	// Add workerpath for zip.js - library
+    // zip.workerScriptsPath = "/lib/";
+
  </script>
 
 </body>
