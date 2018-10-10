@@ -71,10 +71,6 @@
          "opacity": 1
      };
 
-     L.geoJSON(myLines, {
-         style: myStyle
-     }).addTo(map);
-
      var waterLayer = new L.GeoJSON.AJAX("data/Water.geojson", {
          style: waterStyle
      });
