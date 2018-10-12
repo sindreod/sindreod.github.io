@@ -71,6 +71,7 @@
          "opacity": 1
      };
 
+
      var waterLayer = new L.GeoJSON.AJAX("data/Water.geojson", {
          style: waterStyle
      });
@@ -81,7 +82,9 @@
      });
      oceanLayer.addTo(map);
 
-     var landLayer = new L.GeoJSON.AJAX("data/Land.geojson");
+     var landLayer = new L.GeoJSON.AJAX("data/Land.geojson", {
+         style: landStyle
+     });
      landLayer.addTo(map);
 
  	var onchange = function(e){
