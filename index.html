@@ -60,13 +60,13 @@
 
      var waterStyle = {
          "color": "#00BCDC",
-         "weight": 5,
+         "weight": 1,
          "opacity": 1
      };
 
      var landStyle = {
          "color": "#000000",
-         "weight": 5,
+         "weight": 1,
          "opacity": 1
      };
 
@@ -96,6 +96,13 @@
              style: waterStyle
          }).addTo(map);
 
+         map.on('zoomend', function () {
+             map.eachLayer(function (layer) {
+                 currentZoom = map.getZoom();
+                 newZoom = parseInt(Math.floor(Math.sqrt(currentZoom)));
+                 layer.setStyle({weight: newZoom});
+             });
+         });
      });
 
  </script>
