@@ -1,5 +1,6 @@
-#mapid {
-    height: 600px;
+#map {
+    /*height: 600px;*/
+    width: 100%;
 }
 
 .outputList {

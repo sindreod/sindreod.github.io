@@ -13,39 +13,25 @@
    crossorigin=""></script> <!-- Leaflet osv basemap -->
 
     <script src="js/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> <!-- jQuery API -->
     <link rel="stylesheet" href="index.css"/>
 </head>
 
 <body>
 <!-- Side navigation -->
 <div class="sidenav">
-    <input type="file" id="files" name="files[]" multiple />
-    <output id="fileList"></output>
-
     <a href="#">About</a>
-<!--    <a href="#">Services</a>
-    <a href="#">Clients</a>
-    <a href="#">Contact</a> -->
+
 </div>
 
 <!-- Page content -->
 <div class="main">
-    <div id="mapid"></div>
+    <div id="map"></div>
 </div>
  <script type="text/javascript">
 
-     // Check for the various File API support.
-     if (window.File && window.FileReader && window.FileList && window.Blob) {
-         //alert('Great success! All the File APIs are supported.');
-     } else {
-         alert('The File APIs are not fully supported in this browser.');
-     }
-
-     document.getElementById('files').addEventListener('change', onchange, false);
-
      // Set background map
-     var map = L.map('mapid').setView([63.305, 10.41], 8);
+     var map = L.map('map').setView([63.305, 10.41], 8);
 
      var southWest = L.latLng(63.18, 10.02),
          northEast = L.latLng(63.43, 10.8);
@@ -66,7 +52,7 @@
      };
 
      var landStyle = {
-         "color": "#1ec595",
+         "color": "#000000",
          "weight": 5,
          "opacity": 1
      };
@@ -86,25 +72,6 @@
          style: landStyle
      });
      landLayer.addTo(map);
-
- 	var onchange = function(e){
- 	    var files = e.target.files;
- 	    var shpFile;
- 	    var dbfFile;
- 	    for (i = 0; i < files.length; i++) {
- 	        if (getFileExtension(files[i].name) == "shp") {
- 	            shpFile = files[i];
-            } else if (getFileExtension(files[i].name) == "dbf") {
- 	            dbfFile = files[i];
-            }
-        } if (shpFile && dbfFile) {
- 	        shapefile = new Shapefile({shp: shpFile, dbf: dbfFile} , function (data) {
- 	            console.log(data);
-                //var features = parser.read(data.geojson);
-                //layer.addData(features);
-            });
-        }
-    };
 
  </script>
 
