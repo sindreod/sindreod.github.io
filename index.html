@@ -72,8 +72,9 @@
 
      $.when(land, water, ocean).done(function() {
          // Set background map
-         var map = L.map('map').setView([63.305, 10.41], 6);
+         var map = L.map('map').setView([63.305, 10.41]);
 
+         /*
          var southWest = L.latLng(63.18, 10.02),
              northEast = L.latLng(63.43, 10.8);
          var bounds = L.latLngBounds(southWest, northEast);
@@ -85,7 +86,7 @@
 
          map.setMinZoom( map.getBoundsZoom( map.options.maxBounds ) );
          map.options.maxZoom = 10;
-
+        */
          var mLand = L.geoJSON(land.responseJSON, {
              style: landStyle
          }).addTo(map);
