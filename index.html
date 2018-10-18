@@ -30,20 +30,33 @@
 </div>
  <script type="text/javascript">
 
-     // Set background map
-     var map = L.map('map').setView([63.305, 10.41], 8);
-
-     var southWest = L.latLng(63.18, 10.02),
-         northEast = L.latLng(63.43, 10.8);
-     var bounds = L.latLngBounds(southWest, northEast);
-
-     map.setMaxBounds(bounds);
-     map.on('drag', function() {
-         map.panInsideBounds(bounds, { animate: false });
+     // Load data
+     var land = $.ajax({
+         url: 'data/Land.geojson',
+         dataType: json,
+         sucess: console.log("Land data successfully loaded"),
+         error: function(xhr) {
+             alert(xhr.statusText);
+         }
      });
 
-     map.setMinZoom( map.getBoundsZoom( map.options.maxBounds ) );
-     map.options.maxZoom = 10;
+     var water = $.ajax({
+         url: 'data/Water.geojson',
+         dataType: json,
+         sucess: console.log("Water data successfully loaded"),
+         error: function(xhr) {
+             alert(xhr.statusText);
+         }
+     });
+
+     var ocean = $.ajax({
+         url: 'data/Ocean.geojson',
+         dataType: json,
+         sucess: console.log("Ocean data successfully loaded"),
+         error: function(xhr) {
+             alert(xhr.statusText);
+         }
+     });
 
      var waterStyle = {
          "color": "#00BCDC",
@@ -57,21 +70,33 @@
          "opacity": 1
      };
 
+     $.when(land, water, ocean).done(function() {
+         // Set background map
+         var map = L.map('map').setView([63.305, 10.41], 8);
 
-     var waterLayer = new L.GeoJSON.AJAX("data/Water.geojson", {
-         style: waterStyle
-     });
-     waterLayer.addTo(map);
+         var southWest = L.latLng(63.18, 10.02),
+             northEast = L.latLng(63.43, 10.8);
+         var bounds = L.latLngBounds(southWest, northEast);
 
-     var oceanLayer = new L.GeoJSON.AJAX("data/Ocean.geojson", {
-         style: waterStyle
-     });
-     oceanLayer.addTo(map);
+         map.setMaxBounds(bounds);
+         map.on('drag', function() {
+             map.panInsideBounds(bounds, { animate: false });
+         });
 
-     var landLayer = new L.GeoJSON.AJAX("data/Land.geojson", {
-         style: landStyle
+         map.setMinZoom( map.getBoundsZoom( map.options.maxBounds ) );
+         map.options.maxZoom = 10;
+
+         var mLand = L.geoJSON(land.responseJSON, {
+             style: landStyle
+         }).addTo(map);
+         var mWater = L.geoJSON(water.repsonseJSON, {
+             style: waterStyle
+         }).addTo(map);
+         var mOcean = L.geoJSON(ocean.responseJSON, {
+             style: waterStyle
+         }).addTo(map);
+
      });
-     landLayer.addTo(map);
 
  </script>
 
