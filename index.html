@@ -33,7 +33,7 @@
      // Load data
      var land = $.ajax({
          url: 'data/Land.geojson',
-         dataType: json,
+         dataType: "json",
          sucess: console.log("Land data successfully loaded"),
          error: function(xhr) {
              alert(xhr.statusText);
@@ -42,7 +42,7 @@
 
      var water = $.ajax({
          url: 'data/Water.geojson',
-         dataType: json,
+         dataType: "json",
          sucess: console.log("Water data successfully loaded"),
          error: function(xhr) {
              alert(xhr.statusText);
@@ -51,7 +51,7 @@
 
      var ocean = $.ajax({
          url: 'data/Ocean.geojson',
-         dataType: json,
+         dataType: "json",
          sucess: console.log("Ocean data successfully loaded"),
          error: function(xhr) {
              alert(xhr.statusText);
@@ -72,7 +72,7 @@
 
      $.when(land, water, ocean).done(function() {
          // Set background map
-         var map = L.map('map').setView([63.305, 10.41], 8);
+         var map = L.map('map').setView([63.305, 10.41], 6);
 
          var southWest = L.latLng(63.18, 10.02),
              northEast = L.latLng(63.43, 10.8);
