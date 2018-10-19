@@ -15,12 +15,40 @@
     <script src="js/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> <!-- jQuery API -->
     <link rel="stylesheet" href="index.css"/>
+    <link rel="icon" href="pika.png">
 </head>
 
 <body>
 <!-- Side navigation -->
 <div class="sidenav">
     <img src="PokeGIS.png" alt="PokéGIS">
+    <div id="Operations">
+        <ul>
+            <li>
+                <div id="buffer" class="dropDownHeader">Buffer</div>
+                <div class="dropDownContent"></div>
+            </li>
+            <li>
+                <div id="Union" class="dropDownHeader">Union</div>
+                <div class="dropDownContent"></div>
+            </li>
+            <li>
+                <div id="Intersection" class="dropDownHeader">Intersection</div>
+                <div class="dropDownContent"></div>
+            </li>
+            <li>
+                <div id="Difference" class="dropDownHeader">Difference</div>
+                <div class="dropDownContent"></div>
+            </li>
+            <li>
+                <div id="Filter" class="dropDownHeader">Filter</div>
+                <div class="dropDownContent"></div>
+            </li>
+
+
+
+        </ul>
+    </div>
     <a href="#">About</a>
 
 </div>
@@ -121,6 +149,9 @@
          }).bindPopup(function (layer) {
              return "The vast ocean"
          }).addTo(map);
+
+         var basemap = L.layerGroup([mWater, mOcean, mLand]);
+         L.control.layers(basemap).addTo(map);
 
          map.on('click', function(e) {
             console.log("Lat: " + e.latlng.lat + "\nLon: " + e.latlng.lng);
