@@ -32,18 +32,18 @@
 
      // Load data
      var land = $.ajax({
-         url: 'data/Land.geojson',
+         url: 'data/land2.geojson',
          dataType: "json",
-         sucess: console.log("Land data successfully loaded"),
+         success: console.log("Land data successfully loaded"),
          error: function(xhr) {
              alert(xhr.statusText);
          }
      });
 
      var water = $.ajax({
-         url: 'data/Water.geojson',
+         url: 'data/water2.geojson',
          dataType: "json",
-         sucess: console.log("Water data successfully loaded"),
+         success: console.log("Water data successfully loaded"),
          error: function(xhr) {
              alert(xhr.statusText);
          }
@@ -52,58 +52,82 @@
      var ocean = $.ajax({
          url: 'data/Ocean.geojson',
          dataType: "json",
-         sucess: console.log("Ocean data successfully loaded"),
+         success: console.log("Ocean data successfully loaded"),
          error: function(xhr) {
              alert(xhr.statusText);
          }
      });
 
-     var waterStyle = {
-         "color": "#00BCDC",
-         "weight": 1,
-         "opacity": 1
-     };
-
-     var landStyle = {
-         "color": "#000000",
-         "weight": 1,
-         "opacity": 1
-     };
-
      $.when(land, water, ocean).done(function() {
          // Set background map
-         var map = L.map('map').setView([63.305, 10.41]);
+         var map = L.map('map', {
+             minZoom: 12,
+             maxZoom: 20
+         }).setView([63.366288, 10.4308315]);
+         map.minZoom = 12;
 
-         /*
-         var southWest = L.latLng(63.18, 10.02),
-             northEast = L.latLng(63.43, 10.8);
-         var bounds = L.latLngBounds(southWest, northEast);
 
-         map.setMaxBounds(bounds);
+         var startBounds = L.latLngBounds([
+             [63.381063, 10.393066],
+             [63.351513, 10.468597]
+         ]);
+
+         var worldBounds = L.latLngBounds([
+             [63.430860, 10.055237],
+             [63.171095, 10.784454]
+         ]);
+
+         map.fitBounds(startBounds);
          map.on('drag', function() {
-             map.panInsideBounds(bounds, { animate: false });
+             map.panInsideBounds(worldBounds, { animate: true });
          });
 
-         map.setMinZoom( map.getBoundsZoom( map.options.maxBounds ) );
-         map.options.maxZoom = 10;
-        */
-         var mLand = L.geoJSON(land.responseJSON, {
-             style: landStyle
-         }).addTo(map);
          var mWater = L.geoJSON(water.repsonseJSON, {
-             style: waterStyle
-         }).addTo(map);
-         var mOcean = L.geoJSON(ocean.responseJSON, {
-             style: waterStyle
+             style: function (feature) {
+                 return {"fill":true,
+                     "fillColor": "#0000ff",
+                     "fillOpacity": 1,
+                     "stroke": false
+                 };
+             }
+         }).bindPopup(function (layer) {
+             return "This is a water"
          }).addTo(map);
 
-         map.on('zoomend', function () {
-             map.eachLayer(function (layer) {
-                 currentZoom = map.getZoom();
-                 newZoom = parseInt(Math.floor(Math.sqrt(currentZoom)));
-                 layer.setStyle({weight: newZoom});
-             });
+         var mLand = L.geoJSON(land.responseJSON, {
+             style: function (feature) {
+                return {"fill": true,
+                        "fillColor": "#1ec595",
+                        "fillOpacity": 1,
+                        "stroke": true,
+                        "color": "#d09064",
+                        "weight": 1
+                };
+             }
+         }).bindPopup(function (layer) {
+             return "Part of: " + layer.feature.properties.description +
+                 "<br>" + "Color: " + layer.feature.properties.fill;
+         }).addTo(map);
+
+         var mOcean = L.geoJSON(ocean.responseJSON, {
+             style: function (feature) {
+                return {"fill": true,
+                        "fillColor": "#00bcdc",
+                        "fillOpacity": 1,
+                        "stroke": false
+                };
+             }
+         }).bindPopup(function (layer) {
+             return "The vast ocean"
+         }).addTo(map);
+
+         map.on('click', function(e) {
+            console.log("Lat: " + e.latlng.lat + "\nLon: " + e.latlng.lng);
          });
+
+         map.on('zoomend', function() {
+             console.log("Zoom level: " + map.getZoom());
+         })
      });
 
  </script>
