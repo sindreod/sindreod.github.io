@@ -47,9 +47,10 @@ ul {
 
 .dropDownHeader {
     background-color: #FFCB05;
-    width: 296px;
+    width: 288px;
     height: 40px;
     padding: 0px;
+    margin: 0px 4px 0px 4px;
     border: 2px solid #46709B;
     font-size: large;
     color: #46709B;

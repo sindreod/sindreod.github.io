@@ -59,107 +59,92 @@
 </div>
  <script type="text/javascript">
 
+     // Set background map
+     var map = L.map('map', {
+         minZoom: 12,
+         maxZoom: 20
+     }).setView([63.366288, 10.4308315]);
+
+     //var control = L.control.layers();
+     var startBounds = L.latLngBounds([
+         [63.381063, 10.393066],
+         [63.351513, 10.468597]
+     ]);
+
+     var worldBounds = L.latLngBounds([
+         [63.430860, 10.055237],
+         [63.171095, 10.784454]
+     ]);
+
+     map.fitBounds(startBounds);
+     map.on('drag', function() {
+         map.panInsideBounds(worldBounds, { animate: true });
+     });
+
+     var backGroundLayer = L.layerGroup().addTo(map);
+
      // Load data
-     var land = $.ajax({
-         url: 'data/land2.geojson',
-         dataType: "json",
-         success: console.log("Land data successfully loaded"),
-         error: function(xhr) {
-             alert(xhr.statusText);
-         }
-     });
 
-     var water = $.ajax({
-         url: 'data/water2.geojson',
-         dataType: "json",
-         success: console.log("Water data successfully loaded"),
-         error: function(xhr) {
-             alert(xhr.statusText);
-         }
-     });
-
-     var ocean = $.ajax({
-         url: 'data/Ocean.geojson',
-         dataType: "json",
-         success: console.log("Ocean data successfully loaded"),
-         error: function(xhr) {
-             alert(xhr.statusText);
-         }
-     });
-
-     $.when(land, water, ocean).done(function() {
-         // Set background map
-         var map = L.map('map', {
-             minZoom: 12,
-             maxZoom: 20
-         }).setView([63.366288, 10.4308315]);
-         map.minZoom = 12;
-
-         //var control = L.control.layers();
-         var startBounds = L.latLngBounds([
-             [63.381063, 10.393066],
-             [63.351513, 10.468597]
-         ]);
-
-         var worldBounds = L.latLngBounds([
-             [63.430860, 10.055237],
-             [63.171095, 10.784454]
-         ]);
-
-         map.fitBounds(startBounds);
-         map.on('drag', function() {
-             map.panInsideBounds(worldBounds, { animate: true });
-         });
-
-         var mWater = L.geoJSON(water.repsonseJSON, {
+     jQuery.getJSON("data/water2.geojson" , function (json) {
+         L.geoJSON(json, {
              style: function (feature) {
                  return {"fill":true,
-                     "fillColor": "#0000ff",
+                     "fillColor": "#00bfff",
                      "fillOpacity": 1,
                      "stroke": false
-                 };
-             }
+                 }},
+             onEachFeature: addBackGroundData
          }).bindPopup(function (layer) {
              return "This is a water"
          }).addTo(map);
+     });
 
-         var mLand = L.geoJSON(land.responseJSON, {
+     jQuery.getJSON("data/land2.geojson" , function (json) {
+         L.geoJSON(json, {
              style: function (feature) {
-                return {"fill": true,
-                        "fillColor": "#1ec595",
-                        "fillOpacity": 1,
-                        "stroke": true,
-                        "color": "#d09064",
-                        "weight": 1
-                };
-             }
+                 return {"fill": true,
+                     "fillColor": "#1ec595",
+                     "fillOpacity": 1,
+                     "stroke": true,
+                     "color": "#d09064",
+                     "weight": 1
+                 }
+             },
+             onEachFeature: addBackGroundData
          }).bindPopup(function (layer) {
              return "Part of: " + layer.feature.properties.description +
                  "<br>" + "Color: " + layer.feature.properties.fill;
          }).addTo(map);
+     });
 
-         var mOcean = L.geoJSON(ocean.responseJSON, {
+     jQuery.getJSON("data/Ocean.geojson" , function (json) {
+         L.geoJSON(json, {
              style: function (feature) {
-                return {"fill": true,
-                        "fillColor": "#00bcdc",
-                        "fillOpacity": 1,
-                        "stroke": false
-                };
-             }
+                 return {"fill": true,
+                     "fillColor": "#00bcdc",
+                     "fillOpacity": 1,
+                     "stroke": false
+                 };
+             },
+             onEachFeature: addBackGroundData
          }).bindPopup(function (layer) {
              return "The vast ocean"
          }).addTo(map);
+     });
 
-         var basemap = L.layerGroup([mWater, mOcean, mLand]);
-         L.control.layers(basemap).addTo(map);
+     function addBackGroundData(feature, layer) {
+         backGroundLayer.addLayer(layer);
+     }
 
-         map.on('click', function(e) {
-            console.log("Lat: " + e.latlng.lat + "\nLon: " + e.latlng.lng);
-         });
 
-         map.on('zoomend', function() {
-             console.log("Zoom level: " + map.getZoom());
-         })
+     L.control.layers([backGroundLayer]).addTo(map);
+
+     map.on('click', function(e) {
+         console.log("Lat: " + e.latlng.lat + "\nLon: " + e.latlng.lng);
+     });
+
+     map.on('zoomend', function() {
+         console.log("Zoom level: " + map.getZoom());
      });
 
  </script>
