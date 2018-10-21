@@ -84,20 +84,20 @@
      });
 
      var backGroundLayer = L.layerGroup().addTo(map);
-     var politicalLayer = L.layerGroup().addTo(map);
-     var hoenn = L.featureGroup().addTo(map);
-     var sinnoh = L.featureGroup().addTo(map);
-     var orangeIslands = L.featureGroup().addTo(map);
-     var orre = L.featureGroup().addTo(map);
-     var johto = L.featureGroup().addTo(map);
-     var kanto = L.featureGroup().addTo(map);
-     var sevii = L.featureGroup().addTo(map);
-     var fiore = L.featureGroup().addTo(map);
-     var oblivia = L.featureGroup().addTo(map);
-     var almia = L.featureGroup().addTo(map);
-     var holon = L.featureGroup().addTo(map);
-     var unova = L.featureGroup().addTo(map);
-     var rest = L.featureGroup().addTo(map);
+     var politicalLayer = L.layerGroup();
+     var hoenn = L.featureGroup();
+     var sinnoh = L.featureGroup();
+     var orangeIslands = L.featureGroup();
+     var orre = L.featureGroup();
+     var johto = L.featureGroup();
+     var kanto = L.featureGroup();
+     var sevii = L.featureGroup();
+     var fiore = L.featureGroup();
+     var oblivia = L.featureGroup();
+     var almia = L.featureGroup();
+     var holon = L.featureGroup();
+     var unova = L.featureGroup();
+     var rest = L.featureGroup();
      politicalLayer.addLayer(kanto);
      politicalLayer.addLayer(hoenn);
      politicalLayer.addLayer(sinnoh);
@@ -146,8 +146,7 @@
              },
              onEachFeature: addBackGroundData
          }).bindPopup(function (layer) {
-             return "Part of: " + layer.feature.properties.description +
-                 "<br>" + "Color: " + layer.feature.properties.fill;
+             return "Part of: " + layer.feature.properties.description;
          }).addTo(map);
      });
 
@@ -350,18 +349,12 @@
                          rest.addLayer(layer);
                          break;
                  }
+                 layer.bindPopup(function(layer) {
+                     return "<strong> Geographical region <br> " +
+                         "Name: \t\t</strong>" + layer.feature.properties.description
+                 })
              }
-                 /*function(feature, layer) {
-                 layer.on({
-                     mouseover: highlightFeature,
-                     mouseout: resetHighlight
-                 });
-                 politicalLayer.addLayer(layer);
-             }*/
-         }).bindPopup(function (layer) {
-             return "<strong> Geographical region <br> " +
-                 "Name: \t\t</strong>" + layer.feature.properties.description
-         }).addTo(map)
+         })
      });
 
      function addBackGroundData(feature, layer) {
