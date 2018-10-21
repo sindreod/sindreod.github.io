@@ -57,6 +57,7 @@ ul {
     color: #46709B;
     text-align: center;
     vertical-align: middle;
+    cursor: pointer;
 }
 
 /* Used to hide dropdownmenus initially */
