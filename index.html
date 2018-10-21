@@ -14,6 +14,7 @@
 
     <script src="js/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> <!-- jQuery API -->
+    <script src="js/labelOverlayExtended.js"></script> <!-- Label extension -->
     <link rel="stylesheet" href="index.css"/>
     <link rel="icon" href="pika.png">
 </head>
@@ -25,31 +26,32 @@
     <div id="Operations">
         <ul>
             <li>
-                <div id="buffer" class="dropDownHeader">Buffer</div>
-                <div class="dropDownContent"></div>
+                <div id="buffer" class="dropDown">Buffer</div>
+                <div class="dropDownContent"> Dropdown </div>
             </li>
             <li>
-                <div id="Union" class="dropDownHeader">Union</div>
-                <div class="dropDownContent"></div>
+                <div id="Union" class="dropDown">Union</div>
+                <div class="dropDownContent">Dropdown</div>
             </li>
             <li>
-                <div id="Intersection" class="dropDownHeader">Intersection</div>
-                <div class="dropDownContent"></div>
+                <div id="Intersection" class="dropDown">Intersection</div>
+                <div class="dropDownContent">Dropdown</div>
+
             </li>
             <li>
-                <div id="Difference" class="dropDownHeader">Difference</div>
-                <div class="dropDownContent"></div>
+                <div id="Difference" class="dropDown">Difference</div>
+                <div class="dropDownContent">Dropdown</div>
+
             </li>
             <li>
-                <div id="Filter" class="dropDownHeader">Filter</div>
-                <div class="dropDownContent"></div>
+                <div id="Filter" class="dropDown">Filter</div>
+                <div class="dropDownContent">Dropdown</div>
             </li>
 
 
 
         </ul>
     </div>
-    <a href="#">About</a>
 
 </div>
 
@@ -61,7 +63,7 @@
 
      // Set background map
      var map = L.map('map', {
-         minZoom: 12,
+         minZoom: 11,
          maxZoom: 20
      }).setView([63.366288, 10.4308315]);
 
@@ -82,7 +84,7 @@
      });
 
      var backGroundLayer = L.layerGroup().addTo(map);
-
+     var politicalLayer = L.layerGroup().addTo(map);
      // Load data
 
      jQuery.getJSON("data/water2.geojson" , function (json) {
@@ -106,7 +108,7 @@
                      "fillColor": "#1ec595",
                      "fillOpacity": 1,
                      "stroke": true,
-                     "color": "#d09064",
+                     "color": "#000000",
                      "weight": 1
                  }
              },
@@ -132,12 +134,175 @@
          }).addTo(map);
      });
 
+     function highlightFeature(e) {
+         var layer = e.target;
+         layer.setStyle({
+            weight: 5
+         });
+     }
+
+     function resetHighlight(e) {
+         var layer = e.target;
+         layer.setStyle({
+             weight: 1
+         })
+     }
+
+     jQuery.getJSON("data/political.geojson", function (json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 switch (feature.properties.description) {
+                     case "Kanto":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#ff0000"
+                         };
+                     case "Johto":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#ffff00"
+                         };
+                     case "Holon":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#ff00ff"
+                         };
+                     case "Sinnoh":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#ffffff"
+                         };
+                     case "Hoenn":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#ff0000"
+                         };
+                     case "Orange Islands":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#ff7700"
+                         };
+                     case "Sevii Islands":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#0000ff"
+                         };
+                     case "Fiore":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#2CAA40"
+                         };
+                     case "Unova":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#0000ff"
+                         };
+                     case "Almia":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#00ff00"
+                         };
+                     case "Orre":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#ff0000"
+                         };
+                     case "Oblivia":
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#ffffff"
+                         };
+                     default:
+                         return {
+                             "fill": true,
+                             "fillOpacity": 1,
+                             "stroke": true,
+                             "color": "#000000",
+                             "weight": 1,
+                             "fillColor": "#555555"
+                         };
+                 }
+             },
+             onEachFeature: function(feature, layer) {
+                 layer.on({
+                     mouseover: highlightFeature,
+                     mouseout: resetHighlight
+                 });
+                 politicalLayer.addLayer(layer);
+             }
+         }).bindPopup(function (layer) {
+             return "<strong> Geographical region <br> " +
+                 "Name: \t\t</strong>" + layer.feature.properties.description
+         }).addTo(map)
+     });
+
      function addBackGroundData(feature, layer) {
          backGroundLayer.addLayer(layer);
      }
 
+     /*
+     var labelLocation = new L.LatLng(63.366288, 10.4308315);
+     var labelTitle = new L.LabelOverlay(labelLocation, '<b>Johto</b>');
+     backGroundLayer.addLayer(labelTitle);
+     */
 
-     L.control.layers([backGroundLayer]).addTo(map);
+     var baseMaps = {
+         "Pokemon World": backGroundLayer
+     };
+
+     var additionalLayers = {
+         "Geographical region": politicalLayer
+     };
+
+     L.control.layers(baseMaps, additionalLayers).addTo(map);
 
      map.on('click', function(e) {
          console.log("Lat: " + e.latlng.lat + "\nLon: " + e.latlng.lng);
@@ -146,6 +311,32 @@
      map.on('zoomend', function() {
          console.log("Zoom level: " + map.getZoom());
      });
+
+     // To prevent the text labels to "jump" when zooming in and out,
+     // in Google Chrome, I added this event handler:
+     /*
+     map.on('movestart', function () {
+         map.removeLayer(labelTitle);
+         map.removeLayer(labelTitle2);
+     });
+     map.on('moveend', function () {
+         map.addLayer(labelTitle);
+         map.addLayer(labelTitle2);
+     });
+     */
+     var dropdown = document.getElementsByClassName("dropDown");
+
+     for (var i = 0; i < dropdown.length; i++) {
+         dropdown[i].addEventListener("click", function() {
+             this.classList.toggle("active");
+             var dropdownContent = this.nextElementSibling;
+             if (dropdownContent.style.display === "block") {
+                 dropdownContent.style.display = "none";
+             } else {
+                 dropdownContent.style.display = "block";
+             }
+         });
+     }
 
  </script>
 

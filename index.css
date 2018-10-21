@@ -1,5 +1,6 @@
 #map {
-    height: 626px;
+    height: 620px;
+    border: 3px solid black;
 }
 
 .outputList {
@@ -45,7 +46,7 @@ ul {
     margin: 0;
 }
 
-.dropDownHeader {
+.dropDown {
     background-color: #FFCB05;
     width: 288px;
     height: 40px;
@@ -58,6 +59,22 @@ ul {
     vertical-align: middle;
 }
 
+/* Used to hide dropdownmenus initially */
+.dropDownContent {
+    display: none;
+    width: 288px;
+    height: 40px;
+    padding: 0px;
+    margin: 0px 4px 0px 4px;
+    border: 2px solid #46709B;
+    font-size: large;
+    color: #46709B;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #C7A008;
+
+}
+
 /* Style page content */
 .main {
     margin-left: 300px; /* Same as the width of the sidebar */
@@ -66,6 +83,22 @@ ul {
 
 body {
     margin: 0;
+}
+
+/* Style for labels */
+.leaflet-popup-close-button {
+    display:none;
+}
+
+.leaflet-label-overlay {
+    line-height:0px;
+    margin-top: 9px;
+    position:absolute;
+}
+
+.active {
+    background-color: #46709B;
+    color: #FFCB05;
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
