@@ -64,16 +64,26 @@ ul {
 .dropDownContent {
     display: none;
     width: 288px;
-    height: 40px;
+    height: 80px;
     padding: 0px;
     margin: 0px 4px 0px 4px;
     border: 2px solid #46709B;
-    font-size: large;
+    font-size: 14px;
     color: #46709B;
     text-align: center;
     vertical-align: middle;
     background-color: #C7A008;
+}
 
+.dropDownLayers {
+    width: 70%;
+    text-align: center;
+    border: 0;
+    margin-left: 16px;
+}
+
+.sidenavText{
+    width: 70%;
 }
 
 /* Style page content */

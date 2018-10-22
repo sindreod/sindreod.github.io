@@ -27,7 +27,15 @@
         <ul>
             <li>
                 <div id="buffer" class="dropDown">Buffer</div>
-                <div class="dropDownContent"> Dropdown </div>
+                <div class="dropDownContent">
+                    Layer:
+                    <select name="bufferSelect" class="dropDownLayers">
+                        <!-- Options here -->
+                    </select>
+                    <br>Distance:
+                    <input id="bufferDistance" class="sidenavText" type="text" placeholder="km"></input>
+                    <button id="createBuffer">Create buffer</button>
+                </div>
             </li>
             <li>
                 <div id="Union" class="dropDown">Union</div>
@@ -67,58 +75,61 @@
          maxZoom: 20
      }).setView([63.366288, 10.4308315]);
 
-     //var control = L.control.layers();
+     //Set bounds for startup
      var startBounds = L.latLngBounds([
          [63.381063, 10.393066],
          [63.351513, 10.468597]
      ]);
 
+     //Set bounds for panning
      var worldBounds = L.latLngBounds([
          [63.430860, 10.055237],
          [63.171095, 10.784454]
      ]);
 
+     //Start and panning bounds applied
      map.fitBounds(startBounds);
      map.on('drag', function() {
          map.panInsideBounds(worldBounds, { animate: true });
      });
 
+     //Add baseMap layer to map and display it
      var backGroundLayer = L.layerGroup().addTo(map);
+
+     //Add a region layer to map
      var politicalLayer = L.layerGroup();
-     var hoenn = L.featureGroup();
-     var sinnoh = L.featureGroup();
-     var orangeIslands = L.featureGroup();
-     var orre = L.featureGroup();
-     var johto = L.featureGroup();
-     var kanto = L.featureGroup();
-     var sevii = L.featureGroup();
-     var fiore = L.featureGroup();
-     var oblivia = L.featureGroup();
-     var almia = L.featureGroup();
-     var holon = L.featureGroup();
-     var unova = L.featureGroup();
-     var rest = L.featureGroup();
-     politicalLayer.addLayer(kanto);
-     politicalLayer.addLayer(hoenn);
-     politicalLayer.addLayer(sinnoh);
-     politicalLayer.addLayer(johto);
-     politicalLayer.addLayer(orangeIslands);
-     politicalLayer.addLayer(orre);
-     politicalLayer.addLayer(sevii);
-     politicalLayer.addLayer(fiore);
-     politicalLayer.addLayer(oblivia);
-     politicalLayer.addLayer(almia);
-     politicalLayer.addLayer(holon);
-     politicalLayer.addLayer(unova);
-     politicalLayer.addLayer(rest);
+
+     //Make a region dictionary and collect in featureGroups
+     var regions = {};
+     regionNames = ["Hoenn", "Sinnoh", "Orange Islands", "Orre", "Johto", "Kanto", "Sevii Islands", "Fiore", "Oblivia", "Almia", "Holon", "Unova", "Distant land", "Rest"];
+     for (var i = 0; i < regionNames.length; i++) {
+         regions[regionNames[i]] = L.featureGroup();
+         politicalLayer.addLayer(regions[regionNames[i]]);
+     }
+
+     //Add hightlighting on hover
      politicalLayer.eachLayer(function (layer) {
         layer.on({
             mouseover: highlightFeature,
             mouseout: resetHighlight
         });
      });
-     // Load data
 
+     function highlightFeature(e) {
+         var layer = e.target;
+         layer.setStyle({
+             weight: 5
+         });
+     }
+
+     function resetHighlight(e) {
+         var layer = e.target;
+         layer.setStyle({
+             weight: 1
+         })
+     }
+
+     // Load data
      jQuery.getJSON("data/water2.geojson" , function (json) {
          L.geoJSON(json, {
              style: function (feature) {
@@ -165,25 +176,8 @@
          }).addTo(map);
      });
 
-     function highlightLayer(e) {
-         var layerGroup = e.target;
-         console.log(layerGroup.description);
-     }
 
-     function highlightFeature(e) {
-         var layer = e.target;
-         layer.setStyle({
-            weight: 5
-         });
-     }
-
-     function resetHighlight(e) {
-         var layer = e.target;
-         layer.setStyle({
-             weight: 1
-         })
-     }
-
+     //Load regions data and apply styling for each region
      jQuery.getJSON("data/political.geojson", function (json) {
          L.geoJSON(json, {
              style: function (feature) {
@@ -306,48 +300,12 @@
                              "fillColor": "#555555"
                          };
                  }
-             },
+             }, //Add features in dictionary layers
              onEachFeature: function(feature, layer) {
-                 switch (feature.properties.description) {
-                     case "Kanto":
-                         kanto.addLayer(layer);
-                         break;
-                     case "Johto":
-                         johto.addLayer(layer);
-                         break;
-                     case "Holon":
-                         holon.addLayer(layer);
-                         break;
-                     case "Sinnoh":
-                         sinnoh.addLayer(layer);
-                         break;
-                     case "Hoenn":
-                         hoenn.addLayer(layer);
-                         break;
-                     case "Orange Islands":
-                         orangeIslands.addLayer(layer);
-                         break;
-                     case "Sevii Islands":
-                         sevii.addLayer(layer);
-                         break;
-                     case "Fiore":
-                         fiore.addLayer(layer);
-                         break;
-                     case "Unova":
-                         unova.addLayer(layer);
-                         break;
-                     case "Almia":
-                         almia.addLayer(layer);
-                         break;
-                     case "Orre":
-                         orre.addLayer(layer);
-                         break;
-                     case "Oblivia":
-                         oblivia.addLayer(layer);
-                         break;
-                     default:
-                         rest.addLayer(layer);
-                         break;
+                 if(feature.properties.description in regions) {
+                     regions[feature.properties.description].addLayer(layer);
+                 } else {
+                     regions["Rest"].addLayer(layer);
                  }
                  layer.bindPopup(function(layer) {
                      return "<strong> Geographical region <br> " +
@@ -360,12 +318,6 @@
      function addBackGroundData(feature, layer) {
          backGroundLayer.addLayer(layer);
      }
-
-     /*
-     var labelLocation = new L.LatLng(63.366288, 10.4308315);
-     var labelTitle = new L.LabelOverlay(labelLocation, '<b>Johto</b>');
-     backGroundLayer.addLayer(labelTitle);
-     */
 
      var baseMaps = {
          "Pokemon World": backGroundLayer
@@ -384,6 +336,13 @@
      map.on('zoomend', function() {
          console.log("Zoom level: " + map.getZoom());
      });
+
+
+     /*
+      var labelLocation = new L.LatLng(63.366288, 10.4308315);
+      var labelTitle = new L.LabelOverlay(labelLocation, '<b>Johto</b>');
+      backGroundLayer.addLayer(labelTitle);
+      */
 
      // To prevent the text labels to "jump" when zooming in and out,
      // in Google Chrome, I added this event handler:
@@ -409,6 +368,14 @@
                  dropdownContent.style.display = "block";
              }
          });
+     }
+
+     for (var key in regions) {
+         var element = document.createElement("OPTION");
+         element.innerHTML = key;
+         var target = document.getElementsByClassName("dropDownLayers");
+         target[0].add(element);
+         //document.getElementByName("bufferSelect").appendChild(element);
      }
 
  </script>
