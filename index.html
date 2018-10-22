@@ -14,7 +14,7 @@
 
     <script src="js/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> <!-- jQuery API -->
-    <script src="js/labelOverlayExtended.js"></script> <!-- Label extension -->
+    <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
     <link rel="stylesheet" href="index.css"/>
     <link rel="icon" href="pika.png">
 </head>
@@ -106,6 +106,9 @@
          regions[regionNames[i]] = L.featureGroup();
          politicalLayer.addLayer(regions[regionNames[i]]);
      }
+
+     //Make a layer for all cities on the map
+     var cityLayer = L.layerGroup();
 
      //Add hightlighting on hover
      politicalLayer.eachLayer(function (layer) {
@@ -315,6 +318,38 @@
          })
      });
 
+     var pokeball = new PokeIcon({iconUrl: 'pokeball.png'});
+     var greatball = new PokeIcon({iconUrl: 'greatball.png'});
+     var ultraball = new PokeIcon({iconUrl: 'ultraball.png'});
+     var masterball = new PokeIcon({iconUrl: 'masterball.png'});
+
+     jQuery.getJSON("data/cities3.geojson", function (json) {
+         L.geoJSON(json, {
+             pointToLayer: function (feature, latlng) {
+                 var pop = feature.properties.Population;
+                 if(pop > 0 && pop < 20) {
+                     return L.marker(latlng, {icon: pokeball})
+                 } else if (pop >= 20 && pop < 40) {
+                     return L.marker(latlng, {icon: greatball})
+                 } else if (pop >= 40 && pop < 60) {
+                     return L.marker(latlng, {icon: ultraball})
+                 } else if (pop >= 60) {
+                     return L.marker(latlng, {icon: masterball})
+                 }
+             },
+             onEachFeature: function (feature, layer) {
+                 cityLayer.addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return "<strong><u>" + layer.feature.properties.Name + "</strong></u>" +
+                         "<br><strong>Region:</strong> " + layer.feature.properties.Region +
+                         "<br><strong>Population: </strong>" + layer.feature.properties.Population +
+                             "<br><strong>Description: </strong>" + layer.feature.properties.Description
+                 })
+             }
+        });
+     });
+
+
      function addBackGroundData(feature, layer) {
          backGroundLayer.addLayer(layer);
      }
@@ -324,7 +359,8 @@
      };
 
      var additionalLayers = {
-         "Geographical region": politicalLayer
+         "Geographical region": politicalLayer,
+         "Cities": cityLayer
      };
 
      L.control.layers(baseMaps, additionalLayers, {collapsed:false}).addTo(map);
@@ -377,6 +413,50 @@
          target[0].add(element);
          //document.getElementByName("bufferSelect").appendChild(element);
      }
+
+     function getPokeball(pop) {
+         if(pop > 0 && pop < 20) {
+             return "<img src=pokeball.png style: {margin: 10px}>";
+         } else if (pop >= 20 && pop < 40) {
+             return "<img src=greatball.png>";
+         } else if (pop >= 40 && pop < 60) {
+             return "<img src=ultraball.png>";
+         } else if (pop >= 60) {
+             return "<img src=masterball.png>";
+         }
+     }
+
+     var cityLegend = L.control({position: 'bottomright'});
+
+     cityLegend.onAdd = function (map) {
+
+         var div = L.DomUtil.create('div', 'info legend'),
+             pop = [0, 20, 40, 60],
+             labels = [];
+
+         div.innerHTML += "<strong>Population: </strong><br><br>";
+         // loop through our density intervals and generate a icon for each interval
+         for (var i = 0; i < pop.length; i++) {
+             div.innerHTML +=
+                 '' + getPokeball(pop[i] + 1) + "<strong>" +
+                 pop[i] + (pop[i + 1] ? '&ndash;' + pop[i + 1] + '<br>' : '+') + "</strong>"
+         }
+
+         return div;
+     };
+
+     //Add and remove legend when layers are selected or not
+     map.on('overlayadd', function(e) {
+         if(e.name === "Cities") {
+             cityLegend.addTo(map);
+         }
+     });
+
+     map.on('overlayremove', function (e) {
+         if(e.name === "Cities") {
+             cityLegend.remove()
+         }
+     });
 
  </script>
 

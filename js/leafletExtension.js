@@ -30,3 +30,11 @@ L.LabelOverlay = L.Class.extend({
         this._container = L.DomUtil.create('div', 'leaflet-label-overlay');
     }
 });
+
+var PokeIcon = L.Icon.extend({
+    options: {
+        iconSize: [25,25],
+        iconAnchor: [12.5,12.5],
+        popupAnchor: [6.25,0]
+    }
+});
