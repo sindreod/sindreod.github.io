@@ -15,6 +15,7 @@
     <script src="lib/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> <!-- jQuery API -->
     <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
+    <script src="lib/turf.min.js"></script> <!-- Turf -->
     <link rel="stylesheet" href="index.css"/>
     <link rel="icon" href="pika.png">
 </head>
@@ -28,13 +29,20 @@
             <li>
                 <div id="buffer" class="dropDown">Buffer</div>
                 <div class="dropDownContent">
-                    Layer:
-                    <select name="bufferSelect" class="dropDownLayers">
+                    Layergroup:
+                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers" required>
+                        <!-- Options here -->
+                    </select>
+                    <br>Layer:
+                    <select id="bufferSelect" name="bufferSelect" class="dropDownLayers" required>
                         <!-- Options here -->
                     </select>
                     <br>Distance:
-                    <input id="bufferDistance" class="sidenavText" type="text" placeholder="km"></input>
-                    <button id="createBuffer">Create buffer</button>
+                    <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
+                    <button id="createBuffer"
+                            onclick="createBuffer(document.getElementById('bufferSelect'),document.getElementById('bufferDistance').value)">
+                        Create buffer
+                    </button>
                 </div>
             </li>
             <li>
@@ -109,6 +117,8 @@
 
      //Make a layer for all cities on the map
      var cityLayer = L.layerGroup();
+
+     var cities = {};
 
      //Add hightlighting on hover
      politicalLayer.eachLayer(function (layer) {
@@ -338,7 +348,14 @@
 
              },
              onEachFeature: function (feature, layer) {
-                 cityLayer.addLayer(layer);
+                 if(feature.properties.Name in cities) {
+                     cities[feature.properties.Name].addLayer(layer);
+                 } else {
+                     cities[feature.properties.Name] = L.featureGroup();
+                     cityLayer.addLayer(cities[feature.properties.Name]);
+                     cities[feature.properties.Name].addLayer(layer);
+
+                 }
                  layer.bindPopup(function(layer) {
                      return "<strong><u>" + layer.feature.properties.Name + "</strong></u>" +
                          "<br><strong>Region:</strong> " + layer.feature.properties.Region +
@@ -363,7 +380,7 @@
          "Cities": cityLayer
      };
 
-     L.control.layers(baseMaps, additionalLayers, {collapsed:false}).addTo(map);
+     var controls = L.control.layers(baseMaps, additionalLayers, {collapsed:false}).addTo(map);
 
      map.on('click', function(e) {
          console.log("Lat: " + e.latlng.lat + "\nLon: " + e.latlng.lng);
@@ -387,12 +404,12 @@
          });
      }
 
+
      for (var key in regions) {
          var element = document.createElement("OPTION");
          element.innerHTML = key;
-         var target = document.getElementsByClassName("dropDownLayers");
-         target[0].add(element);
-         //document.getElementByName("bufferSelect").appendChild(element);
+         var target = document.getElementById("bufferSelect");
+         target.add(element);
      }
 
      function getPokeball(pop) {
@@ -435,6 +452,37 @@
              cityLegend.remove()
          }
      });
+
+     function createBuffer(select, distance) {
+         if (distance < 0) {
+             return;
+         }
+         var bufferLayer = L.layerGroup();
+         var selectedLayer = select.options[select.selectedIndex].text;
+         geojson = regions[selectedLayer].toGeoJSON();
+         var buffered = turf.buffer(geojson, distance/100, {units: 'kilometers'});
+         var name = "buffer_" + selectedLayer + "_" + distance;
+         L.geoJSON(buffered, {
+             style: function (feature) {
+                 return {
+                     "fill": true,
+                     "fillOpacity": 0.5,
+                     "stroke": true,
+                     "color": "#000000",
+                     "weight": 1,
+                     "fillColor": "#55ff55"
+                 };
+             }, //Add features in dictionary layers
+             onEachFeature: function(feature, layer) {
+                 bufferLayer.addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return "buffer_" + selectedLayer + "_" + distance;
+                 })
+             }
+         });
+         bufferLayer.addTo(map);
+         controls.addOverlay(bufferLayer, name);
+     }
 
  </script>
 

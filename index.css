@@ -64,7 +64,7 @@ ul {
 .dropDownContent {
     display: none;
     width: 288px;
-    height: 80px;
+    height: 120px;
     padding: 0px;
     margin: 0px 4px 0px 4px;
     border: 2px solid #46709B;
@@ -76,10 +76,20 @@ ul {
 }
 
 .dropDownLayers {
-    width: 70%;
+    width: 60%;
     text-align: center;
     border: 0;
-    margin-left: 16px;
+    margin: 5px;
+    padding: 5px;
+}
+
+#dropDownContent input {
+    width: 60%;
+    padding: 5px;
+}
+
+button {
+    margin: 5px;
 }
 
 .sidenavText{
