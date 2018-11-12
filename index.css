@@ -83,10 +83,6 @@ ul {
     padding: 5px;
 }
 
-#dropDownContent input {
-    width: 60%;
-    padding: 5px;
-}
 
 button {
     margin: 5px;
@@ -94,6 +90,12 @@ button {
 
 .sidenavText{
     width: 70%;
+}
+
+#dropDownContent input {
+    width: 60%;
+    padding: 5px;
+    margin: 100px;
 }
 
 /* Style page content */

@@ -40,7 +40,7 @@
                     <br>Distance:
                     <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
                     <button id="createBuffer"
-                            onclick="createBuffer(document.getElementById('bufferSelect'),document.getElementById('bufferDistance').value)">
+                            onclick="createBuffer(document.getElementById('bufferLayerGroup'), document.getElementById('bufferSelect'),document.getElementById('bufferDistance').value)">
                         Create buffer
                     </button>
                 </div>
@@ -366,7 +366,6 @@
         });
      });
 
-
      function addBackGroundData(feature, layer) {
          backGroundLayer.addLayer(layer);
      }
@@ -404,13 +403,69 @@
          });
      }
 
+     var blank = document.createElement("OPTION");
+     blank.disabled = true;
+     blank.selected = 'selected';
+     blank.value = "";
+     blank.innerHTML = "-- select a layergroup --";
+     target = document.getElementById("bufferLayerGroup");
+     target.add(blank);
 
-     for (var key in regions) {
+     for(var key in additionalLayers) {
          var element = document.createElement("OPTION");
          element.innerHTML = key;
-         var target = document.getElementById("bufferSelect");
          target.add(element);
      }
+
+     function updateLayerGroup(target) {
+         //Clear dropdown options
+         while(target.firstChild) {
+             target.removeChild(target.firstChild);
+         }
+         var blank = document.createElement("OPTION");
+         blank.disabled = true;
+         blank.selected = 'selected';
+         blank.value = "";
+         blank.innerHTML = "-- select a layergroup --";
+         target.add(blank);
+
+         for(var key in additionalLayers) {
+             var element = document.createElement("OPTION");
+             element.innerHTML = key;
+             target.add(element);
+         }
+     }
+
+     document.getElementById("bufferLayerGroup").onchange = function() {
+         var target = document.getElementById("bufferSelect");
+         while (target.firstChild) {
+             target.removeChild(target.firstChild);
+         }
+         var select = document.getElementById("bufferLayerGroup");
+         layer = select.options[select.selectedIndex].value;
+         var selection;
+         if(layer == "Cities") {
+             selection = cities;
+             blank.innerHTML = "-- select a city --";
+             //Add groups?
+         } else if (layer  == "Geographical region") {
+             selection = regions;
+             blank.innerHTML = "-- select a region --";
+         } else {
+             selection = additionalLayers[layer];
+             return;
+         }
+         target.add(blank);
+         target.selectedIndex = 0;
+         for (var key in selection) {
+             var element = document.createElement("OPTION");
+             element.innerHTML = key;
+             target.add(element);
+
+         }
+     };
+
+
 
      function getPokeball(pop) {
          var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
@@ -453,14 +508,22 @@
          }
      });
 
-     function createBuffer(select, distance) {
+     function createBuffer(mainLayer, select, distance) {
          if (distance < 0) {
              return;
          }
          var bufferLayer = L.layerGroup();
+         layer = mainLayer.options[mainLayer.selectedIndex].value;
+         var selection;
+         if(layer == "Cities") {
+             selection = cities;
+         } else if (layer  == "Geographical region") {
+             selection = regions;
+         } 
          var selectedLayer = select.options[select.selectedIndex].text;
-         geojson = regions[selectedLayer].toGeoJSON();
-         var buffered = turf.buffer(geojson, distance/100, {units: 'kilometers'});
+
+         geojson = selection[selectedLayer].toGeoJSON();
+         var buffered = turf.buffer(geojson, distance/10, {units: 'kilometers'});
          var name = "buffer_" + selectedLayer + "_" + distance;
          L.geoJSON(buffered, {
              style: function (feature) {
@@ -470,7 +533,7 @@
                      "stroke": true,
                      "color": "#000000",
                      "weight": 1,
-                     "fillColor": "#55ff55"
+                     "fillColor": "#aaaaaa"
                  };
              }, //Add features in dictionary layers
              onEachFeature: function(feature, layer) {
@@ -480,9 +543,13 @@
                  })
              }
          });
+         additionalLayers[name] = bufferLayer;
          bufferLayer.addTo(map);
          controls.addOverlay(bufferLayer, name);
+         updateLayerGroup(document.getElementById("bufferLayerGroup"));
      }
+
+
 
  </script>
 
