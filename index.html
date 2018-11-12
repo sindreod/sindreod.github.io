@@ -30,7 +30,8 @@
                 <div id="buffer" class="dropDown">Buffer</div>
                 <div class="dropDownContent">
                     <span class="dropDownLeft">Layergroup:</span>
-                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required
+                            onchange="updateFeatureSelect('bufferSelect','bufferLayerGroup')">
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Layer:</span>
@@ -49,7 +50,8 @@
                 <div id="Union" class="dropDown">Union</div>
                 <div class="dropDownContent">
                     <span class="dropDownLeft">Layergroup1:</span>
-                    <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                    <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required
+                    onchange="updateFeatureSelect('unionSelect1','unionLayerGroup1')">
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Layer1:</span>
@@ -57,7 +59,8 @@
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Layergroup2:</span>
-                    <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required>
+                    <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required
+                    onchange="updateFeatureSelect('unionSelect2','unionLayerGroup2')">
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Layer2:</span>
@@ -410,6 +413,8 @@
          console.log("Zoom level: " + map.getZoom());
      });
 
+     // Create dropdowns in sidenav
+
      var dropdown = document.getElementsByClassName("dropDown");
 
      for (var i = 0; i < dropdown.length; i++) {
@@ -431,6 +436,7 @@
          });
      }
 
+     // Create selections in Layergroup dropdowns
      var blank = document.createElement("OPTION");
      blank.disabled = true;
      blank.selected = 'selected';
@@ -447,7 +453,7 @@
          }
      }
 
-
+     // Update layerGroup if function is used (buffer, union, intersection etc)
      function updateLayerGroup() {
          targets = document.getElementsByClassName("dropDownLayerGroup");
          for(var i = 0; i< targets.length; i++) {
@@ -470,12 +476,12 @@
          }
      }
 
-     document.getElementById("bufferLayerGroup").onchange = function() {
-         var target = document.getElementById("bufferSelect");
+     function updateFeatureSelect(targetId, selectId) {
+         target = document.getElementById(targetId);
          while (target.firstChild) {
              target.removeChild(target.firstChild);
          }
-         var select = document.getElementById("bufferLayerGroup");
+         select = document.getElementById(selectId);
          layer = select.options[select.selectedIndex].value;
          var selection;
          if(layer == "Cities") {
@@ -500,7 +506,7 @@
              target.add(element);
 
          }
-     };
+     }
 
 
 
