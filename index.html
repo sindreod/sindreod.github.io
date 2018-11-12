@@ -68,7 +68,7 @@
                         <!-- Options here -->
                     </select>
                     <button id="createUnion"
-                        onclick="createUnion(document.getElementById('unionLayerGroup1'), document.getElementById('unionSelect1'),document.getElementById('unionLayerGroup2'),document.getElementById('unionSelect2'))">
+                        onclick="createUnion('unionLayerGroup1','unionLayerGroup2','unionSelect1','unionSelect2')">
                         Create union
                 </button>
                 </div>
@@ -572,11 +572,9 @@
              geojson = additionalLayers[selectedLayer].toGeoJSON();
          }
 
-
          var buffered = turf.buffer(geojson, distance/10, {units: 'kilometers'});
          var name = "buffer_" + selectedLayer + "_" + distance;
          var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-         console.log(color);
          L.geoJSON(buffered, {
              style: function (feature) {
                  return {
@@ -598,48 +596,63 @@
          additionalLayers[name] = bufferLayer;
          bufferLayer.addTo(map);
          controls.addOverlay(bufferLayer, name);
-         updateLayerGroup(document.getElementById("bufferLayerGroup"));
+         updateLayerGroup();
      }
 
-     function createUnion(mainLayer1, select1, mainLayer2, select2) {
+     function createUnion(Layer1, Layer2, featureLayer1, featureLayer2) {
+         var layerGroup1 = document.getElementById(Layer1);
+         var featureGroup1 = document.getElementById(featureLayer1);
+         var layerGroup2 = document.getElementById(Layer2);
+         var featureGroup2 = document.getElementById(featureLayer2);
          var unionLayer = L.layerGroup();
-         layers = [mainLayer1.options[mainLayer1.selectedIndex].value, mainLayer2.options[mainLayer2.selectedIndex].value];
+         layer1 = layerGroup1.options[layerGroup1.selectedIndex].value;
+         layer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
          var selection1;
          var selectedLayer1;
          var selection2;
          var selectedLayer2;
-         if(layers[0] == "Cities") {
+         if(layer1 == "Cities") {
              selection1 = cities;
-             selectedLayer1 = select1.options[select1.selectedIndex].text;
-             geojson1 = selection1[selectedLayer1].toGeoJSON();
-         } else if (layers[0]  == "Geographical region") {
+             selectedLayer1 = featureGroup1.options[featureGroup1.selectedIndex].text;
+             geojson1 = selection1[selectedLayer1];
+         } else if (layer1  == "Geographical region") {
              selection1 = regions;
-             selectedLayer1 = select1.options[select1.selectedIndex].text;
-             geojson1 = selection1[selectedLayer1].toGeoJSON();
+             selectedLayer1 = featureGroup1.options[featureGroup1.selectedIndex].text;
+             geojson1 = selection1[selectedLayer1];
          } else {
-             selectedLayer1 = mainLayer1.options[mainLayer1.selectedIndex].value;
-             geojson1 = additionalLayers[selectedLayer1].toGeoJSON();
+             selectedLayer1 = layerGroup1.options[layerGroup1.selectedIndex].value;
+             geojson1 = additionalLayers[layer1];
          }
 
-         if(layers[1] == "Cities") {
+         if(layer2 == "Cities") {
              selection2 = cities;
-             selectedLayer2 = select2.options[select2.selectedIndex].text;
-             geojson2 = selection2[selectedLayer2].toGeoJSON();
-         } else if (layers[1]  == "Geographical region") {
+             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
+             geojson2 = selection2[selectedLayer2];
+         } else if (layer2  == "Geographical region") {
              selection2 = regions;
-             selectedLayer2 = select2.options[select2.selectedIndex].text;
-             geojson2 = selection2[selectedLayer2].toGeoJSON();
+             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
+             geojson2 = selection1[selectedLayer2];
          } else {
-             selectedLayer2 = mainLayer1.options[mainLayer1.selectedIndex].value;
-             geojson2 = additionalLayers[selectedLayer2].toGeoJSON();
+             selectedLayer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
+             geojson2 = additionalLayers[layer2];
          }
 
+         var u1 = geojson1.getLayers();
+         var u2 = geojson2.getLayers();
+         for(var i = 0; i<u1.length; i++) {
+             if (i == 0) {
+                 var unionTemp = u1[i].toGeoJSON();
+             } else {
+                 unionTemp = turf.union(unionTemp, u1[i].toGeoJSON());
+             }
+         }
+         for(var i = 0; i<u2.length; i++) {
+                 unionTemp = turf.union(unionTemp, u2[i].toGeoJSON());
+         }
 
-         var buffered = turf.union(geojson1, geojson2);
          var name = "union_" + selectedLayer1 + "_" + selectedLayer2;
          var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-         console.log(color);
-         L.geoJSON(buffered, {
+         L.geoJSON(unionTemp, {
              style: function (feature) {
                  return {
                      "fill": true,
@@ -660,9 +673,9 @@
          additionalLayers[name] = unionLayer;
          unionLayer.addTo(map);
          controls.addOverlay(unionLayer, name);
-         updateLayerGroup(document.getElementById("bufferLayerGroup"));
-         updateLayerGroup(document.getElement)
+         updateLayerGroup();
      }
+
 
  </script>
 
