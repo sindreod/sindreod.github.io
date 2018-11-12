@@ -29,16 +29,16 @@
             <li>
                 <div id="buffer" class="dropDown">Buffer</div>
                 <div class="dropDownContent">
-                    Layergroup:
-                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers" required>
+                    <span class="dropDownLeft">Layergroup:</span>
+                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
                     </select>
-                    <br>Layer:
+                    <span class="dropDownLeft">Layer:</span>
                     <select id="bufferSelect" name="bufferSelect" class="dropDownLayers" required>
                         <!-- Options here -->
                     </select>
-                    <br>Distance:
-                    <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
+                    <span class="dropDownLeft">Distance:</span>
+                    <input class="dropDownLayers" name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
                     <button id="createBuffer"
                             onclick="createBuffer(document.getElementById('bufferLayerGroup'), document.getElementById('bufferSelect'),document.getElementById('bufferDistance').value)">
                         Create buffer
@@ -47,7 +47,28 @@
             </li>
             <li>
                 <div id="Union" class="dropDown">Union</div>
-                <div class="dropDownContent">Dropdown</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layergroup1:</span>
+                    <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Layer1:</span>
+                    <select id="unionSelect1" name="unionSelect" class="dropDownLayers" required>
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Layergroup2:</span>
+                    <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Layer2:</span>
+                    <select id="unionSelect2" name="unionSelect2" class="dropDownLayers" required>
+                        <!-- Options here -->
+                    </select>
+                    <button id="createUnion"
+                        onclick="createUnion(document.getElementById('unionLayerGroup1'), document.getElementById('unionSelect1'),document.getElementById('unionLayerGroup2'),document.getElementById('unionSelect2'))">
+                        Create union
+                </button>
+                </div>
             </li>
             <li>
                 <div id="Intersection" class="dropDown">Intersection</div>
@@ -392,13 +413,20 @@
      var dropdown = document.getElementsByClassName("dropDown");
 
      for (var i = 0; i < dropdown.length; i++) {
-         dropdown[i].addEventListener("click", function() {
-             this.classList.toggle("active");
-             var dropdownContent = this.nextElementSibling;
-             if (dropdownContent.style.display === "block") {
-                 dropdownContent.style.display = "none";
-             } else {
-                 dropdownContent.style.display = "block";
+         dropdown[i].addEventListener("click", function(e) {
+             for(var j = 0; j < dropdown.length; j++) {
+                 if (dropdown[j] == e.target) {
+                     this.classList.toggle("active");
+                     var dropdownContent = this.nextElementSibling;
+                     if (dropdownContent.style.display === "block") {
+                         dropdownContent.style.display = "none";
+                     } else {
+                         dropdownContent.style.display = "block";
+                     }
+                 } else {
+                     dropdown[j].nextElementSibling.style.display = "none";
+                     dropdown[j].classList.remove("active");
+                 }
              }
          });
      }
@@ -408,31 +436,37 @@
      blank.selected = 'selected';
      blank.value = "";
      blank.innerHTML = "-- select a layergroup --";
-     target = document.getElementById("bufferLayerGroup");
-     target.add(blank);
-
-     for(var key in additionalLayers) {
-         var element = document.createElement("OPTION");
-         element.innerHTML = key;
-         target.add(element);
-     }
-
-     function updateLayerGroup(target) {
-         //Clear dropdown options
-         while(target.firstChild) {
-             target.removeChild(target.firstChild);
-         }
-         var blank = document.createElement("OPTION");
-         blank.disabled = true;
-         blank.selected = 'selected';
-         blank.value = "";
-         blank.innerHTML = "-- select a layergroup --";
-         target.add(blank);
+     targets = document.getElementsByClassName("dropDownLayerGroup");
+     for (var i = 0; i< targets.length; i++) {
+         targets[i].add(blank);
 
          for(var key in additionalLayers) {
              var element = document.createElement("OPTION");
              element.innerHTML = key;
-             target.add(element);
+             targets[i].add(element);
+         }
+     }
+
+
+     function updateLayerGroup() {
+         targets = document.getElementsByClassName("dropDownLayerGroup");
+         for(var i = 0; i< targets.length; i++) {
+             //Clear dropdown options
+             while(targets[i].firstChild) {
+                 targets[i].removeChild(targets[i].firstChild);
+             }
+             var blank = document.createElement("OPTION");
+             blank.disabled = true;
+             blank.selected = 'selected';
+             blank.value = "";
+             blank.innerHTML = "-- select a layergroup --";
+             targets[i].add(blank);
+
+             for(var key in additionalLayers) {
+                 var element = document.createElement("OPTION");
+                 element.innerHTML = key;
+                 targets[i].add(element);
+             }
          }
      }
 
@@ -452,7 +486,10 @@
              selection = regions;
              blank.innerHTML = "-- select a region --";
          } else {
+             console.log(additionalLayers);
              selection = additionalLayers[layer];
+             console.log(selection);
+             blank.innerHTML = "-- Nothing to select --";
              return;
          }
          target.add(blank);
@@ -515,25 +552,34 @@
          var bufferLayer = L.layerGroup();
          layer = mainLayer.options[mainLayer.selectedIndex].value;
          var selection;
+         var selectedLayer;
          if(layer == "Cities") {
              selection = cities;
+             selectedLayer = select.options[select.selectedIndex].text;
+             geojson = selection[selectedLayer].toGeoJSON();
          } else if (layer  == "Geographical region") {
              selection = regions;
-         } 
-         var selectedLayer = select.options[select.selectedIndex].text;
+             selectedLayer = select.options[select.selectedIndex].text;
+             geojson = selection[selectedLayer].toGeoJSON();
+         } else {
+             selectedLayer = mainLayer.options[mainLayer.selectedIndex].value;
+             geojson = additionalLayers[selectedLayer].toGeoJSON();
+         }
 
-         geojson = selection[selectedLayer].toGeoJSON();
+
          var buffered = turf.buffer(geojson, distance/10, {units: 'kilometers'});
          var name = "buffer_" + selectedLayer + "_" + distance;
+         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+         console.log(color);
          L.geoJSON(buffered, {
              style: function (feature) {
                  return {
                      "fill": true,
-                     "fillOpacity": 0.5,
+                     "fillOpacity": 0.8,
                      "stroke": true,
                      "color": "#000000",
                      "weight": 1,
-                     "fillColor": "#aaaaaa"
+                     "fillColor": color
                  };
              }, //Add features in dictionary layers
              onEachFeature: function(feature, layer) {
@@ -549,7 +595,68 @@
          updateLayerGroup(document.getElementById("bufferLayerGroup"));
      }
 
+     function createUnion(mainLayer1, select1, mainLayer2, select2) {
+         var unionLayer = L.layerGroup();
+         layers = [mainLayer1.options[mainLayer1.selectedIndex].value, mainLayer2.options[mainLayer2.selectedIndex].value];
+         var selection1;
+         var selectedLayer1;
+         var selection2;
+         var selectedLayer2;
+         if(layers[0] == "Cities") {
+             selection1 = cities;
+             selectedLayer1 = select1.options[select1.selectedIndex].text;
+             geojson1 = selection1[selectedLayer1].toGeoJSON();
+         } else if (layers[0]  == "Geographical region") {
+             selection1 = regions;
+             selectedLayer1 = select1.options[select1.selectedIndex].text;
+             geojson1 = selection1[selectedLayer1].toGeoJSON();
+         } else {
+             selectedLayer1 = mainLayer1.options[mainLayer1.selectedIndex].value;
+             geojson1 = additionalLayers[selectedLayer1].toGeoJSON();
+         }
 
+         if(layers[1] == "Cities") {
+             selection2 = cities;
+             selectedLayer2 = select2.options[select2.selectedIndex].text;
+             geojson2 = selection2[selectedLayer2].toGeoJSON();
+         } else if (layers[1]  == "Geographical region") {
+             selection2 = regions;
+             selectedLayer2 = select2.options[select2.selectedIndex].text;
+             geojson2 = selection2[selectedLayer2].toGeoJSON();
+         } else {
+             selectedLayer2 = mainLayer1.options[mainLayer1.selectedIndex].value;
+             geojson2 = additionalLayers[selectedLayer2].toGeoJSON();
+         }
+
+
+         var buffered = turf.union(geojson1, geojson2);
+         var name = "union_" + selectedLayer1 + "_" + selectedLayer2;
+         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+         console.log(color);
+         L.geoJSON(buffered, {
+             style: function (feature) {
+                 return {
+                     "fill": true,
+                     "fillOpacity": 0.8,
+                     "stroke": true,
+                     "color": "#000000",
+                     "weight": 1,
+                     "fillColor": color
+                 };
+             }, //Add features in dictionary layers
+             onEachFeature: function(feature, layer) {
+                 unionLayer.addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return "union_" + selectedLayer1 + "_" + selectedLayer2;
+                 })
+             }
+         });
+         additionalLayers[name] = unionLayer;
+         unionLayer.addTo(map);
+         controls.addOverlay(unionLayer, name);
+         updateLayerGroup(document.getElementById("bufferLayerGroup"));
+         updateLayerGroup(document.getElement)
+     }
 
  </script>
 
