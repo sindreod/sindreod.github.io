@@ -823,86 +823,95 @@
      }
 
      function createDifference(Layer1, differenceMainLayer, featureLayer1, differenceFeatureLayer) {
-     var layerGroup = document.getElementById(Layer1);
-     var featureGroup = document.getElementById(featureLayer1);
-     var differenceGroup = document.getElementById(differenceMainLayer);
-     var differenceFeature = document.getElementById(differenceFeatureLayer);
-     var differenceLayer = L.layerGroup();
-     layer1 = layerGroup.options[layerGroup.selectedIndex].value;
-     layer2 = differenceGroup.options[differenceGroup.selectedIndex].value;
-     var selection1;
-     var selectedLayer1;
-     var selection2;
-     var selectedLayer2;
-     if(layer1 == "Cities") {
-         selection1 = cities;
-         selectedLayer1 = featureGroup.options[featureGroup.selectedIndex].text;
-         geojson1 = selection1[selectedLayer1];
-     } else if (layer1  == "Geographical region") {
-         selection1 = regions;
-         selectedLayer1 = featureGroup.options[featureGroup.selectedIndex].text;
-         geojson1 = selection1[selectedLayer1];
-     } else {
-         selectedLayer1 = layerGroup.options[layerGroup.selectedIndex].value;
-         geojson1 = additionalLayers[layer1];
-     }
-
-     if(layer2 == "Cities") {
-         selection2 = cities;
-         selectedLayer2 = differenceFeature.options[differenceFeature.selectedIndex].text;
-         geojson2 = selection2[selectedLayer2];
-     } else if (layer2  == "Geographical region") {
-         selection2 = regions;
-         selectedLayer2 = differenceFeature.options[differenceFeature.selectedIndex].text;
-         geojson2 = selection2[selectedLayer2];
-     } else {
-         selectedLayer2 = differenceGroup.options[differenceGroup.selectedIndex].value;
-         geojson2 = additionalLayers[layer2];
-     }
-
-     var u1 = geojson1.getLayers();
-     var u2 = geojson2.getLayers();
-     var totalDifference;
-     for(var i = 0; i<u1.length; i++) {
-         for(var j = 0; j<u2.length; j++) {
-             tempDifference = turf.difference(u1[i].toGeoJSON(), u2[j].toGeoJSON());
-             if(totalDifference == undefined) {
-                 totalDifference = tempDifference;
-             } else {
-                 totalDifference = turf.union(totalDifference, tempDifference);
+         var differenceLayer = L.layerGroup();
+         var polygons = getPolygons(Layer1, differenceMainLayer, featureLayer1, differenceFeatureLayer);
+         var polygon1 = polygons[0].getLayers();
+         var polygon2 = polygons[1].getLayers();
+         var totalDifference;
+         for(var i = 0; i < polygon1.length; i++) {
+             for(var j = 0; j < polygon2.length; j++) {
+                 tempDifference = turf.difference(polygon1[i].toGeoJSON(), polygon2[j].toGeoJSON());
+                 if(totalDifference == undefined) {
+                     totalDifference = tempDifference;
+                 } else {
+                     totalDifference = turf.union(totalDifference, tempDifference);
+                 }
              }
          }
+         console.log(totalDifference);
+         afterOperation(differenceLayer, totalDifference, polygons[2]);
      }
-     var name = "difference_" + selectedLayer1 + "_" + selectedLayer2;
-     var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-     L.geoJSON(totalDifference, {
-         style: function (feature) {
-             return {
-                 "fill": true,
-                 "fillOpacity": 0.8,
-                 "stroke": true,
-                 "color": "#000000",
-                 "weight": 1,
-                 "fillColor": color
-             };
-         }, //Add features in dictionary layers
-         onEachFeature: function(feature, layer) {
-             differenceLayer.addLayer(layer);
-             layer.bindPopup(function(layer) {
-                 return "difference_" + selectedLayer1 + "_" + selectedLayer2;
-             })
+
+     function getPolygons(layer1, layer2, feature1, feature2) {
+         var layerGroup = document.getElementById(layer1);
+         var featureGroup = document.getElementById(feature1);
+         var layerGroup2 = document.getElementById(layer2);
+         var featureGroup2 = document.getElementById(feature2);
+         layer1 = layerGroup.options[layerGroup.selectedIndex].value;
+         layer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
+         var selection1;
+         var selectedLayer1;
+         var selection2;
+         var selectedLayer2;
+         if(layer1 == "Cities") {
+             selection1 = cities;
+             selectedLayer1 = featureGroup.options[featureGroup.selectedIndex].text;
+             geojson1 = selection1[selectedLayer1];
+         } else if (layer1  == "Geographical region") {
+             selection1 = regions;
+             selectedLayer1 = featureGroup.options[featureGroup.selectedIndex].text;
+             geojson1 = selection1[selectedLayer1];
+         } else {
+             selectedLayer1 = layerGroup.options[layerGroup.selectedIndex].value;
+             geojson1 = additionalLayers[layer1];
          }
-     });
-     additionalLayers[name] = differenceLayer;
-     differenceLayer.addTo(map);
-     differenceLayer.eachLayer(function (layer) {
-         layer.on({
-             mouseover: highlightFeature,
-             mouseout: resetHighlight
+
+         if(layer2 == "Cities") {
+             selection2 = cities;
+             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
+             geojson2 = selection2[selectedLayer2];
+         } else if (layer2  == "Geographical region") {
+             selection2 = regions;
+             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
+             geojson2 = selection2[selectedLayer2];
+         } else {
+             selectedLayer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
+             geojson2 = additionalLayers[layer2];
+         }
+         var name = "difference_" + selectedLayer1 + "_" + selectedLayer2;
+         return [geojson1,geojson2, name];
+     }
+
+     function afterOperation(targetLayer, polygon, name) {
+         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+         L.geoJSON(polygon, {
+             style: function (feature) {
+                 return {
+                     "fill": true,
+                     "fillOpacity": 0.8,
+                     "stroke": true,
+                     "color": "#000000",
+                     "weight": 1,
+                     "fillColor": color
+                 };
+             }, //Add features in dictionary layers
+             onEachFeature: function(feature, layer) {
+                 targetLayer.addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return name;
+                 })
+             }
          });
-     });
-     controls.addOverlay(differenceLayer, name);
-     updateLayerGroup();
+         additionalLayers[name] = targetLayer;
+         targetLayer.addTo(map);
+         targetLayer.eachLayer(function (layer) {
+             layer.on({
+                 mouseover: highlightFeature,
+                 mouseout: resetHighlight
+             });
+         });
+         controls.addOverlay(targetLayer, name);
+         updateLayerGroup();
      }
 
 
