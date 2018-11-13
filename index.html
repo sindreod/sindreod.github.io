@@ -461,11 +461,6 @@
              while(targets[i].firstChild) {
                  targets[i].removeChild(targets[i].firstChild);
              }
-             var blank = document.createElement("OPTION");
-             blank.disabled = true;
-             blank.selected = 'selected';
-             blank.value = "";
-             blank.innerHTML = "-- select a layergroup --";
              targets[i].add(blank);
 
              for(var key in additionalLayers) {
@@ -492,9 +487,7 @@
              selection = regions;
              blank.innerHTML = "-- select a region --";
          } else {
-             console.log(additionalLayers);
              selection = additionalLayers[layer];
-             console.log(selection);
              blank.innerHTML = "-- Nothing to select --";
              return;
          }
