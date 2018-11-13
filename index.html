@@ -588,6 +588,12 @@
          });
          additionalLayers[name] = bufferLayer;
          bufferLayer.addTo(map);
+         bufferLayer.eachLayer(function (layer) {
+             layer.on({
+                 mouseover: highlightFeature,
+                 mouseout: resetHighlight
+             });
+         });
          controls.addOverlay(bufferLayer, name);
          updateLayerGroup();
      }
@@ -665,6 +671,12 @@
          });
          additionalLayers[name] = unionLayer;
          unionLayer.addTo(map);
+         unionLayer.eachLayer(function (layer) {
+             layer.on({
+                 mouseover: highlightFeature,
+                 mouseout: resetHighlight
+             });
+         });
          controls.addOverlay(unionLayer, name);
          updateLayerGroup();
      }
