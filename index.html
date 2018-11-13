@@ -103,7 +103,30 @@
             </li>
             <li>
                 <div id="Difference" class="dropDown">Difference</div>
-                <div class="dropDownContent">Dropdown</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer group:</span>
+                    <select id="differenceLayerGroup1" name="differenceSelect1" class="dropDownLayers dropDownLayerGroup" required
+                            onchange="updateFeatureSelect('differenceSelect1','differenceLayerGroup1')">
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="differenceSelect1" name="differenceSelect" class="dropDownLayers" required>
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Diff. layer group:</span>
+                    <select id="differenceLayerGroup2" name="differenceSelect2" class="dropDownLayers dropDownLayerGroup" required
+                            onchange="updateFeatureSelect('differenceSelect2','differenceLayerGroup2')">
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Diff. layer:</span>
+                    <select id="differenceSelect2" name="differenceSelect2" class="dropDownLayers" required>
+                        <!-- Options here -->
+                    </select>
+                    <button id="createDifference"
+                            onclick="createDifference('differenceLayerGroup1','differenceLayerGroup2','differenceSelect1','differenceSelect2')">
+                        Create difference
+                    </button>
+                </div>
 
             </li>
             <li>
@@ -755,8 +778,8 @@
          for(var i = 0; i < features.length; i++) {
              for (var j = 0; j < features.length; j++) {
                  if(i != j) {
-                     tempIntersection = turf.intersect(features[i], features[j]);
-                     if(tempIntersection != null) {
+                     if(turf.booleanOverlap(features[i], features[j])) {
+                         tempIntersection = turf.intersect(features[i], features[j]);
                          if(totalIntersection == undefined) {
                              totalIntersection = tempIntersection;
                          } else {
@@ -797,6 +820,89 @@
          });
          controls.addOverlay(intersectLayer, name);
          updateLayerGroup();
+     }
+
+     function createDifference(Layer1, differenceMainLayer, featureLayer1, differenceFeatureLayer) {
+     var layerGroup = document.getElementById(Layer1);
+     var featureGroup = document.getElementById(featureLayer1);
+     var differenceGroup = document.getElementById(differenceMainLayer);
+     var differenceFeature = document.getElementById(differenceFeatureLayer);
+     var differenceLayer = L.layerGroup();
+     layer1 = layerGroup.options[layerGroup.selectedIndex].value;
+     layer2 = differenceGroup.options[differenceGroup.selectedIndex].value;
+     var selection1;
+     var selectedLayer1;
+     var selection2;
+     var selectedLayer2;
+     if(layer1 == "Cities") {
+         selection1 = cities;
+         selectedLayer1 = featureGroup.options[featureGroup.selectedIndex].text;
+         geojson1 = selection1[selectedLayer1];
+     } else if (layer1  == "Geographical region") {
+         selection1 = regions;
+         selectedLayer1 = featureGroup.options[featureGroup.selectedIndex].text;
+         geojson1 = selection1[selectedLayer1];
+     } else {
+         selectedLayer1 = layerGroup.options[layerGroup.selectedIndex].value;
+         geojson1 = additionalLayers[layer1];
+     }
+
+     if(layer2 == "Cities") {
+         selection2 = cities;
+         selectedLayer2 = differenceFeature.options[differenceFeature.selectedIndex].text;
+         geojson2 = selection2[selectedLayer2];
+     } else if (layer2  == "Geographical region") {
+         selection2 = regions;
+         selectedLayer2 = differenceFeature.options[differenceFeature.selectedIndex].text;
+         geojson2 = selection2[selectedLayer2];
+     } else {
+         selectedLayer2 = differenceGroup.options[differenceGroup.selectedIndex].value;
+         geojson2 = additionalLayers[layer2];
+     }
+
+     var u1 = geojson1.getLayers();
+     var u2 = geojson2.getLayers();
+     var totalDifference;
+     for(var i = 0; i<u1.length; i++) {
+         for(var j = 0; j<u2.length; j++) {
+             tempDifference = turf.difference(u1[i].toGeoJSON(), u2[j].toGeoJSON());
+             if(totalDifference == undefined) {
+                 totalDifference = tempDifference;
+             } else {
+                 totalDifference = turf.union(totalDifference, tempDifference);
+             }
+         }
+     }
+     var name = "difference_" + selectedLayer1 + "_" + selectedLayer2;
+     var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+     L.geoJSON(totalDifference, {
+         style: function (feature) {
+             return {
+                 "fill": true,
+                 "fillOpacity": 0.8,
+                 "stroke": true,
+                 "color": "#000000",
+                 "weight": 1,
+                 "fillColor": color
+             };
+         }, //Add features in dictionary layers
+         onEachFeature: function(feature, layer) {
+             differenceLayer.addLayer(layer);
+             layer.bindPopup(function(layer) {
+                 return "difference_" + selectedLayer1 + "_" + selectedLayer2;
+             })
+         }
+     });
+     additionalLayers[name] = differenceLayer;
+     differenceLayer.addTo(map);
+     differenceLayer.eachLayer(function (layer) {
+         layer.on({
+             mouseover: highlightFeature,
+             mouseout: resetHighlight
+         });
+     });
+     controls.addOverlay(differenceLayer, name);
+     updateLayerGroup();
      }
 
 
