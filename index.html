@@ -75,7 +75,30 @@
             </li>
             <li>
                 <div id="Intersection" class="dropDown">Intersection</div>
-                <div class="dropDownContent">Dropdown</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layergroup1:</span>
+                    <select id="intersectionLayerGroup1" name="intersectionSelect1" class="dropDownLayers dropDownLayerGroup" required
+                            onchange="updateFeatureSelect('intersectionSelect1','intersectionLayerGroup1')">
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Layer1:</span>
+                    <select id="intersectionSelect1" name="intersectionSelect" class="dropDownLayers" required>
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Layergroup2:</span>
+                    <select id="intersectionLayerGroup2" name="intersectionSelect2" class="dropDownLayers dropDownLayerGroup" required
+                            onchange="updateFeatureSelect('intersectionSelect2','intersectionLayerGroup2')">
+                        <!-- Options here -->
+                    </select>
+                    <span class="dropDownLeft">Layer2:</span>
+                    <select id="intersectionSelect2" name="intersectionSelect2" class="dropDownLayers" required>
+                        <!-- Options here -->
+                    </select>
+                    <button id="createIntersection"
+                            onclick="createIntersection('intersectionLayerGroup1','intersectionLayerGroup2','intersectionSelect1','intersectionSelect2')">
+                        Create intersection
+                    </button>
+                </div>
 
             </li>
             <li>
@@ -630,7 +653,7 @@
          } else if (layer2  == "Geographical region") {
              selection2 = regions;
              selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
-             geojson2 = selection1[selectedLayer2];
+             geojson2 = selection2[selectedLayer2];
          } else {
              selectedLayer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
              geojson2 = additionalLayers[layer2];
@@ -678,6 +701,101 @@
              });
          });
          controls.addOverlay(unionLayer, name);
+         updateLayerGroup();
+     }
+
+     function createIntersection(Layer1, Layer2, featureLayer1, featureLayer2) {
+         var layerGroup1 = document.getElementById(Layer1);
+         var featureGroup1 = document.getElementById(featureLayer1);
+         var layerGroup2 = document.getElementById(Layer2);
+         var featureGroup2 = document.getElementById(featureLayer2);
+         var intersectLayer = L.layerGroup();
+         layer1 = layerGroup1.options[layerGroup1.selectedIndex].value;
+         layer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
+         var selection1;
+         var selectedLayer1;
+         var selection2;
+         var selectedLayer2;
+         if(layer1 == "Cities") {
+             selection1 = cities;
+             selectedLayer1 = featureGroup1.options[featureGroup1.selectedIndex].text;
+             geojson1 = selection1[selectedLayer1];
+         } else if (layer1  == "Geographical region") {
+             selection1 = regions;
+             selectedLayer1 = featureGroup1.options[featureGroup1.selectedIndex].text;
+             geojson1 = selection1[selectedLayer1];
+         } else {
+             selectedLayer1 = layerGroup1.options[layerGroup1.selectedIndex].value;
+             geojson1 = additionalLayers[layer1];
+         }
+
+         if(layer2 == "Cities") {
+             selection2 = cities;
+             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
+             geojson2 = selection2[selectedLayer2];
+         } else if (layer2  == "Geographical region") {
+             selection2 = regions;
+             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
+             geojson2 = selection2[selectedLayer2];
+         } else {
+             selectedLayer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
+             geojson2 = additionalLayers[layer2];
+         }
+
+         var u1 = geojson1.getLayers();
+         var u2 = geojson2.getLayers();
+         var features = [];
+         for(var i = 0; i<u1.length; i++) {
+             features[i] = u1[i].toGeoJSON();
+         }
+         for(var i = 0; i<u2.length; i++) {
+             features[u1.length + i] = u2[i].toGeoJSON();
+         }
+         var totalIntersection;
+         for(var i = 0; i < features.length; i++) {
+             for (var j = 0; j < features.length; j++) {
+                 if(i != j) {
+                     tempIntersection = turf.intersect(features[i], features[j]);
+                     if(tempIntersection != null) {
+                         if(totalIntersection == undefined) {
+                             totalIntersection = tempIntersection;
+                         } else {
+                             totalIntersection = turf.union(totalIntersection, tempIntersection);
+                         }
+                     }
+                 }
+             }
+         }
+
+         var name = "intersection_" + selectedLayer1 + "_" + selectedLayer2;
+         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+         L.geoJSON(totalIntersection, {
+             style: function (feature) {
+                 return {
+                     "fill": true,
+                     "fillOpacity": 0.8,
+                     "stroke": true,
+                     "color": "#000000",
+                     "weight": 1,
+                     "fillColor": color
+                 };
+             }, //Add features in dictionary layers
+             onEachFeature: function(feature, layer) {
+                 intersectLayer.addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return "intersection_" + selectedLayer1 + "_" + selectedLayer2;
+                 })
+             }
+         });
+         additionalLayers[name] = intersectLayer;
+         intersectLayer.addTo(map);
+         intersectLayer.eachLayer(function (layer) {
+             layer.on({
+                 mouseover: highlightFeature,
+                 mouseout: resetHighlight
+             });
+         });
+         controls.addOverlay(intersectLayer, name);
          updateLayerGroup();
      }
 
