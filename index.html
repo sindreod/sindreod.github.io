@@ -3,17 +3,13 @@
 <head> 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
-   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-   crossorigin=""/>
+	<link rel="stylesheet" href="lib/leaflet.css"/>
 
     <!-- Lib libraries -->
-    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
-   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-   crossorigin=""></script> <!-- Leaflet osv basemap -->
+    <script src="lib/leaflet.js"></script> <!-- Leaflet osv basemap -->
 
     <script src="lib/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> <!-- jQuery API -->
+    <script src="lib/jquery-3.3.1.min.js"></script> <!-- jQuery API -->
     <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
     <script src="lib/turf.min.js"></script> <!-- Turf -->
     <link rel="stylesheet" href="index.css"/>
@@ -41,7 +37,7 @@
                     <span class="dropDownLeft">Distance:</span>
                     <input class="dropDownLayers" name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
                     <button id="createBuffer"
-                            onclick="createBuffer(document.getElementById('bufferLayerGroup'), document.getElementById('bufferSelect'),document.getElementById('bufferDistance').value)">
+                            onclick="createBuffer('bufferLayerGroup', 'bufferSelect','bufferDistance')">
                         Create buffer
                     </button>
                 </div>
@@ -131,7 +127,27 @@
             </li>
             <li>
                 <div id="Filter" class="dropDown">Filter</div>
-                <div class="dropDownContent">Dropdown</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="filterLayerGroup" class="dropDownLayers dropDownLayerGroup" required
+                            onchange="updateFeatureSelect('filterValues','filterLayerGroup')">
+                        <!-- Options here -->
+                    </select>
+                    <select id="filterSelect" required>
+                        <!-- Options here -->
+                    </select>
+                    <select id="filterSign" required>
+                        <!-- Option signs -->
+                    </select>
+                    <select id="filterValues" required>
+                        <!-- Layer values here -->
+                    </select>
+                    <button id="createFilter"
+                            onclick="createFilter('filterLayerGroup','filterSelect','filterSign','filterValues')">
+                        Extract features
+                    </button>
+
+                </div>
             </li>
 
 
@@ -590,189 +606,55 @@
          }
      });
 
-     function createBuffer(mainLayer, select, distance) {
+     function createBuffer(inputLayer, inputFeatures, distanceId) {
+         var distance = document.getElementById(distanceId).value;
          if (distance < 0) {
              return;
          }
          var bufferLayer = L.layerGroup();
-         layer = mainLayer.options[mainLayer.selectedIndex].value;
-         var selection;
-         var selectedLayer;
-         if(layer == "Cities") {
-             selection = cities;
-             selectedLayer = select.options[select.selectedIndex].text;
-             geojson = selection[selectedLayer].toGeoJSON();
-         } else if (layer  == "Geographical region") {
-             selection = regions;
-             selectedLayer = select.options[select.selectedIndex].text;
-             geojson = selection[selectedLayer].toGeoJSON();
-         } else {
-             selectedLayer = mainLayer.options[mainLayer.selectedIndex].value;
-             geojson = additionalLayers[selectedLayer].toGeoJSON();
-         }
-
-         var buffered = turf.buffer(geojson, distance/10, {units: 'kilometers'});
-         var name = "buffer_" + selectedLayer + "_" + distance;
-         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-         L.geoJSON(buffered, {
-             style: function (feature) {
-                 return {
-                     "fill": true,
-                     "fillOpacity": 0.8,
-                     "stroke": true,
-                     "color": "#000000",
-                     "weight": 1,
-                     "fillColor": color
-                 };
-             }, //Add features in dictionary layers
-             onEachFeature: function(feature, layer) {
-                 bufferLayer.addLayer(layer);
-                 layer.bindPopup(function(layer) {
-                     return "buffer_" + selectedLayer + "_" + distance;
-                 })
-             }
-         });
-         additionalLayers[name] = bufferLayer;
-         bufferLayer.addTo(map);
-         bufferLayer.eachLayer(function (layer) {
-             layer.on({
-                 mouseover: highlightFeature,
-                 mouseout: resetHighlight
-             });
-         });
-         controls.addOverlay(bufferLayer, name);
-         updateLayerGroup();
+         var polygon = getPolygon(inputLayer, inputFeatures);
+         var features = polygon[0];
+         var buffered = turf.buffer(features.toGeoJSON(), distance/10, {units: 'kilometers'});
+         var name = "buffer_" + polygon[1] + "_" + distance;
+         afterOperation(bufferLayer, buffered, name);
      }
 
-     function createUnion(Layer1, Layer2, featureLayer1, featureLayer2) {
-         var layerGroup1 = document.getElementById(Layer1);
-         var featureGroup1 = document.getElementById(featureLayer1);
-         var layerGroup2 = document.getElementById(Layer2);
-         var featureGroup2 = document.getElementById(featureLayer2);
+     function createUnion(inputLayer1, inputLayer2, inputFeatures1, inputFeatures2) {
          var unionLayer = L.layerGroup();
-         layer1 = layerGroup1.options[layerGroup1.selectedIndex].value;
-         layer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
-         var selection1;
-         var selectedLayer1;
-         var selection2;
-         var selectedLayer2;
-         if(layer1 == "Cities") {
-             selection1 = cities;
-             selectedLayer1 = featureGroup1.options[featureGroup1.selectedIndex].text;
-             geojson1 = selection1[selectedLayer1];
-         } else if (layer1  == "Geographical region") {
-             selection1 = regions;
-             selectedLayer1 = featureGroup1.options[featureGroup1.selectedIndex].text;
-             geojson1 = selection1[selectedLayer1];
-         } else {
-             selectedLayer1 = layerGroup1.options[layerGroup1.selectedIndex].value;
-             geojson1 = additionalLayers[layer1];
-         }
+         var polygon1 = getPolygon(inputLayer1, inputFeatures1);
+         var polygon2 = getPolygon(inputLayer2, inputFeatures2);
+         var features1 = polygon1[0].getLayers();
+         var features2 = polygon2[0].getLayers();
 
-         if(layer2 == "Cities") {
-             selection2 = cities;
-             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
-             geojson2 = selection2[selectedLayer2];
-         } else if (layer2  == "Geographical region") {
-             selection2 = regions;
-             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
-             geojson2 = selection2[selectedLayer2];
-         } else {
-             selectedLayer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
-             geojson2 = additionalLayers[layer2];
-         }
 
-         var u1 = geojson1.getLayers();
-         var u2 = geojson2.getLayers();
-         for(var i = 0; i<u1.length; i++) {
+         for(var i = 0; i<features1.length; i++) {
              if (i == 0) {
-                 var unionTemp = u1[i].toGeoJSON();
+                 var unionTemp = features1[i].toGeoJSON();
              } else {
-                 unionTemp = turf.union(unionTemp, u1[i].toGeoJSON());
+                 unionTemp = turf.union(unionTemp, features1[i].toGeoJSON());
              }
          }
-         for(var i = 0; i<u2.length; i++) {
-                 unionTemp = turf.union(unionTemp, u2[i].toGeoJSON());
+         for(var i = 0; i<features2.length; i++) {
+                 unionTemp = turf.union(unionTemp, features2[i].toGeoJSON());
          }
 
-         var name = "union_" + selectedLayer1 + "_" + selectedLayer2;
-         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-         L.geoJSON(unionTemp, {
-             style: function (feature) {
-                 return {
-                     "fill": true,
-                     "fillOpacity": 0.8,
-                     "stroke": true,
-                     "color": "#000000",
-                     "weight": 1,
-                     "fillColor": color
-                 };
-             }, //Add features in dictionary layers
-             onEachFeature: function(feature, layer) {
-                 unionLayer.addLayer(layer);
-                 layer.bindPopup(function(layer) {
-                     return "union_" + selectedLayer1 + "_" + selectedLayer2;
-                 })
-             }
-         });
-         additionalLayers[name] = unionLayer;
-         unionLayer.addTo(map);
-         unionLayer.eachLayer(function (layer) {
-             layer.on({
-                 mouseover: highlightFeature,
-                 mouseout: resetHighlight
-             });
-         });
-         controls.addOverlay(unionLayer, name);
-         updateLayerGroup();
+         var name = "union_" + polygon1[1] + "_" + polygon2[1];
+         afterOperation(unionLayer, unionTemp, name)
      }
 
-     function createIntersection(Layer1, Layer2, featureLayer1, featureLayer2) {
-         var layerGroup1 = document.getElementById(Layer1);
-         var featureGroup1 = document.getElementById(featureLayer1);
-         var layerGroup2 = document.getElementById(Layer2);
-         var featureGroup2 = document.getElementById(featureLayer2);
+     function createIntersection(inputLayer1, inputLayer2, inputFeatures1, inputFeatures2) {
          var intersectLayer = L.layerGroup();
-         layer1 = layerGroup1.options[layerGroup1.selectedIndex].value;
-         layer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
-         var selection1;
-         var selectedLayer1;
-         var selection2;
-         var selectedLayer2;
-         if(layer1 == "Cities") {
-             selection1 = cities;
-             selectedLayer1 = featureGroup1.options[featureGroup1.selectedIndex].text;
-             geojson1 = selection1[selectedLayer1];
-         } else if (layer1  == "Geographical region") {
-             selection1 = regions;
-             selectedLayer1 = featureGroup1.options[featureGroup1.selectedIndex].text;
-             geojson1 = selection1[selectedLayer1];
-         } else {
-             selectedLayer1 = layerGroup1.options[layerGroup1.selectedIndex].value;
-             geojson1 = additionalLayers[layer1];
-         }
+         var polygon1 = getPolygon(inputLayer1, inputFeatures1);
+         var polygon2 = getPolygon(inputLayer2, inputFeatures2);
+         var features1 = polygon1[0].getLayers();
+         var features2 = polygon2[0].getLayers();
 
-         if(layer2 == "Cities") {
-             selection2 = cities;
-             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
-             geojson2 = selection2[selectedLayer2];
-         } else if (layer2  == "Geographical region") {
-             selection2 = regions;
-             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
-             geojson2 = selection2[selectedLayer2];
-         } else {
-             selectedLayer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
-             geojson2 = additionalLayers[layer2];
-         }
-
-         var u1 = geojson1.getLayers();
-         var u2 = geojson2.getLayers();
          var features = [];
-         for(var i = 0; i<u1.length; i++) {
-             features[i] = u1[i].toGeoJSON();
+         for(var i = 0; i<features1.length; i++) {
+             features[i] = features1[i].toGeoJSON();
          }
-         for(var i = 0; i<u2.length; i++) {
-             features[u1.length + i] = u2[i].toGeoJSON();
+         for(var i = 0; i<features2.length; i++) {
+             features[features1.length + i] = features2[i].toGeoJSON();
          }
          var totalIntersection;
          for(var i = 0; i < features.length; i++) {
@@ -790,47 +672,20 @@
              }
          }
 
-         var name = "intersection_" + selectedLayer1 + "_" + selectedLayer2;
-         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-         L.geoJSON(totalIntersection, {
-             style: function (feature) {
-                 return {
-                     "fill": true,
-                     "fillOpacity": 0.8,
-                     "stroke": true,
-                     "color": "#000000",
-                     "weight": 1,
-                     "fillColor": color
-                 };
-             }, //Add features in dictionary layers
-             onEachFeature: function(feature, layer) {
-                 intersectLayer.addLayer(layer);
-                 layer.bindPopup(function(layer) {
-                     return "intersection_" + selectedLayer1 + "_" + selectedLayer2;
-                 })
-             }
-         });
-         additionalLayers[name] = intersectLayer;
-         intersectLayer.addTo(map);
-         intersectLayer.eachLayer(function (layer) {
-             layer.on({
-                 mouseover: highlightFeature,
-                 mouseout: resetHighlight
-             });
-         });
-         controls.addOverlay(intersectLayer, name);
-         updateLayerGroup();
+         var name = "intersection_" + polygon1[1] + "_" + polygon2[1];
+         afterOperation(intersectLayer, totalIntersection, name)
      }
 
      function createDifference(Layer1, differenceMainLayer, featureLayer1, differenceFeatureLayer) {
          var differenceLayer = L.layerGroup();
-         var polygons = getPolygons(Layer1, differenceMainLayer, featureLayer1, differenceFeatureLayer);
-         var polygon1 = polygons[0].getLayers();
-         var polygon2 = polygons[1].getLayers();
+         var polygon1 = getPolygon(Layer1, featureLayer1);
+         var polygon2 = getPolygon(differenceMainLayer, differenceFeatureLayer);
+         var features1 = polygon1[0].getLayers();
+         var features2 = polygon2[0].getLayers();
          var totalDifference;
-         for(var i = 0; i < polygon1.length; i++) {
-             for(var j = 0; j < polygon2.length; j++) {
-                 tempDifference = turf.difference(polygon1[i].toGeoJSON(), polygon2[j].toGeoJSON());
+         for(var i = 0; i < features1.length; i++) {
+             for(var j = 0; j < features2.length; j++) {
+                 tempDifference = turf.difference(features1[i].toGeoJSON(), features2[j].toGeoJSON());
                  if(totalDifference == undefined) {
                      totalDifference = tempDifference;
                  } else {
@@ -839,47 +694,29 @@
              }
          }
          console.log(totalDifference);
-         afterOperation(differenceLayer, totalDifference, polygons[2]);
+         var name = "difference_" + polygon1[1] + "_" + polygon2[1];
+         afterOperation(differenceLayer, totalDifference, name);
      }
 
-     function getPolygons(layer1, layer2, feature1, feature2) {
-         var layerGroup = document.getElementById(layer1);
-         var featureGroup = document.getElementById(feature1);
-         var layerGroup2 = document.getElementById(layer2);
-         var featureGroup2 = document.getElementById(feature2);
-         layer1 = layerGroup.options[layerGroup.selectedIndex].value;
-         layer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
-         var selection1;
-         var selectedLayer1;
-         var selection2;
-         var selectedLayer2;
-         if(layer1 == "Cities") {
-             selection1 = cities;
-             selectedLayer1 = featureGroup.options[featureGroup.selectedIndex].text;
-             geojson1 = selection1[selectedLayer1];
-         } else if (layer1  == "Geographical region") {
-             selection1 = regions;
-             selectedLayer1 = featureGroup.options[featureGroup.selectedIndex].text;
-             geojson1 = selection1[selectedLayer1];
+     function getPolygon(inputLayer, inputFeatures) {
+         var layerGroup = document.getElementById(inputLayer);
+         var featureGroup = document.getElementById(inputFeatures);
+         layer = layerGroup.options[layerGroup.selectedIndex].value;
+         var selection;
+         var selectedLayer;
+         if(layer == "Cities") {
+             selection = cities;
+             selectedLayer = featureGroup.options[featureGroup.selectedIndex].text;
+             geojson = selection[selectedLayer];
+         } else if (layer  == "Geographical region") {
+             selection = regions;
+             selectedLayer = featureGroup.options[featureGroup.selectedIndex].text;
+             geojson = selection[selectedLayer];
          } else {
-             selectedLayer1 = layerGroup.options[layerGroup.selectedIndex].value;
-             geojson1 = additionalLayers[layer1];
+             selectedLayer = layerGroup.options[layerGroup.selectedIndex].value;
+             geojson = additionalLayers[layer];
          }
-
-         if(layer2 == "Cities") {
-             selection2 = cities;
-             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
-             geojson2 = selection2[selectedLayer2];
-         } else if (layer2  == "Geographical region") {
-             selection2 = regions;
-             selectedLayer2 = featureGroup2.options[featureGroup2.selectedIndex].text;
-             geojson2 = selection2[selectedLayer2];
-         } else {
-             selectedLayer2 = layerGroup2.options[layerGroup2.selectedIndex].value;
-             geojson2 = additionalLayers[layer2];
-         }
-         var name = "difference_" + selectedLayer1 + "_" + selectedLayer2;
-         return [geojson1,geojson2, name];
+         return [geojson, selectedLayer];
      }
 
      function afterOperation(targetLayer, polygon, name) {

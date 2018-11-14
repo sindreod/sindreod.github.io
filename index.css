@@ -91,6 +91,31 @@ ul {
     float: right;
 }
 
+#filterSelect {
+    width: 40%;
+    text-align: center;
+    border: 1px solid blue;
+    margin: 0px;
+    padding: 0px;
+    float: left;
+}
+
+#filterSign {
+    width: 20%;
+    text-align: center;
+    border: 1px solid blue;
+    margin: 0px;
+    padding: 0px;
+}
+
+#filterValues {
+    width: 40%;
+    text-align: center;
+    border: 1px solid blue;
+    margin: 0px;
+    padding: 0px;
+    float: right;
+}
 
 button {
     margin: 1px;
