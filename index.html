@@ -814,30 +814,6 @@
          afterOperation(differenceLayer, totalDifference, name);
      }
 
-     // Help function
-     function addFeaturesToMap(feature, name) {
-         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-         L.geoJSON(tempDifference, {
-             style: function (feature) {
-                 return {
-                     "fill": true,
-                     "fillOpacity": 0.8,
-                     "stroke": true,
-                     "color": "#000000",
-                     "weight": 1,
-                     "fillColor": color
-                 };
-             }, //Add features in dictionary layers
-             onEachFeature: function(feature, layer) {
-                 L.layerGroup().addLayer(layer);
-                 layer.bindPopup(function(layer) {
-                     return name;
-                 });
-                 controls.addOverlay(layer, name);
-             }
-         }).addTo(map);
-     }
-
      function createFilter(layerId, featureId, signId, valueId) {
          layerElement = document.getElementById(layerId);
          featureElement = document.getElementById(featureId);
@@ -954,6 +930,29 @@
          updateLayerGroup();
      }
 
+     // Help function
+     function addFeaturesToMap(feature, name) {
+         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+         L.geoJSON(tempDifference, {
+             style: function (feature) {
+                 return {
+                     "fill": true,
+                     "fillOpacity": 0.8,
+                     "stroke": true,
+                     "color": "#000000",
+                     "weight": 1,
+                     "fillColor": color
+                 };
+             }, //Add features in dictionary layers
+             onEachFeature: function(feature, layer) {
+                 L.layerGroup().addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return name;
+                 });
+                 controls.addOverlay(layer, name);
+             }
+         }).addTo(map);
+     }
 
  </script>
 
