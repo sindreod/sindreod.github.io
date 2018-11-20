@@ -721,25 +721,25 @@
          afterOperation(bufferLayer, buffered, name);
      }
 
+     function unify(polyList) {
+         for (var i = 0; i < polyList.length; ++i) {
+             if (i == 0) {
+                 var unionTemp = polyList[i].toGeoJSON();
+             } else {
+                 unionTemp = turf.union(unionTemp, polyList[i].toGeoJSON());
+             }
+         }
+         return unionTemp;
+     }
+
      function createUnion(inputLayer1, inputLayer2, inputFeatures1, inputFeatures2) {
          var unionLayer = L.layerGroup();
          var polygon1 = getPolygon(inputLayer1, inputFeatures1);
          var polygon2 = getPolygon(inputLayer2, inputFeatures2);
          var features1 = polygon1[0].getLayers();
          var features2 = polygon2[0].getLayers();
-
-
-         for(var i = 0; i<features1.length; i++) {
-             if (i == 0) {
-                 var unionTemp = features1[i].toGeoJSON();
-             } else {
-                 unionTemp = turf.union(unionTemp, features1[i].toGeoJSON());
-             }
-         }
-         for(var i = 0; i<features2.length; i++) {
-                 unionTemp = turf.union(unionTemp, features2[i].toGeoJSON());
-         }
-
+         var features = features1.concat(features2);
+         var unionTemp = unify(features);
          var name = "union_" + polygon1[1] + "_" + polygon2[1];
          afterOperation(unionLayer, unionTemp, name)
      }
@@ -785,9 +785,24 @@
          var features1 = polygon1[0].getLayers();
          var features2 = polygon2[0].getLayers();
          var totalDifference;
+
+         // Check if overlap and save features that overlap
+         var overlappingClipFeatures = [];
          for(var i = 0; i < features1.length; i++) {
              for(var j = 0; j < features2.length; j++) {
-                 tempDifference = turf.difference(features1[i].toGeoJSON(), features2[j].toGeoJSON());
+                 if(turf.booleanOverlap(features1[i].toGeoJSON(),features2[j].toGeoJSON())) {
+                     if(! overlappingClipFeatures.includes(features2[j])) {
+                         overlappingClipFeatures.push(features2[j]);
+                     }
+                 }
+             }
+         }
+         var clipFeature = overlappingClipFeatures.length == 0 ? features2 : overlappingClipFeatures;
+
+         for(var i = 0; i < features1.length; i++) {
+             for(var j = 0; j < clipFeature.length; j++) {
+                 tempDifference = turf.difference(features1[i].toGeoJSON(), clipFeature[j].toGeoJSON());
+
                  if(totalDifference == undefined) {
                      totalDifference = tempDifference;
                  } else {
@@ -795,9 +810,32 @@
                  }
              }
          }
-         console.log(differenceLayer);
          var name = "difference_" + polygon1[1] + "_" + polygon2[1];
          afterOperation(differenceLayer, totalDifference, name);
+     }
+
+     // Help function
+     function addFeaturesToMap(feature, name) {
+         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+         L.geoJSON(tempDifference, {
+             style: function (feature) {
+                 return {
+                     "fill": true,
+                     "fillOpacity": 0.8,
+                     "stroke": true,
+                     "color": "#000000",
+                     "weight": 1,
+                     "fillColor": color
+                 };
+             }, //Add features in dictionary layers
+             onEachFeature: function(feature, layer) {
+                 L.layerGroup().addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return name;
+                 });
+                 controls.addOverlay(layer, name);
+             }
+         }).addTo(map);
      }
 
      function createFilter(layerId, featureId, signId, valueId) {
