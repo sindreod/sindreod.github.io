@@ -13,6 +13,7 @@
     <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
     <script src="lib/turf.min.js"></script> <!-- Turf -->
     <link rel="stylesheet" href="index.css"/>
+    <link rel="stylesheet" href="lib/tabMenu.css"/>
     <link rel="icon" href="pika.png">
 </head>
 
@@ -20,7 +21,16 @@
 <!-- Side navigation -->
 <div class="sidenav">
     <img src="PokeGIS.png" alt="PokéGIS">
-    <div id="Operations">
+    <!-- Tab links -->
+    <div id = "cssmenu" class="tab">
+        <ul>
+            <li id="defaultOpen" class="tablinks" onclick="openTab(event, 'Operations')"><a href="#">Operations</a></li>
+            <li class="tablinks" onclick="openTab(event, 'Layers')"><a href="#">Layers</a></li>
+            <li class="tablinks" onclick="openTab(event, 'Story')"><a href="#">Story</a></li>
+        </ul>
+    </div>
+
+    <div id="Operations" class="tabcontent">
         <ul>
             <li>
                 <div id="buffer" class="dropDown">Buffer</div>
@@ -35,7 +45,7 @@
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Distance:</span>
-                    <input class="dropDownLayers" name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
+                    <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
                     <button id="createBuffer"
                             onclick="createBuffer('bufferLayerGroup', 'bufferSelect','bufferDistance')">
                         Create buffer
@@ -66,7 +76,7 @@
                     <button id="createUnion"
                         onclick="createUnion('unionLayerGroup1','unionLayerGroup2','unionSelect1','unionSelect2')">
                         Create union
-                </button>
+                    </button>
                 </div>
             </li>
             <li>
@@ -154,6 +164,13 @@
         </ul>
     </div>
 
+    <div id="Layers" class="tabcontent">
+
+    </div>
+    <div id="Story" class="tabcontent">
+
+    </div>
+
 </div>
 
 <!-- Page content -->
@@ -161,7 +178,30 @@
     <div id="map"></div>
 </div>
  <script type="text/javascript">
+     //Tab menu function
+     function openTab(evt, tabId) {
+         // Declare all variables
+         var i, tabcontent, tablinks;
 
+         // Get all elements with class="tabcontent" and hide them
+         tabcontent = document.getElementsByClassName("tabcontent");
+         for (i = 0; i < tabcontent.length; i++) {
+             tabcontent[i].style.display = "none";
+         }
+
+         // Get all elements with class="tablinks" and remove the class "active"
+         tablinks = document.getElementsByClassName("tablinks");
+         for (i = 0; i < tablinks.length; i++) {
+             tablinks[i].className = tablinks[i].className.replace(" active", "");
+         }
+
+         // Show the current tab, and add an "active" class to the button that opened the tab
+         document.getElementById(tabId).style.display = "block";
+         evt.currentTarget.className += " active";
+     }
+
+     document.getElementById("defaultOpen").click();
+     
      // Set background map
      var map = L.map('map', {
          minZoom: 11,
@@ -464,7 +504,7 @@
          "Cities": cityLayer
      };
 
-     var controls = L.control.layers(baseMaps, additionalLayers, {collapsed:false}).addTo(map);
+     var controls = L.control.layers(baseMaps, additionalLayers, {collapsed:true}).addTo(map);
 
      map.on('click', function(e) {
          console.log("Lat: " + e.latlng.lat + "\nLon: " + e.latlng.lng);
