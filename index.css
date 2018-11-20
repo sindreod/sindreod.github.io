@@ -120,7 +120,7 @@ ul {
 button {
     margin: 1px;
     float: left;
-    display: inline-block;
+    display: block;
 }
 
 .sidenavText{

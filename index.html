@@ -127,21 +127,20 @@
             </li>
             <li>
                 <div id="Filter" class="dropDown">Filter</div>
-                <div class="dropDownContent">
+                <div class="dropDownContent" id="filterDiv">
                     <span class="dropDownLeft">Layer:</span>
                     <select id="filterLayerGroup" class="dropDownLayers dropDownLayerGroup" required
-                            onchange="updateFeatureSelect('filterValues','filterLayerGroup')">
+                            onchange="updateFilterSelect('filterSelect','filterLayerGroup')">
                         <!-- Options here -->
                     </select>
-                    <select id="filterSelect" required>
+                    <select id="filterSelect" required
+                            onchange="updateFilterValue('filterDiv','filterLayerGroup','filterSelect')">
                         <!-- Options here -->
                     </select>
                     <select id="filterSign" required>
                         <!-- Option signs -->
                     </select>
-                    <select id="filterValues" required>
-                        <!-- Layer values here -->
-                    </select>
+                    <br id="break">
                     <button id="createFilter"
                             onclick="createFilter('filterLayerGroup','filterSelect','filterSign','filterValues')">
                         Extract features
@@ -499,14 +498,14 @@
      }
 
      // Create selections in Layergroup dropdowns
-     var blank = document.createElement("OPTION");
-     blank.disabled = true;
-     blank.selected = 'selected';
-     blank.value = "";
-     blank.innerHTML = "-- select a layergroup --";
      targets = document.getElementsByClassName("dropDownLayerGroup");
-     for (var i = 0; i< targets.length; i++) {
+     for (var i = 0; i < targets.length; i++) {
+         var blank = document.createElement("OPTION");
+         blank.disabled = true;
+         blank.value = "";
+         blank.innerHTML = "-- select something --";
          targets[i].add(blank);
+         targets[i].selectedIndex = 0;
 
          for(var key in additionalLayers) {
              var element = document.createElement("OPTION");
@@ -524,6 +523,7 @@
                  targets[i].removeChild(targets[i].firstChild);
              }
              targets[i].add(blank);
+             targets[i].selectedIndex = 0;
 
              for(var key in additionalLayers) {
                  var element = document.createElement("OPTION");
@@ -560,6 +560,108 @@
              element.innerHTML = key;
              target.add(element);
 
+         }
+     }
+
+     function updateFilterSelect(targetId, selectId) {
+         target = document.getElementById(targetId);
+         while (target.firstChild) {
+             target.removeChild(target.firstChild);
+         }
+         select = document.getElementById(selectId);
+         layer = select.options[select.selectedIndex].value;
+         var layers = additionalLayers[layer].getLayers();
+         var types = [];
+         for (var key in layers) {
+             features = layers[key].getLayers();
+             for (var i = 0; i < features.length; i++) {
+                 for (var key in features[i].feature.properties) {
+                    if (!types.includes(key)) {
+                        types.push(key);
+                    }
+                }
+             }
+         }
+         target.add(blank);
+         target.selectedIndex = 0;
+         for (var i = 0; i < types.length; i++) {
+             var element = document.createElement("OPTION");
+             element.innerHTML = types[i];
+             target.add(element);
+
+         }
+
+     }
+
+     function updateFilterValue(targetId, selectId1, selectId2) {
+         div = document.getElementById(targetId);
+         select = document.getElementById(selectId1);
+         selectedFeature = document.getElementById(selectId2);
+         layer = select.options[select.selectedIndex].value;
+         var layers = additionalLayers[layer].getLayers();
+         layerVariable = selectedFeature.options[selectedFeature.selectedIndex].value;
+         var filter = [];
+         for (var key in layers) {
+             features = layers[key].getLayers();
+             for (var i = 0; i < features.length; i++) {
+                 for (var key in features[i].feature.properties) {
+                     if(key == layerVariable) {
+                         if(! filter.includes(features[i].feature.properties[key])) {
+                             filter.push(features[i].feature.properties[key]);
+                         }
+                     }
+                 }
+             }
+         }
+         removeElement("filterValues");
+         var baseElement;
+         if(isNaN(filter[0])) {
+             baseElement = document.createElement("SELECT");
+             baseElement.add(blank);
+             baseElement.selectedIndex = 0;
+             for (var i = 0; i < filter.length; i++) {
+                 var element = document.createElement("OPTION");
+                 element.innerHTML = filter[i];
+                 baseElement.add(element);
+
+             }
+         } else {
+             var baseElement = document.createElement("INPUT");
+             baseElement.type = "number";
+             baseElement.style = "width:39%";
+         }
+         baseElement.id = "filterValues";
+         div.insertBefore(baseElement, document.getElementById("break"));
+         baseElement.onchange = updateFilterSign('filterSign', 'filterValues');
+     }
+
+     function updateFilterSign(targetId, selectId) {
+         var target = document.getElementById(targetId);
+         while(target.firstChild) {
+             target.removeChild(target.firstChild);
+         }
+         var select = document.getElementById(selectId);
+         var tag = select.tagName;
+         var element = document.createElement("OPTION");
+         element.innerHTML = "=";
+         target.add(element);
+         element = document.createElement("OPTION");
+         element.innerHTML = "!=";
+         target.add(element);
+         if (tag == "INPUT") {
+             element = document.createElement("OPTION");
+             element.innerHTML = ">";
+             target.add(element);
+             element = document.createElement("OPTION");
+             element.innerHTML = "<";
+             target.add(element);
+         }
+     }
+
+     function removeElement(elementId) {
+         var element = document.getElementById(elementId);
+         if(element) {
+             element.parentNode.removeChild(element);
          }
      }
 
@@ -693,9 +795,72 @@
                  }
              }
          }
-         console.log(totalDifference);
+         console.log(differenceLayer);
          var name = "difference_" + polygon1[1] + "_" + polygon2[1];
          afterOperation(differenceLayer, totalDifference, name);
+     }
+
+     function createFilter(layerId, featureId, signId, valueId) {
+         layerElement = document.getElementById(layerId);
+         featureElement = document.getElementById(featureId);
+         signElement = document.getElementById(signId);
+         valueElement = document.getElementById(valueId);
+         var filterLayer = L.layerGroup();
+         // Extract chosen value (number or string)
+         var val;
+         if(valueElement.tagName == "INPUT") {
+             val = valueElement.value;
+             if(val < 0) {
+                 return;
+             }
+         } else {
+             val = valueElement.options[valueElement.selectedIndex].value;
+         }
+         // Get all features from layer
+         layerName = layerElement.options[layerElement.selectedIndex].value;
+         polygon = additionalLayers[layerName];
+
+         // Get sign
+         sign = signElement.options[signElement.selectedIndex].value;
+
+         // Get filter feature
+         filterFeature = featureElement.options[featureElement.selectedIndex].value;
+
+         var filter = [];
+         var featureGroups = polygon.getLayers();
+         for (var i = 0; i < featureGroups.length; i++) {
+             var features = featureGroups[i].getLayers();
+             for (var j = 0; j < features.length; j++) {
+                 if(sign == "=") {
+                     if(features[j].feature.properties[filterFeature] == val) {
+                         filter.push(features[j]);
+                         filterLayer.addLayer(features[j]);
+                     }
+                 } else if (sign == "!=") {
+                     if(features[j].feature.properties[filterFeature] != val) {
+                         filter.push(features[j]);
+                         filterLayer.addLayer(features[j]);
+                     }
+                 } else if (sign == ">") {
+                     if(features[j].feature.properties[filterFeature] > val) {
+                         filter.push(features[j]);
+                         filterLayer.addLayer(features[j]);
+                     }
+                 } else if (sign == "<") {
+                     if(features[j].feature.properties[filterFeature] < val) {
+                         filter.push(features[j]);
+                         filterLayer.addLayer(features[j]);
+                     }
+                 }
+
+             }
+         }
+         var name = "filter_" + layerName + "_" + filterFeature + "_" + sign + "_" + val;
+         additionalLayers[name] = filterLayer;
+         filterLayer.addTo(map);
+         controls.addOverlay(filterLayer, name);
+         updateLayerGroup();
+
      }
 
      function getPolygon(inputLayer, inputFeatures) {
