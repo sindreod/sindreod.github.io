@@ -222,10 +222,18 @@ body {
 
 .label {
     font-size: 10px;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    /*text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;*/
 }
 
 .labelRegion {
     font-size: 10px;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    /*text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;*/
 }
 
 /* ghostClass */

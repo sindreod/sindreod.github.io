@@ -264,14 +264,13 @@
      });
 
      map.on('zoomend', function() {
-         console.log("Zoom level: " + map.getZoom());
+         //console.log("Zoom level: " + map.getZoom());
          var zoom = map.getZoom();
          if (zoom < 14 && (!lastZoom || lastZoom >= 14)) {
              map.eachLayer(function(l) {
                  if (l.getTooltip()) {
                      var tooltip = l.getTooltip();
                      if(tooltip.options.className != "labelRegion")  {
-                         console.log("Ao");
                         l.unbindTooltip().bindTooltip(tooltip, {
                             permanent: false
                         })
@@ -283,9 +282,8 @@
                  if (l.getTooltip()) {
                      var tooltip = l.getTooltip();
                      if(tooltip.options.className != "labelRegion")  {
-                         console.log("Bo");
                          l.unbindTooltip().bindTooltip(tooltip, {
-                             permanent: false
+                             permanent: true
                          })
                      }
                  }
@@ -293,7 +291,6 @@
          }
          lastZoom = zoom;
      });
-
 
 
  </script>

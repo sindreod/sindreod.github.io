@@ -203,7 +203,8 @@ function loadOverlayData() {
                     permanent: false,
                     sticky: true,
                     direction: 'center',
-                    className: 'labelRegion'
+                    className: 'labelRegion',
+                    offset: L.point({x: 0, y: 40})
                 });
             }
         })
@@ -241,7 +242,10 @@ function loadOverlayData() {
                     return layer.feature.properties.Name;
                 }, {
                     permanent:false,
-                    className: 'label'
+                    direction: "center",
+                    offset: L.point({x: 0, y: 40}),
+                    className: 'label',
+                    opacity: 0.9
                 }).openTooltip();
             }
         });
