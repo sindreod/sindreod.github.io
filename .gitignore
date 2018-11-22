@@ -1,5 +1,8 @@
 # Ignore .idea folder
 .idea/
 
+# Ignore old data folder
+data/old
+
 #Ignore paint.net-file
 PokeGIS.pdn

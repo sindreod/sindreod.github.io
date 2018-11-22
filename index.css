@@ -192,6 +192,52 @@ body {
     border-radius: 5px;
 }
 
+.glyphicon-move {
+    cursor: move;
+    cursor: -webkit-grabbing;
+}
+
+.my-handle {
+    cursor: move;
+    cursor: -webkit-grabbing;
+}
+
+.list-group-item {
+    display: block;
+    width: 276px;
+    padding: 4px;
+    margin: 2px 6px 2px 6px;
+    border: 2px solid #46709B;
+    font-size: 14px;
+    color: #46709B;
+    text-align: left;
+    vertical-align: middle;
+    background-color: #FFCB05;
+    overflow: hidden;
+}
+
+.drag-layer-select {
+    float: right;
+}
+
+.label {
+    font-size: 10px;
+}
+
+.labelRegion {
+    font-size: 10px;
+}
+
+/* ghostClass */
+.ghost {
+    opacity: .5;
+    background: #C8EBFB;
+}
+
+#story {
+    font-family: pokemon_gbregular;
+}
+
 
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {

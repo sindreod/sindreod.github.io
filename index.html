@@ -4,16 +4,21 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="lib/leaflet.css"/>
+    <script src="js/sidenav.js"></script>
+    <script src="js/fileLoad.js"></script>
+    <script src="js/mapOperations.js"></script>
+
 
     <!-- Lib libraries -->
     <script src="lib/leaflet.js"></script> <!-- Leaflet osv basemap -->
-
     <script src="lib/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
     <script src="lib/jquery-3.3.1.min.js"></script> <!-- jQuery API -->
-    <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
+    <script src="lib/Sortable.min.js"></script> <!-- Sortable extension -->
     <script src="lib/turf.min.js"></script> <!-- Turf -->
+    <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
     <link rel="stylesheet" href="index.css"/>
     <link rel="stylesheet" href="lib/tabMenu.css"/>
+    <link rel="stylesheet" href="lib/stylesheet.css">
     <link rel="icon" href="pika.png">
 </head>
 
@@ -36,18 +41,13 @@
                 <div id="buffer" class="dropDown">Buffer</div>
                 <div class="dropDownContent">
                     <span class="dropDownLeft">Layergroup:</span>
-                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required
-                            onchange="updateFeatureSelect('bufferSelect','bufferLayerGroup')">
-                        <!-- Options here -->
-                    </select>
-                    <span class="dropDownLeft">Layer:</span>
-                    <select id="bufferSelect" name="bufferSelect" class="dropDownLayers" required>
+                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Distance:</span>
                     <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
                     <button id="createBuffer"
-                            onclick="createBuffer('bufferLayerGroup', 'bufferSelect','bufferDistance')">
+                            onclick="createBuffer('bufferLayerGroup','bufferDistance')">
                         Create buffer
                     </button>
                 </div>
@@ -55,26 +55,16 @@
             <li>
                 <div id="Union" class="dropDown">Union</div>
                 <div class="dropDownContent">
-                    <span class="dropDownLeft">Layergroup1:</span>
-                    <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required
-                    onchange="updateFeatureSelect('unionSelect1','unionLayerGroup1')">
-                        <!-- Options here -->
-                    </select>
                     <span class="dropDownLeft">Layer1:</span>
-                    <select id="unionSelect1" name="unionSelect" class="dropDownLayers" required>
-                        <!-- Options here -->
-                    </select>
-                    <span class="dropDownLeft">Layergroup2:</span>
-                    <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required
-                    onchange="updateFeatureSelect('unionSelect2','unionLayerGroup2')">
+                    <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Layer2:</span>
-                    <select id="unionSelect2" name="unionSelect2" class="dropDownLayers" required>
+                    <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
                     </select>
                     <button id="createUnion"
-                        onclick="createUnion('unionLayerGroup1','unionLayerGroup2','unionSelect1','unionSelect2')">
+                        onclick="createUnion('unionLayerGroup1','unionLayerGroup2')">
                         Create union
                     </button>
                 </div>
@@ -82,26 +72,16 @@
             <li>
                 <div id="Intersection" class="dropDown">Intersection</div>
                 <div class="dropDownContent">
-                    <span class="dropDownLeft">Layergroup1:</span>
-                    <select id="intersectionLayerGroup1" name="intersectionSelect1" class="dropDownLayers dropDownLayerGroup" required
-                            onchange="updateFeatureSelect('intersectionSelect1','intersectionLayerGroup1')">
-                        <!-- Options here -->
-                    </select>
                     <span class="dropDownLeft">Layer1:</span>
-                    <select id="intersectionSelect1" name="intersectionSelect" class="dropDownLayers" required>
-                        <!-- Options here -->
-                    </select>
-                    <span class="dropDownLeft">Layergroup2:</span>
-                    <select id="intersectionLayerGroup2" name="intersectionSelect2" class="dropDownLayers dropDownLayerGroup" required
-                            onchange="updateFeatureSelect('intersectionSelect2','intersectionLayerGroup2')">
+                    <select id="intersectionLayerGroup1" name="intersectionSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Layer2:</span>
-                    <select id="intersectionSelect2" name="intersectionSelect2" class="dropDownLayers" required>
+                    <select id="intersectionLayerGroup2" name="intersectionSelect2" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
                     </select>
                     <button id="createIntersection"
-                            onclick="createIntersection('intersectionLayerGroup1','intersectionLayerGroup2','intersectionSelect1','intersectionSelect2')">
+                            onclick="createIntersection('intersectionLayerGroup1','intersectionLayerGroup2')">
                         Create intersection
                     </button>
                 </div>
@@ -110,26 +90,16 @@
             <li>
                 <div id="Difference" class="dropDown">Difference</div>
                 <div class="dropDownContent">
-                    <span class="dropDownLeft">Layer group:</span>
-                    <select id="differenceLayerGroup1" name="differenceSelect1" class="dropDownLayers dropDownLayerGroup" required
-                            onchange="updateFeatureSelect('differenceSelect1','differenceLayerGroup1')">
-                        <!-- Options here -->
-                    </select>
                     <span class="dropDownLeft">Layer:</span>
-                    <select id="differenceSelect1" name="differenceSelect" class="dropDownLayers" required>
-                        <!-- Options here -->
-                    </select>
-                    <span class="dropDownLeft">Diff. layer group:</span>
-                    <select id="differenceLayerGroup2" name="differenceSelect2" class="dropDownLayers dropDownLayerGroup" required
-                            onchange="updateFeatureSelect('differenceSelect2','differenceLayerGroup2')">
+                    <select id="differenceLayerGroup1" name="differenceSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
                     </select>
                     <span class="dropDownLeft">Diff. layer:</span>
-                    <select id="differenceSelect2" name="differenceSelect2" class="dropDownLayers" required>
+                    <select id="differenceLayerGroup2" name="differenceSelect2" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
                     </select>
                     <button id="createDifference"
-                            onclick="createDifference('differenceLayerGroup1','differenceLayerGroup2','differenceSelect1','differenceSelect2')">
+                            onclick="createDifference('differenceLayerGroup1','differenceLayerGroup2')">
                         Create difference
                     </button>
                 </div>
@@ -168,7 +138,7 @@
 
     </div>
     <div id="Story" class="tabcontent">
-
+        <p>Abra kadabra</p>
     </div>
 
 </div>
@@ -178,32 +148,12 @@
     <div id="map"></div>
 </div>
  <script type="text/javascript">
-     //Tab menu function
-     function openTab(evt, tabId) {
-         // Declare all variables
-         var i, tabcontent, tablinks;
-
-         // Get all elements with class="tabcontent" and hide them
-         tabcontent = document.getElementsByClassName("tabcontent");
-         for (i = 0; i < tabcontent.length; i++) {
-             tabcontent[i].style.display = "none";
-         }
-
-         // Get all elements with class="tablinks" and remove the class "active"
-         tablinks = document.getElementsByClassName("tablinks");
-         for (i = 0; i < tablinks.length; i++) {
-             tablinks[i].className = tablinks[i].className.replace(" active", "");
-         }
-
-         // Show the current tab, and add an "active" class to the button that opened the tab
-         document.getElementById(tabId).style.display = "block";
-         evt.currentTarget.className += " active";
-     }
 
      document.getElementById("defaultOpen").click();
-     
+
      // Set background map
      var map = L.map('map', {
+         drawControl: true,
          minZoom: 11,
          maxZoom: 20
      }).setView([63.366288, 10.4308315]);
@@ -226,8 +176,17 @@
          map.panInsideBounds(worldBounds, { animate: true });
      });
 
+     lastZoom = map.getZoom();
      //Add baseMap layer to map and display it
      var backGroundLayer = L.layerGroup().addTo(map);
+
+     var baseLayer = {
+         "Pokemon World": backGroundLayer
+     };
+
+     var overlay = {};
+
+     var controls = L.control.layers(baseLayer, overlay, {collapsed:false}).addTo(map);
 
      //Add a region layer to map
      var politicalLayer = L.layerGroup();
@@ -253,459 +212,16 @@
         });
      });
 
-     function highlightFeature(e) {
-         var layer = e.target;
-         layer.setStyle({
-             weight: 5
-         });
-     }
 
-     function resetHighlight(e) {
-         var layer = e.target;
-         layer.setStyle({
-             weight: 1
-         })
-     }
+     loadBackgroundData();
+     loadOverlayData();
 
-     // Load data
-     jQuery.getJSON("data/water2.geojson" , function (json) {
-         L.geoJSON(json, {
-             style: function (feature) {
-                 return {"fill":true,
-                     "fillColor": "#00bfff",
-                     "fillOpacity": 1,
-                     "stroke": false
-                 }},
-             onEachFeature: addBackGroundData
-         }).bindPopup(function (layer) {
-             return "This is a water"
-         }).addTo(map);
-     });
+     controls.addOverlay(politicalLayer, "Geographical region");
+     controls.addOverlay(cityLayer, "Cities");
 
-     jQuery.getJSON("data/land2.geojson" , function (json) {
-         L.geoJSON(json, {
-             style: function (feature) {
-                 return {"fill": true,
-                     "fillColor": "#1ec595",
-                     "fillOpacity": 1,
-                     "stroke": true,
-                     "color": "#000000",
-                     "weight": 1
-                 }
-             },
-             onEachFeature: addBackGroundData
-         }).bindPopup(function (layer) {
-             return "Part of: " + layer.feature.properties.description;
-         }).addTo(map);
-     });
+     updateLayerGroup();
 
-     jQuery.getJSON("data/Ocean.geojson" , function (json) {
-         L.geoJSON(json, {
-             style: function (feature) {
-                 return {"fill": true,
-                     "fillColor": "#00bcdc",
-                     "fillOpacity": 1,
-                     "stroke": false
-                 };
-             },
-             onEachFeature: addBackGroundData
-         }).bindPopup(function (layer) {
-             return "The vast ocean"
-         }).addTo(map);
-     });
-
-
-     //Load regions data and apply styling for each region
-     jQuery.getJSON("data/political.geojson", function (json) {
-         L.geoJSON(json, {
-             style: function (feature) {
-                 switch (feature.properties.description) {
-                     case "Kanto":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#ff0000"
-                         };
-                     case "Johto":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#ffff00"
-                         };
-                     case "Holon":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#ff00ff"
-                         };
-                     case "Sinnoh":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#ffffff"
-                         };
-                     case "Hoenn":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#ff0000"
-                         };
-                     case "Orange Islands":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#ff7700"
-                         };
-                     case "Sevii Islands":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#0000ff"
-                         };
-                     case "Fiore":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#2CAA40"
-                         };
-                     case "Unova":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#0000ff"
-                         };
-                     case "Almia":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#00ff00"
-                         };
-                     case "Orre":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#ff0000"
-                         };
-                     case "Oblivia":
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#ffffff"
-                         };
-                     default:
-                         return {
-                             "fill": true,
-                             "fillOpacity": 1,
-                             "stroke": true,
-                             "color": "#000000",
-                             "weight": 1,
-                             "fillColor": "#555555"
-                         };
-                 }
-             }, //Add features in dictionary layers
-             onEachFeature: function(feature, layer) {
-                 if(feature.properties.description in regions) {
-                     regions[feature.properties.description].addLayer(layer);
-                 } else {
-                     regions["Rest"].addLayer(layer);
-                 }
-                 layer.bindPopup(function(layer) {
-                     return "<strong> Geographical region <br> " +
-                         "Name: \t\t</strong>" + layer.feature.properties.description
-                 })
-             }
-         })
-     });
-
-     var PokeIcon = L.Icon.extend({
-         options: {
-             iconUrl: "pokeball.png"
-         }
-     });
-
-     jQuery.getJSON("data/cities3.geojson", function (json) {
-         L.geoJSON(json, {
-             pointToLayer: function (feature, latlng) {
-                 var pop = feature.properties.Population;
-                 var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
-                 var pokeball = new PokeIcon({
-                     iconSize: [size,size],
-                     iconAnchor: [size/2, size/2],
-                     popupAnchor: [0, -size/2]
-                 });
-                 return L.marker(latlng, {icon: pokeball});
-
-             },
-             onEachFeature: function (feature, layer) {
-                 if(feature.properties.Name in cities) {
-                     cities[feature.properties.Name].addLayer(layer);
-                 } else {
-                     cities[feature.properties.Name] = L.featureGroup();
-                     cityLayer.addLayer(cities[feature.properties.Name]);
-                     cities[feature.properties.Name].addLayer(layer);
-
-                 }
-                 layer.bindPopup(function(layer) {
-                     return "<strong><u>" + layer.feature.properties.Name + "</strong></u>" +
-                         "<br><strong>Region:</strong> " + layer.feature.properties.Region +
-                         "<br><strong>Population: </strong>" + layer.feature.properties.Population +
-                             "<br><strong>Description: </strong>" + layer.feature.properties.Description
-                 })
-             }
-        });
-     });
-
-     function addBackGroundData(feature, layer) {
-         backGroundLayer.addLayer(layer);
-     }
-
-     var baseMaps = {
-         "Pokemon World": backGroundLayer
-     };
-
-     var additionalLayers = {
-         "Geographical region": politicalLayer,
-         "Cities": cityLayer
-     };
-
-     var controls = L.control.layers(baseMaps, additionalLayers, {collapsed:true}).addTo(map);
-
-     map.on('click', function(e) {
-         console.log("Lat: " + e.latlng.lat + "\nLon: " + e.latlng.lng);
-     });
-
-     map.on('zoomend', function() {
-         console.log("Zoom level: " + map.getZoom());
-     });
-
-     // Create dropdowns in sidenav
-
-     var dropdown = document.getElementsByClassName("dropDown");
-
-     for (var i = 0; i < dropdown.length; i++) {
-         dropdown[i].addEventListener("click", function(e) {
-             for(var j = 0; j < dropdown.length; j++) {
-                 if (dropdown[j] == e.target) {
-                     this.classList.toggle("active");
-                     var dropdownContent = this.nextElementSibling;
-                     if (dropdownContent.style.display === "block") {
-                         dropdownContent.style.display = "none";
-                     } else {
-                         dropdownContent.style.display = "block";
-                     }
-                 } else {
-                     dropdown[j].nextElementSibling.style.display = "none";
-                     dropdown[j].classList.remove("active");
-                 }
-             }
-         });
-     }
-
-     // Create selections in Layergroup dropdowns
-     targets = document.getElementsByClassName("dropDownLayerGroup");
-     for (var i = 0; i < targets.length; i++) {
-         var blank = document.createElement("OPTION");
-         blank.disabled = true;
-         blank.value = "";
-         blank.innerHTML = "-- select something --";
-         targets[i].add(blank);
-         targets[i].selectedIndex = 0;
-
-         for(var key in additionalLayers) {
-             var element = document.createElement("OPTION");
-             element.innerHTML = key;
-             targets[i].add(element);
-         }
-     }
-
-     // Update layerGroup if function is used (buffer, union, intersection etc)
-     function updateLayerGroup() {
-         targets = document.getElementsByClassName("dropDownLayerGroup");
-         for(var i = 0; i< targets.length; i++) {
-             //Clear dropdown options
-             while(targets[i].firstChild) {
-                 targets[i].removeChild(targets[i].firstChild);
-             }
-             targets[i].add(blank);
-             targets[i].selectedIndex = 0;
-
-             for(var key in additionalLayers) {
-                 var element = document.createElement("OPTION");
-                 element.innerHTML = key;
-                 targets[i].add(element);
-             }
-         }
-     }
-
-     function updateFeatureSelect(targetId, selectId) {
-         target = document.getElementById(targetId);
-         while (target.firstChild) {
-             target.removeChild(target.firstChild);
-         }
-         select = document.getElementById(selectId);
-         layer = select.options[select.selectedIndex].value;
-         var selection;
-         if(layer == "Cities") {
-             selection = cities;
-             blank.innerHTML = "-- select a city --";
-             //Add groups?
-         } else if (layer  == "Geographical region") {
-             selection = regions;
-             blank.innerHTML = "-- select a region --";
-         } else {
-             selection = additionalLayers[layer];
-             blank.innerHTML = "-- Nothing to select --";
-             return;
-         }
-         target.add(blank);
-         target.selectedIndex = 0;
-         for (var key in selection) {
-             var element = document.createElement("OPTION");
-             element.innerHTML = key;
-             target.add(element);
-
-         }
-     }
-
-     function updateFilterSelect(targetId, selectId) {
-         target = document.getElementById(targetId);
-         while (target.firstChild) {
-             target.removeChild(target.firstChild);
-         }
-         select = document.getElementById(selectId);
-         layer = select.options[select.selectedIndex].value;
-         var layers = additionalLayers[layer].getLayers();
-         var types = [];
-         for (var key in layers) {
-             features = layers[key].getLayers();
-             for (var i = 0; i < features.length; i++) {
-                 for (var key in features[i].feature.properties) {
-                    if (!types.includes(key)) {
-                        types.push(key);
-                    }
-                }
-             }
-         }
-         target.add(blank);
-         target.selectedIndex = 0;
-         for (var i = 0; i < types.length; i++) {
-             var element = document.createElement("OPTION");
-             element.innerHTML = types[i];
-             target.add(element);
-
-         }
-
-     }
-
-     function updateFilterValue(targetId, selectId1, selectId2) {
-         div = document.getElementById(targetId);
-         select = document.getElementById(selectId1);
-         selectedFeature = document.getElementById(selectId2);
-         layer = select.options[select.selectedIndex].value;
-         var layers = additionalLayers[layer].getLayers();
-         layerVariable = selectedFeature.options[selectedFeature.selectedIndex].value;
-         var filter = [];
-         for (var key in layers) {
-             features = layers[key].getLayers();
-             for (var i = 0; i < features.length; i++) {
-                 for (var key in features[i].feature.properties) {
-                     if(key == layerVariable) {
-                         if(! filter.includes(features[i].feature.properties[key])) {
-                             filter.push(features[i].feature.properties[key]);
-                         }
-                     }
-                 }
-             }
-         }
-         removeElement("filterValues");
-         var baseElement;
-         if(isNaN(filter[0])) {
-             baseElement = document.createElement("SELECT");
-             baseElement.add(blank);
-             baseElement.selectedIndex = 0;
-             for (var i = 0; i < filter.length; i++) {
-                 var element = document.createElement("OPTION");
-                 element.innerHTML = filter[i];
-                 baseElement.add(element);
-
-             }
-         } else {
-             var baseElement = document.createElement("INPUT");
-             baseElement.type = "number";
-             baseElement.style = "width:39%";
-         }
-         baseElement.id = "filterValues";
-         div.insertBefore(baseElement, document.getElementById("break"));
-         baseElement.onchange = updateFilterSign('filterSign', 'filterValues');
-     }
-
-     function updateFilterSign(targetId, selectId) {
-         var target = document.getElementById(targetId);
-         while(target.firstChild) {
-             target.removeChild(target.firstChild);
-         }
-         var select = document.getElementById(selectId);
-         var tag = select.tagName;
-         var element = document.createElement("OPTION");
-         element.innerHTML = "=";
-         target.add(element);
-         element = document.createElement("OPTION");
-         element.innerHTML = "!=";
-         target.add(element);
-         if (tag == "INPUT") {
-             element = document.createElement("OPTION");
-             element.innerHTML = ">";
-             target.add(element);
-             element = document.createElement("OPTION");
-             element.innerHTML = "<";
-             target.add(element);
-         }
-     }
-
-     function removeElement(elementId) {
-         var element = document.getElementById(elementId);
-         if(element) {
-             element.parentNode.removeChild(element);
-         }
-     }
-
-
+     addDropdown();
 
      function getPokeball(pop) {
          var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
@@ -718,8 +234,7 @@
 
      var cityLegend = L.control({position: 'bottomright'});
 
-     cityLegend.onAdd = function (map) {
-
+     cityLegend.onAdd = function(map) {
          var div = L.DomUtil.create('div', 'info legend'),
              pop = [25, 50, 75, 100],
              labels = [];
@@ -748,251 +263,38 @@
          }
      });
 
-     function createBuffer(inputLayer, inputFeatures, distanceId) {
-         var distance = document.getElementById(distanceId).value;
-         if (distance < 0) {
-             return;
-         }
-         var bufferLayer = L.layerGroup();
-         var polygon = getPolygon(inputLayer, inputFeatures);
-         var features = polygon[0];
-         var buffered = turf.buffer(features.toGeoJSON(), distance/10, {units: 'kilometers'});
-         var name = "buffer_" + polygon[1] + "_" + distance;
-         afterOperation(bufferLayer, buffered, name);
-     }
-
-     function unify(polyList) {
-         for (var i = 0; i < polyList.length; ++i) {
-             if (i == 0) {
-                 var unionTemp = polyList[i].toGeoJSON();
-             } else {
-                 unionTemp = turf.union(unionTemp, polyList[i].toGeoJSON());
-             }
-         }
-         return unionTemp;
-     }
-
-     function createUnion(inputLayer1, inputLayer2, inputFeatures1, inputFeatures2) {
-         var unionLayer = L.layerGroup();
-         var polygon1 = getPolygon(inputLayer1, inputFeatures1);
-         var polygon2 = getPolygon(inputLayer2, inputFeatures2);
-         var features1 = polygon1[0].getLayers();
-         var features2 = polygon2[0].getLayers();
-         var features = features1.concat(features2);
-         var unionTemp = unify(features);
-         var name = "union_" + polygon1[1] + "_" + polygon2[1];
-         afterOperation(unionLayer, unionTemp, name)
-     }
-
-     function createIntersection(inputLayer1, inputLayer2, inputFeatures1, inputFeatures2) {
-         var intersectLayer = L.layerGroup();
-         var polygon1 = getPolygon(inputLayer1, inputFeatures1);
-         var polygon2 = getPolygon(inputLayer2, inputFeatures2);
-         var features1 = polygon1[0].getLayers();
-         var features2 = polygon2[0].getLayers();
-
-         var features = [];
-         for(var i = 0; i<features1.length; i++) {
-             features[i] = features1[i].toGeoJSON();
-         }
-         for(var i = 0; i<features2.length; i++) {
-             features[features1.length + i] = features2[i].toGeoJSON();
-         }
-         var totalIntersection;
-         for(var i = 0; i < features.length; i++) {
-             for (var j = 0; j < features.length; j++) {
-                 if(i != j) {
-                     if(turf.booleanOverlap(features[i], features[j])) {
-                         tempIntersection = turf.intersect(features[i], features[j]);
-                         if(totalIntersection == undefined) {
-                             totalIntersection = tempIntersection;
-                         } else {
-                             totalIntersection = turf.union(totalIntersection, tempIntersection);
-                         }
+     map.on('zoomend', function() {
+         console.log("Zoom level: " + map.getZoom());
+         var zoom = map.getZoom();
+         if (zoom < 14 && (!lastZoom || lastZoom >= 14)) {
+             map.eachLayer(function(l) {
+                 if (l.getTooltip()) {
+                     var tooltip = l.getTooltip();
+                     if(tooltip.options.className != "labelRegion")  {
+                         console.log("Ao");
+                        l.unbindTooltip().bindTooltip(tooltip, {
+                            permanent: false
+                        })
                      }
                  }
-             }
-         }
-
-         var name = "intersection_" + polygon1[1] + "_" + polygon2[1];
-         afterOperation(intersectLayer, totalIntersection, name)
-     }
-
-     function createDifference(Layer1, differenceMainLayer, featureLayer1, differenceFeatureLayer) {
-         var differenceLayer = L.layerGroup();
-         var polygon1 = getPolygon(Layer1, featureLayer1);
-         var polygon2 = getPolygon(differenceMainLayer, differenceFeatureLayer);
-         var features1 = polygon1[0].getLayers();
-         var features2 = polygon2[0].getLayers();
-         var totalDifference;
-
-         // Check if overlap and save features that overlap
-         var overlappingClipFeatures = [];
-         for(var i = 0; i < features1.length; i++) {
-             for(var j = 0; j < features2.length; j++) {
-                 if(turf.booleanOverlap(features1[i].toGeoJSON(),features2[j].toGeoJSON())) {
-                     if(! overlappingClipFeatures.includes(features2[j])) {
-                         overlappingClipFeatures.push(features2[j]);
+             })
+         } else if (zoom >= 14 && (!lastZoom || lastZoom < 14)) {
+             map.eachLayer(function(l) {
+                 if (l.getTooltip()) {
+                     var tooltip = l.getTooltip();
+                     if(tooltip.options.className != "labelRegion")  {
+                         console.log("Bo");
+                         l.unbindTooltip().bindTooltip(tooltip, {
+                             permanent: false
+                         })
                      }
                  }
-             }
-         }
-         var clipFeature = overlappingClipFeatures.length == 0 ? features2 : overlappingClipFeatures;
-
-         for(var i = 0; i < features1.length; i++) {
-             for(var j = 0; j < clipFeature.length; j++) {
-                 tempDifference = turf.difference(features1[i].toGeoJSON(), clipFeature[j].toGeoJSON());
-
-                 if(totalDifference == undefined) {
-                     totalDifference = tempDifference;
-                 } else {
-                     totalDifference = turf.union(totalDifference, tempDifference);
-                 }
-             }
-         }
-         var name = "difference_" + polygon1[1] + "_" + polygon2[1];
-         afterOperation(differenceLayer, totalDifference, name);
-     }
-
-     function createFilter(layerId, featureId, signId, valueId) {
-         layerElement = document.getElementById(layerId);
-         featureElement = document.getElementById(featureId);
-         signElement = document.getElementById(signId);
-         valueElement = document.getElementById(valueId);
-         var filterLayer = L.layerGroup();
-         // Extract chosen value (number or string)
-         var val;
-         if(valueElement.tagName == "INPUT") {
-             val = valueElement.value;
-             if(val < 0) {
-                 return;
-             }
-         } else {
-             val = valueElement.options[valueElement.selectedIndex].value;
-         }
-         // Get all features from layer
-         layerName = layerElement.options[layerElement.selectedIndex].value;
-         polygon = additionalLayers[layerName];
-
-         // Get sign
-         sign = signElement.options[signElement.selectedIndex].value;
-
-         // Get filter feature
-         filterFeature = featureElement.options[featureElement.selectedIndex].value;
-
-         var filter = [];
-         var featureGroups = polygon.getLayers();
-         for (var i = 0; i < featureGroups.length; i++) {
-             var features = featureGroups[i].getLayers();
-             for (var j = 0; j < features.length; j++) {
-                 if(sign == "=") {
-                     if(features[j].feature.properties[filterFeature] == val) {
-                         filter.push(features[j]);
-                         filterLayer.addLayer(features[j]);
-                     }
-                 } else if (sign == "!=") {
-                     if(features[j].feature.properties[filterFeature] != val) {
-                         filter.push(features[j]);
-                         filterLayer.addLayer(features[j]);
-                     }
-                 } else if (sign == ">") {
-                     if(features[j].feature.properties[filterFeature] > val) {
-                         filter.push(features[j]);
-                         filterLayer.addLayer(features[j]);
-                     }
-                 } else if (sign == "<") {
-                     if(features[j].feature.properties[filterFeature] < val) {
-                         filter.push(features[j]);
-                         filterLayer.addLayer(features[j]);
-                     }
-                 }
-
-             }
-         }
-         var name = "filter_" + layerName + "_" + filterFeature + "_" + sign + "_" + val;
-         additionalLayers[name] = filterLayer;
-         filterLayer.addTo(map);
-         controls.addOverlay(filterLayer, name);
-         updateLayerGroup();
-
-     }
-
-     function getPolygon(inputLayer, inputFeatures) {
-         var layerGroup = document.getElementById(inputLayer);
-         var featureGroup = document.getElementById(inputFeatures);
-         layer = layerGroup.options[layerGroup.selectedIndex].value;
-         var selection;
-         var selectedLayer;
-         if(layer == "Cities") {
-             selection = cities;
-             selectedLayer = featureGroup.options[featureGroup.selectedIndex].text;
-             geojson = selection[selectedLayer];
-         } else if (layer  == "Geographical region") {
-             selection = regions;
-             selectedLayer = featureGroup.options[featureGroup.selectedIndex].text;
-             geojson = selection[selectedLayer];
-         } else {
-             selectedLayer = layerGroup.options[layerGroup.selectedIndex].value;
-             geojson = additionalLayers[layer];
-         }
-         return [geojson, selectedLayer];
-     }
-
-     function afterOperation(targetLayer, polygon, name) {
-         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-         L.geoJSON(polygon, {
-             style: function (feature) {
-                 return {
-                     "fill": true,
-                     "fillOpacity": 0.8,
-                     "stroke": true,
-                     "color": "#000000",
-                     "weight": 1,
-                     "fillColor": color
-                 };
-             }, //Add features in dictionary layers
-             onEachFeature: function(feature, layer) {
-                 targetLayer.addLayer(layer);
-                 layer.bindPopup(function(layer) {
-                     return name;
-                 })
-             }
-         });
-         additionalLayers[name] = targetLayer;
-         targetLayer.addTo(map);
-         targetLayer.eachLayer(function (layer) {
-             layer.on({
-                 mouseover: highlightFeature,
-                 mouseout: resetHighlight
              });
-         });
-         controls.addOverlay(targetLayer, name);
-         updateLayerGroup();
-     }
+         }
+         lastZoom = zoom;
+     });
 
-     // Help function
-     function addFeaturesToMap(feature, name) {
-         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-         L.geoJSON(tempDifference, {
-             style: function (feature) {
-                 return {
-                     "fill": true,
-                     "fillOpacity": 0.8,
-                     "stroke": true,
-                     "color": "#000000",
-                     "weight": 1,
-                     "fillColor": color
-                 };
-             }, //Add features in dictionary layers
-             onEachFeature: function(feature, layer) {
-                 L.layerGroup().addLayer(layer);
-                 layer.bindPopup(function(layer) {
-                     return name;
-                 });
-                 controls.addOverlay(layer, name);
-             }
-         }).addTo(map);
-     }
+
 
  </script>
 
