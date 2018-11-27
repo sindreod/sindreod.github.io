@@ -255,6 +255,3 @@ function loadOverlayData() {
 function addBackGroundData(feature, layer) {
     backGroundLayer.addLayer(layer);
 }
-
-
-

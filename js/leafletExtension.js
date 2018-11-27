@@ -23,3 +23,17 @@ L.Control.Layers.include({
         return layers;
     }
 });
+
+L.Map.include({
+    hasLayerControl: function (control) {
+        console.log(this);
+        for(var key in this._controlContainer.children) {
+            console.log(this._controlContainer.children[key]);
+            if(this._controlContainer.children[key]._layers != null) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+});

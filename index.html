@@ -128,17 +128,95 @@
 
                 </div>
             </li>
-
-
-
+            <li>
+                <div style="border-bottom: 3px solid #FFCB05"></div>
+            </li>
         </ul>
     </div>
 
     <div id="Layers" class="tabcontent">
-
+        <ul>
+            <li>
+                <div id="importHeader" class="dropDown">Import</div>
+                <div class="dropDownContent">
+                    <button id="import">Import layer to map</button>
+                </div>
+            </li>
+            <li>
+                <div id="exportHeader" class="dropDown">Export</div>
+                <div class="dropDownContent">
+                    Layer:
+                    <select id="exportSelect" class="dropDownLayers dropDownLayerGroup" required
+                    <!-- Options here -->
+                    </select>
+                    <button id="export">Export layer to geojson</button>
+                </div>
+            </li>
+        </ul>
+        <div style="border-bottom: 3px solid #FFCB05"></div>
     </div>
     <div id="Story" class="tabcontent">
-        <p>Abra kadabra</p>
+        <ul>
+            <li>
+                <div class="dropDown storyHeader story1">Story 1: The Basics</div>
+                <div class="dropDownContent story1parent">
+                    <div style="display: none" class="s1_1">
+                        <h4>Hello there! Welcome to the world of pokémon. My name is Oak! People call me the pokémon Prof! This world is inhabited by creatures called pokémon! For some people, pokémon are pets. Others use them for fights. Myself...I study pokémon as a profession using GIS-tools to master it. <br><br> First we will have a look at the basics of GIS.</h4>
+                        <button class="story_button next_button" style="float: right">Next Page</button>
+                        <button class="story_button menu_button" style="float: right">Close Page</button>
+                    </div>
+                    <div style="display: none" class="s1_2">
+                        <h4>Maps consist of different layers. Each layer can take up different forms; points, lines and polygons. <br><br> Now you will learn a little about each type of layer.</h4>
+                        <img src="points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button class="story_button menu_button">Close Page</button>
+                        <button class="story_button next_button">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_3">
+                        <h4>Now, you can see a point layer is added to the map. This layer represents xxx.</h4>
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button class="story_button menu_button">Close Page</button>
+                        <button class="story_button next_button">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_4">
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button class="story_button menu_button">Close Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story2">Story2</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s2_1 locked">
+                        <h4>Hello there! Welcome to the world of pokémon. My name is Oak! People call me the pokémon Prof! This world is inhabited by creatures called pokémon! For some people, pokémon are pets. Others use them for fights. Myself...I study pokémon as a profession using GIS-tools to master it. <br><br> First we will have a look at the basics of GIS.</h4>
+                        <button class="story_button next_button s0_button1" style="float: right">Next Page</button>
+                        <button class="story_button menu_button" style="float: right">Close Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader">Story3</div>
+                <div class="dropDownContent">
+
+                </div>
+
+            </li>
+            <li>
+                <div class="dropDown storyHeader">Story4</div>
+                <div class="dropDownContent">
+
+                </div>
+
+            </li>
+            <li>
+                <div class="dropDown storyHeader">Story5</div>
+                <div class="dropDownContent"></div>
+            </li>
+            <li>
+                <div style="border-bottom: 3px solid #FFCB05"></div>
+            </li>
+        </ul>
+        <button id="reset">Reset stories</button>
     </div>
 
 </div>
@@ -151,6 +229,12 @@
 
      document.getElementById("defaultOpen").click();
 
+     myStorage = window.localStorage;
+     if(! myStorage.getItem('storyIndex')) {
+         myStorage.setItem('storyIndex', 0);
+     }
+
+     var storyIndex = myStorage.getItem('storyIndex');
      // Set background map
      var map = L.map('map', {
          drawControl: true,
@@ -292,6 +376,88 @@
          lastZoom = zoom;
      });
 
+     //Next page
+     $(".next_button").click(function(){
+         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
+         myStorage.setItem("s1_text", Number(myStorage.getItem("s1_text"))+1);
+         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).show();
+     });
+
+     //Previous page
+     $(".previous_button").click(function(){
+         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
+         myStorage.setItem("s1_text", Number(myStorage.getItem("s1_text"))-1);
+         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).show();
+     });
+
+     //Close page
+     $(".menu_button").click(function (event) {
+         $('.story'+currentStory).click();
+         controls.addTo(map);
+     });
+
+     //Reset stories
+     $("#reset").click(function () {
+         myStorage.clear();
+     });
+
+     //Story 1
+     $(".story1").click(function () {
+         if($(".story1").hasClass("active")) {
+             removeOverlays(controls.getOverlays(), controls);
+             controls.remove();
+             currentStory = 1;
+             startStory();
+         } else {
+             controls.addTo(map);
+         }
+     });
+
+     //Story 2
+     $(".story2").click(function () {
+         if($(".story2").hasClass("active")) {
+             controls.remove();
+             currentStory = 2;
+             startStory();
+         } else {
+             controls.addTo(map);
+         }
+     });
+
+     function startStory() {
+         if(! myStorage.getItem("s" + currentStory + "_text")) {
+             myStorage.setItem("s" + currentStory + "_text", 1);
+         }
+         $('story' + currentStory + 'parent').children().hide();
+         $('.s' + currentStory + '_' + myStorage.getItem("s" + currentStory + "_text")).show();
+     }
+
+
+
+     function removeOverlays(overlayArray, controlName) {
+         for(var i = 0; i < overlayArray.length; i++) {
+             overlayArray[i].layer.remove();
+         }
+         controlName.remove();
+     }
+
+     console.log(myStorage);
+
+     // Export layer to geojson-file for later use
+
+     $("#export").click(function () {
+         var name = $("#exportSelect").val();
+         layer = getSelectedLayer(name);
+         myStorage.setItem("layer", JSON.stringify(layer.toGeoJSON()));
+         download(name, JSON.stringify(layer.toGeoJSON()));
+     });
+
+     function download(filename, content) {
+         var pom = document.createElement('a');
+         pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+         pom.setAttribute('download', filename + ".geojson");
+         pom.click();
+     }
 
  </script>
 
