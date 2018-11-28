@@ -174,7 +174,7 @@
                         <img src="points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
                         <button class="story_button previous_button">Prev Page</button>
                         <button class="story_button menu_button">Close Page</button>
-                        <button class="story_button next_button s1_2n">Next Page</button>
+                        <button id="s1_2n" class="story_button next_button">Next Page</button>
                     </div>
                     <div style="display: none" class="s1_3">
                         <h4>Now, you can see a point layer is added to the map. Points are single data values that can have data assigned to them.
@@ -188,13 +188,37 @@
                         <button id="s1_3n" class="story_button next_button locked">Next Page</button>
                     </div>
                     <div style="display: none" class="s1_4">
-                        <button class="story_button previous_button s1_4p">Prev Page</button>
+                        <h4>
+                            Now we have added the roads in kanto to the map. The roads are represented by lines on the map. Each line consists of multiple points connected to each other. <br>
+                        </h4>
+                        <img src="line.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <h4>
+                            Click on the road between Viridian City and Pewter City to find the route number.
+                        </h4>
+                        <input class="story_input" type="number" id="s1_line" placeholder="route number">
+                        <button class="story_answer" id="s1_line_ans">Check answer</button>
+                        <button id="s1_4p" class="story_button previous_button">Prev Page</button>
+                        <button class="story_button menu_button">Close Page</button>
+                        <button id="s1_4n" class="story_button next_button locked">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_5">
+                        <h4>
+                            The last type of layers we will have a look at are polygons. Polygons are closed loop of lines. <br>
+                        </h4>
+                        <img src="polygon.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <h4>
+                            Your task is to find out how many islands the region of Hoenn are made up of. Hover or click a region to get more information about it.
+
+                        </h4>
+                        <input class="story_input" type="number" id="s1_pol" placeholder="number of islands">
+                        <button class="story_answer" id="s1_pol_ans">Check answer</button>
+                        <button id="s1_5p" class="story_button previous_button">Prev Page</button>
                         <button class="story_button menu_button">Close Page</button>
                     </div>
                 </div>
             </li>
             <li>
-                <div class="dropDown storyHeader story2 locked">Story2</div>
+                <div class="dropDown storyHeader story2 locked">Story2: Buffer</div>
                 <div class="dropDownContent">
                     <div style="display: none" class="s2_1">
                         <h4>Story2</h4>
@@ -204,21 +228,21 @@
                 </div>
             </li>
             <li>
-                <div class="dropDown storyHeader locked">Story3</div>
+                <div class="dropDown storyHeader story3 locked">Story3</div>
                 <div class="dropDownContent">
 
                 </div>
 
             </li>
             <li>
-                <div class="dropDown storyHeader locked">Story4</div>
+                <div class="dropDown storyHeader story4 locked">Story4</div>
                 <div class="dropDownContent">
 
                 </div>
 
             </li>
             <li>
-                <div class="dropDown storyHeader locked">Story5</div>
+                <div class="dropDown storyHeader story5 locked">Story5</div>
                 <div class="dropDownContent"></div>
             </li>
             <li>
@@ -240,7 +264,7 @@
 
      myStorage = window.localStorage;
      if(! myStorage.getItem('storyIndex')) {
-         myStorage.setItem('storyIndex', 0);
+         myStorage.setItem('storyIndex', 1);
      }
 
      var storyIndex = myStorage.getItem('storyIndex');
@@ -357,7 +381,7 @@
      });
 
      map.on('zoomend', function() {
-         //console.log("Zoom level: " + map.getZoom());
+         console.log("Zoom level: " + map.getZoom());
          var zoom = map.getZoom();
          if (zoom < 14 && (!lastZoom || lastZoom >= 14)) {
              map.eachLayer(function(l) {
@@ -401,8 +425,11 @@
      $(".locked").attr("disabled", "disabled");
 
      // Set css for locked stories
-     $(" li > .locked").css("filter", "brightness(50%)");
-     $(" li > .locked").css("pointer-events", "none");
+     for(var i = Number(myStorage.getItem("storyIndex")) + 1; i < 6; i++) {
+         string = ".story" + i;
+         $(string).css("filter", "brightness(50%)");
+         $(string).css("pointer-events", "none");
+     }
 
      //Next page
      $(".next_button").click(function(){
@@ -430,7 +457,13 @@
 
      //Reset stories
      $("#reset").click(function () {
-         myStorage.clear();
+         myStorage.setItem("storyIndex", 1);
+         myStorage.setItem("s1_text", 1);
+         for(var i = Number(myStorage.getItem("storyIndex")) + 1; i < 6; i++) {
+             string = ".story" + i;
+             $(string).css("filter", "brightness(50%)");
+             $(string).css("pointer-events", "none");
+         }
      });
 
      //Story 1
@@ -449,7 +482,7 @@
          }
      });
 
-     $(".s1_2n, .s1_4p").click(function () {
+     $("#s1_2n, #s1_4p").click(function () {
          var cityKantoLayer = L.layerGroup();
          jQuery.getJSON("data/CitiesKanto.geojson", function (json) {
              L.geoJSON(json, {
@@ -484,14 +517,14 @@
                  }
              });
          });
-         var c = L.control.layers(null, {"cities": cityKantoLayer}, {collapsed: false}).addTo(map);
+         //var c = L.control.layers(null, {"cities": cityKantoLayer}, {collapsed: false}).addTo(map);
          cityKantoLayer.addTo(map);
          map.fitBounds([
              [63.38237, 10.37658],
              [63.34820, 10.47889]
          ]);
          cityLegend.addTo(map);
-         removeArray.push(c);
+         //removeArray.push(c);
          removeArray.push(cityKantoLayer);
          removeArray.push(cityLegend);
      });
@@ -505,11 +538,69 @@
          }
      });
 
-     /*
-     $(".s1_2n").click(function () {
 
-     });*/
+     $("#s1_3n, #s1_5p").click(function () {
+         var roadLayer = L.layerGroup();
+         jQuery.getJSON("data/roads.geojson", function (json) {
+             L.geoJSON(json, {
+                 style: function (feature) {
+                     return {
+                         "stroke": true,
+                         "weight": 3,
+                         "color": "#000000"
+                     };
+                 },
+                 onEachFeature: function (feature, layer) {
+                     //console.log(feature.properties);
+                     if(feature.properties.type == "route") {
+                         roadLayer.addLayer(layer);
+                         layer.bindPopup(function(layer) {
+                             return "<strong>" + layer.feature.properties.type +
+                                 layer.feature.properties.number + "</strong>"
+                         });
+                     }
+                 }
+             });
+         });
+         //var c = L.control.layers(null, {"cities": cityKantoLayer}, {collapsed: false}).addTo(map);
+         roadLayer.addTo(map);
+         map.fitBounds([
+             [63.38237, 10.37658],
+             [63.34820, 10.47889]
+         ]);
+         removeArray.push(roadLayer);
+     });
 
+
+     $('#s1_line_ans').click(function(){
+         var number = $('#s1_line').val();
+         if(number == 2) {
+             alert("Correct!");
+             $('#s1_4n').removeClass("locked");
+             $('#s1_4n').attr("disabled", false);
+         }
+     });
+
+     $("#s1_4n, #s1_6p").click(function () {
+         while (removeArray.length > 0) {
+             removeArray.pop().remove();
+         }
+         politicalLayer.addTo(map);
+         map.setZoom(11);
+         map.setView([63.28861, 10.38139]);
+         removeArray.push(politicalLayer);
+     });
+
+     $('#s1_pol_ans').click(function(){
+         var number = $('#s1_pol').val();
+         if(number == 11) {
+             alert("Correct!");
+             $('.story2').removeClass("locked");
+             $(".story2").css("pointer-events", "");
+             $(".story2").css("filter", "brightness(100%)")
+         }
+         myStorage.setItem("storyIndex", 2);
+     });
 
 
      //Story 2
@@ -520,6 +611,10 @@
              startStory();
          } else {
              controls.addTo(map);
+             while(removeArray.length > 0) {
+                 removeArray.pop().remove();
+             }
+             $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
          }
      });
 
@@ -580,6 +675,7 @@
              reader.onload = (function(theFile) {
                  return function(e) {
                      geojson = JSON.parse(e.target.result);
+                     console.log(geojson);
                      newLayer = L.layerGroup();
                      afterOperation(newLayer, geojson, theFile.name);
                  }

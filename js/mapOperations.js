@@ -193,6 +193,7 @@ function afterOperation(targetLayer, polygon, name) {
         onEachFeature: function(feature, layer) {
             targetLayer.addLayer(layer);
             layer.bindPopup(function(layer) {
+                console.log(feature.properties);
                 return name;
             })
         }
