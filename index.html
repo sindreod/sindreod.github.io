@@ -139,7 +139,8 @@
             <li>
                 <div id="importHeader" class="dropDown">Import</div>
                 <div class="dropDownContent">
-                    <button id="import">Import layer to map</button>
+                    <input id="fileImport" type="file" accept=".geojson" multiple>
+                    <button id="import">Import geojson to map</button>
                 </div>
             </li>
             <li>
@@ -154,6 +155,9 @@
             </li>
         </ul>
         <div style="border-bottom: 3px solid #FFCB05"></div>
+        <output id="import_list"></output>
+        <div style="border-bottom: 3px solid #FFCB05"></div>
+
     </div>
     <div id="Story" class="tabcontent">
         <ul>
@@ -443,12 +447,18 @@
 
      console.log(myStorage);
 
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                   FILE IMPORT/EXPORT                                                  //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
      // Export layer to geojson-file for later use
 
      $("#export").click(function () {
          var name = $("#exportSelect").val();
          layer = getSelectedLayer(name);
-         myStorage.setItem("layer", JSON.stringify(layer.toGeoJSON()));
+         myStorage.setItem(name, JSON.stringify(layer.toGeoJSON()));
          download(name, JSON.stringify(layer.toGeoJSON()));
      });
 
@@ -458,6 +468,52 @@
          pom.setAttribute('download', filename + ".geojson");
          pom.click();
      }
+
+     $("#import").click(function() {
+         var files = $("#fileImport").prop('files'); // FileList object
+
+         // Loop through the FileList and render image files as thumbnails.
+         for (var i = 0, f; f = files[i]; i++) {
+
+             if(f.name.split(".").pop() != "geojson") {
+                 continue;
+             }
+
+             var reader = new FileReader();
+
+             // Closure to capture the file information.
+             reader.onload = (function(theFile) {
+                 return function(e) {
+                     geojson = JSON.parse(e.target.result);
+                     newLayer = L.layerGroup();
+                     afterOperation(newLayer, geojson, theFile.name);
+                 }
+             })(f);
+
+             // Read in the image file as a data URL.
+             reader.readAsText(f);
+         }
+     });
+
+     $("#fileImport").change(function(evt) {
+         var files = evt.target.files; // FileList object
+
+         // files is a FileList of File objects. List some properties.
+         var output = [];
+
+         for (var i = 0, f; f = files[i]; i++) {
+
+             if(f.name.split(".").pop() != "geojson") {
+                 continue;
+             }
+
+             output.push('<li><strong>', escape(f.name), '</strong> last modified: ',
+                 f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                 '</li>');
+         }
+         $("#import_list").html('<ul>' + output.join('') + '</ul>');
+     });
+     //document.getElementById('fileImport').addEventListener('change', handleFileSelect, false);
 
  </script>
 
