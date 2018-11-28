@@ -174,46 +174,51 @@
                         <img src="points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
                         <button class="story_button previous_button">Prev Page</button>
                         <button class="story_button menu_button">Close Page</button>
-                        <button class="story_button next_button">Next Page</button>
+                        <button class="story_button next_button s1_2n">Next Page</button>
                     </div>
                     <div style="display: none" class="s1_3">
-                        <h4>Now, you can see a point layer is added to the map. This layer represents xxx.</h4>
+                        <h4>Now, you can see a point layer is added to the map. Points are single data values that can have data assigned to them.
+                            This layer represents the cities of the region Kanto. Each city is represented by a pokeball. The balls are scaled with the size of the city, but not linear. It uses scaled circles, a logarithmic size expansion. <br>
+                            Click on a city to get more information and find the population of Lavender Town.
+                        </h4>
+                        <input class="story_input" type="number" id="s1_pop" placeholder="population">
+                        <button class="story_answer" id="s1_pop_ans">Check answer</button>
                         <button class="story_button previous_button">Prev Page</button>
                         <button class="story_button menu_button">Close Page</button>
-                        <button class="story_button next_button">Next Page</button>
+                        <button id="s1_3n" class="story_button next_button locked">Next Page</button>
                     </div>
                     <div style="display: none" class="s1_4">
-                        <button class="story_button previous_button">Prev Page</button>
+                        <button class="story_button previous_button s1_4p">Prev Page</button>
                         <button class="story_button menu_button">Close Page</button>
                     </div>
                 </div>
             </li>
             <li>
-                <div class="dropDown storyHeader story2">Story2</div>
+                <div class="dropDown storyHeader story2 locked">Story2</div>
                 <div class="dropDownContent">
-                    <div style="display: none" class="s2_1 locked">
-                        <h4>Hello there! Welcome to the world of pokémon. My name is Oak! People call me the pokémon Prof! This world is inhabited by creatures called pokémon! For some people, pokémon are pets. Others use them for fights. Myself...I study pokémon as a profession using GIS-tools to master it. <br><br> First we will have a look at the basics of GIS.</h4>
+                    <div style="display: none" class="s2_1">
+                        <h4>Story2</h4>
                         <button class="story_button next_button s0_button1" style="float: right">Next Page</button>
                         <button class="story_button menu_button" style="float: right">Close Page</button>
                     </div>
                 </div>
             </li>
             <li>
-                <div class="dropDown storyHeader">Story3</div>
+                <div class="dropDown storyHeader locked">Story3</div>
                 <div class="dropDownContent">
 
                 </div>
 
             </li>
             <li>
-                <div class="dropDown storyHeader">Story4</div>
+                <div class="dropDown storyHeader locked">Story4</div>
                 <div class="dropDownContent">
 
                 </div>
 
             </li>
             <li>
-                <div class="dropDown storyHeader">Story5</div>
+                <div class="dropDown storyHeader locked">Story5</div>
                 <div class="dropDownContent"></div>
             </li>
             <li>
@@ -380,6 +385,25 @@
          lastZoom = zoom;
      });
 
+     map.on('click', function(event) {
+         console.log(event.latlng);
+     });
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                         STORIES                                                       //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     var removeArray = [];
+
+     // Disable locked buttons
+     $(".locked").attr("disabled", "disabled");
+
+     // Set css for locked stories
+     $(" li > .locked").css("filter", "brightness(50%)");
+     $(" li > .locked").css("pointer-events", "none");
+
      //Next page
      $(".next_button").click(function(){
          $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
@@ -397,6 +421,10 @@
      //Close page
      $(".menu_button").click(function (event) {
          $('.story'+currentStory).click();
+         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
+         while(removeArray) {
+             removeArray.pop().remove();
+         }
          controls.addTo(map);
      });
 
@@ -414,8 +442,75 @@
              startStory();
          } else {
              controls.addTo(map);
+             while(removeArray.length > 0) {
+                 removeArray.pop().remove();
+             }
+             $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
          }
      });
+
+     $(".s1_2n, .s1_4p").click(function () {
+         var cityKantoLayer = L.layerGroup();
+         jQuery.getJSON("data/CitiesKanto.geojson", function (json) {
+             L.geoJSON(json, {
+                 pointToLayer: function (feature, latlng) {
+                     var pop = feature.properties.Population;
+                     var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
+                     var pokeball = new PokeIcon({
+                         iconSize: [size,size],
+                         iconAnchor: [size/2, size/2],
+                         popupAnchor: [0, -size/2]
+                     });
+                     return L.marker(latlng, {icon: pokeball});
+
+                 },
+                 onEachFeature: function (feature, layer) {
+                     cityKantoLayer.addLayer(layer);
+                     layer.bindPopup(function(layer) {
+                         return "<strong><u>" + layer.feature.properties.Name + "</strong></u>" +
+                             "<br><strong>Region:</strong> " + layer.feature.properties.Region +
+                             "<br><strong>Population: </strong>" + layer.feature.properties.Population +
+                             "<br><strong>Description: </strong>" + layer.feature.properties.Description
+                     });
+                     layer.bindTooltip(function (layer) {
+                         return layer.feature.properties.Name;
+                     }, {
+                         permanent:true,
+                         direction: "center",
+                         offset: L.point({x: 0, y: 40}),
+                         className: 'label',
+                         opacity: 0.9
+                     }).openTooltip();
+                 }
+             });
+         });
+         var c = L.control.layers(null, {"cities": cityKantoLayer}, {collapsed: false}).addTo(map);
+         cityKantoLayer.addTo(map);
+         map.fitBounds([
+             [63.38237, 10.37658],
+             [63.34820, 10.47889]
+         ]);
+         cityLegend.addTo(map);
+         removeArray.push(c);
+         removeArray.push(cityKantoLayer);
+         removeArray.push(cityLegend);
+     });
+
+     $('#s1_pop_ans').click(function(){
+         var number = $('#s1_pop').val();
+         if(number == 41) {
+             alert("Correct!");
+             $('#s1_3n').removeClass("locked");
+             $('#s1_3n').attr("disabled", false);
+         }
+     });
+
+     /*
+     $(".s1_2n").click(function () {
+
+     });*/
+
+
 
      //Story 2
      $(".story2").click(function () {
@@ -513,7 +608,66 @@
          }
          $("#import_list").html('<ul>' + output.join('') + '</ul>');
      });
-     //document.getElementById('fileImport').addEventListener('change', handleFileSelect, false);
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                   JQUERY EXTENSION                                                    //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     (function ($) {
+         var _oldShow = $.fn.show;
+
+         $.fn.show = function (/*speed, easing, callback*/) {
+             var argsArray = Array.prototype.slice.call(arguments),
+                 duration = argsArray[0],
+                 easing,
+                 callback,
+                 callbackArgIndex;
+
+             // jQuery recursively calls show sometimes; we shouldn't
+             //  handle such situations. Pass it to original show method.
+             if (!this.selector) {
+                 _oldShow.apply(this, argsArray);
+                 return this;
+             }
+
+             if (argsArray.length === 2) {
+                 if ($.isFunction(argsArray[1])) {
+                     callback = argsArray[1];
+                     callbackArgIndex = 1;
+                 } else {
+                     easing = argsArray[1];
+                 }
+             } else if (argsArray.length === 3) {
+                 easing = argsArray[1];
+                 callback = argsArray[2];
+                 callbackArgIndex = 2;
+             }
+
+             return $(this).each(function () {
+                 var obj = $(this),
+                     oldCallback = callback,
+                     newCallback = function () {
+                         if ($.isFunction(oldCallback)) {
+                             oldCallback.apply(obj);
+                         }
+
+                         obj.trigger('afterShow');
+                     };
+
+                 if (callback) {
+                     argsArray[callbackArgIndex] = newCallback;
+                 } else {
+                     argsArray.push(newCallback);
+                 }
+
+                 obj.trigger('beforeShow');
+
+                 _oldShow.apply(obj, argsArray);
+             });
+         };
+     })(jQuery);
 
  </script>
 

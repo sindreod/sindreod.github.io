@@ -40,8 +40,6 @@ function loadBackgroundData() {
                 }
             },
             onEachFeature: addBackGroundData
-        }).bindPopup(function (layer) {
-            return "Part of: " + layer.feature.properties.description;
         }).addTo(map);
     });
 
@@ -236,7 +234,8 @@ function loadOverlayData() {
                     return "<strong><u>" + layer.feature.properties.Name + "</strong></u>" +
                         "<br><strong>Region:</strong> " + layer.feature.properties.Region +
                         "<br><strong>Population: </strong>" + layer.feature.properties.Population +
-                        "<br><strong>Description: </strong>" + layer.feature.properties.Description
+                        "<br><strong>Description: </strong>" + layer.feature.properties.Description +
+                            "<br><strong>Type: </strong>" + layer.feature.properties.Type;
                 });
                 layer.bindTooltip(function (layer) {
                     return layer.feature.properties.Name;
@@ -251,6 +250,8 @@ function loadOverlayData() {
         });
     });
 }
+
+
 
 function addBackGroundData(feature, layer) {
     backGroundLayer.addLayer(layer);

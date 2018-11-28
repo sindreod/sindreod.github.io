@@ -153,6 +153,15 @@ button {
     width: 90px;
 }
 
+.story_answer {
+    float: right;
+    width: 139px;
+}
+
+.story_input {
+    width: 139px;
+}
+
 .sidenavText{
     width: 70%;
 }
@@ -250,7 +259,6 @@ body {
 }
 
 #story {
-    font-family: pokemon_gbregular;
     height: 100%;
 }
 
