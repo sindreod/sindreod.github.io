@@ -276,6 +276,33 @@ body {
     bottom: 9px;
 }
 
+.style_layer-item{
+    margin: 4px 9px 4px 9px;
+    border-bottom: 1px solid black;
+}
+
+.input_color {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    float: left;
+    height: 20px;
+    width: 20px;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: 1px solid white;
+    width: 18px;
+    height: 18px;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+}
+
 
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {

@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="lib/tabMenu.css"/>
     <link rel="stylesheet" href="lib/stylesheet.css">
     <link rel="icon" href="pika.png">
+    <title>PokéGIS</title>
 </head>
 
 <body>
@@ -151,6 +152,15 @@
                     <!-- Options here -->
                     </select>
                     <button id="export">Export layer to geojson</button>
+                </div>
+            </li>
+            <li>
+                <div id="styleHeader" class="dropDown">Style layers</div>
+                <div class="dropDownContent">
+                    <div id="style_layers">
+                        <h4 style="text-align: center">Active layers appear here: <br></h4>
+                        <!-- Layers here -->
+                    </div>
                 </div>
             </li>
         </ul>
@@ -372,12 +382,32 @@
          if(e.name === "Cities") {
              cityLegend.addTo(map);
          }
+         $("#style_layers").append(function () {
+             return "<li><div class='style_layer-item'><input class='input_color' id='" + e.name.split(' ')[0] + "' type='color'><h4>" + e.name + "</h4></div></li>";
+         });
+         id = "#" + e.name.split(' ')[0];
+         $(id).data(e.name, e.layer);
+         $(id).change(function (e) {
+             var layer = $(id).data();
+             var color = e.target.value;
+             /*
+             for(var key in layer) {
+                 console.log(layer[key]);
+                 layer[key]._layers.forEach(function (l) {
+                     l.setStyle({"fillColor": color})
+                 });
+             }*/
+
+             // find some way to change color
+         });
      });
 
      map.on('overlayremove', function (e) {
          if(e.name === "Cities") {
              cityLegend.remove()
          }
+         $("#" + e.name.split(' ')[0]).parent().parent().remove();
+
      });
 
      map.on('zoomend', function() {
@@ -675,9 +705,44 @@
              reader.onload = (function(theFile) {
                  return function(e) {
                      geojson = JSON.parse(e.target.result);
-                     console.log(geojson);
-                     newLayer = L.layerGroup();
-                     afterOperation(newLayer, geojson, theFile.name);
+                     newLayer = L.layerGroup().addTo(map);
+                     if(geojson.features[0].geometry.type == "Point") {
+                         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+                         L.geoJSON(geojson, {
+                             pointToLayer: function (feature, latlng) {
+                                 return L.circleMarker(latlng, {
+                                     "radius": 10,
+                                     "stroke": true,
+                                     "weight": 1,
+                                     "color": "#000000",
+                                     "fill": true,
+                                     "fillColor": color,
+                                     "fillOpacity": 0.9
+                                 });
+                             },
+                             onEachFeature: function(feature, layer) {
+                                 res = "<strong>Layer: <u>" + theFile.name + "</u></strong><br>";
+                                 for(var key in feature.properties) {
+                                     res = res.concat("<strong>", key, ": </strong>",  feature.properties[key],"<br>");
+                                 }
+                                layer.bindPopup(function(layer) {
+                                    return res;
+                                });
+                                 newLayer.addLayer(layer);
+                             }
+                         });
+                         overlay[theFile.name] = newLayer;
+                         newLayer.eachLayer(function (layer) {
+                             layer.on({
+                                 mouseover: highlightFeature,
+                                 mouseout: resetHighlight
+                             });
+                         });
+                         controls.addOverlay(newLayer, theFile.name);
+                         updateLayerGroup();
+                     } else {
+                         afterOperation(newLayer, geojson, theFile.name);
+                     }
                  }
              })(f);
 
@@ -704,6 +769,7 @@
          }
          $("#import_list").html('<ul>' + output.join('') + '</ul>');
      });
+
 
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      //////                                                                                                       //////
