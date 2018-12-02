@@ -193,7 +193,8 @@ function loadOverlayData() {
                 }
                 layer.bindPopup(function(layer) {
                     return "<strong> Geographical region <br> " +
-                        "Name: \t\t</strong>" + layer.feature.properties.description
+                        "Name: \t\t</strong>" + layer.feature.properties.description +
+                            "<br><strong>Area:\t\t</strong> " + getArea(layer) + "km" + "2".sup();
                 });
                 layer.bindTooltip(function(layer) {
                     return layer.feature.properties.description;

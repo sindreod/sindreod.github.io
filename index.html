@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="lib/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
     <script src="js/sidenav.js"></script>
     <script src="js/fileLoad.js"></script>
     <script src="js/mapOperations.js"></script>
@@ -15,10 +16,12 @@
     <script src="lib/jquery-3.3.1.min.js"></script> <!-- jQuery API -->
     <script src="lib/Sortable.min.js"></script> <!-- Sortable extension -->
     <script src="lib/turf.min.js"></script> <!-- Turf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script> <!-- Leaflet Draw Plugin -->
     <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
     <link rel="stylesheet" href="index.css"/>
     <link rel="stylesheet" href="lib/tabMenu.css"/>
     <link rel="stylesheet" href="lib/stylesheet.css">
+    <link rel="stylesheet" href="lib/leaflet.draw.css">
     <link rel="icon" href="pika.png">
     <title>PokéGIS</title>
 </head>
@@ -133,6 +136,7 @@
                 <div style="border-bottom: 3px solid #FFCB05"></div>
             </li>
         </ul>
+        <button class="resetButton" id="resetAll">Reset All</button>
     </div>
 
     <div id="Layers" class="tabcontent">
@@ -224,6 +228,14 @@
                         <button class="story_answer" id="s1_pol_ans">Check answer</button>
                         <button id="s1_5p" class="story_button previous_button">Prev Page</button>
                         <button class="story_button menu_button">Close Page</button>
+                        <button id="s1_5n" class="story_button next_button locked">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_6">
+                        <h4>
+                            Congratulations! You have now finished your first story line. You can now go on to the buffer story.
+                        </h4>
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button class="story_button menu_button">Close Page</button>
                     </div>
                 </div>
             </li>
@@ -231,9 +243,41 @@
                 <div class="dropDown storyHeader story2 locked">Story2: Buffer</div>
                 <div class="dropDownContent">
                     <div style="display: none" class="s2_1">
-                        <h4>Story2</h4>
-                        <button class="story_button next_button s0_button1" style="float: right">Next Page</button>
+                        <h4>
+                            You have started your pokémon adventure and reached Viridian City. Trying to buy pokéballs at the Poké Mart, the clerk gives you a parcel. A note on the parcel says: <br>"To be delivered to Professor Oak in Pallet Town" <br>
+                        </h4>
+                        <button class="story_button next_button" style="float: right">Next Page</button>
                         <button class="story_button menu_button" style="float: right">Close Page</button>
+                    </div>
+                    <div style="display: none" class="s2_2">
+                        <h4>
+                            It is starting to get dark and you know powerful pokémon sneak around in the grass after sunset. Worried about encountering one you decide to start the walk to Pallet Town, only if it is less than 6 km to walk.
+                            A buffer can give you the answer to this. Use the buffer tool in the operations tab to construct a buffer around Viridian City.
+                        </h4>
+                        <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button class="story_button menu_button">Close Page</button>
+                        <button id="s2_2n" class="story_button next_button">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s2_3">
+                        <h4>
+                            Use the buffer tool in the operations tab to construct a buffer around Viridian City with distance 6 km.
+                        </h4>
+                        <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
+                        <h4>Is Pallet Town within 6 km from Viridian City? </h4>
+                        <select id="s2_buf_point" style="display: block; float: left; margin: 0 74px 0 73px">
+                            <option disabled="disabled" selected>-- Select answer --</option>
+                            <option value="false">Yes</option>
+                            <option value="true">No</option>
+                        </select>
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button class="story_button menu_button">Close Page</button>
+                        <button id="s2_3n" class="story_button next_button locked">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s2_4">
+                        <button id="s2_4p" class="story_button previous_button">Prev Page</button>
+                        <button class="story_button menu_button">Close Page</button>
+                        <button id="s2_4n" class="story_button next_button locked">Next Page</button>
                     </div>
                 </div>
             </li>
@@ -259,7 +303,7 @@
                 <div style="border-bottom: 3px solid #FFCB05"></div>
             </li>
         </ul>
-        <button id="reset">Reset stories</button>
+        <button class="resetButton" id="reset">Reset stories</button>
     </div>
 
 </div>
@@ -273,17 +317,36 @@
      document.getElementById("defaultOpen").click();
 
      myStorage = window.localStorage;
+     console.log(myStorage);
      if(! myStorage.getItem('storyIndex')) {
          myStorage.setItem('storyIndex', 1);
      }
 
      var storyIndex = myStorage.getItem('storyIndex');
+
      // Set background map
      var map = L.map('map', {
-         drawControl: true,
+         //drawControl: true,
          minZoom: 11,
          maxZoom: 20
      }).setView([63.366288, 10.4308315]);
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                            Leaflet.draw                                                               //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     // FeatureGroup is to store editable layers
+     var editableLayers = new L.FeatureGroup();
+     map.addLayer(editableLayers);
+     editableLayers.addTo(map);
+     var drawControl = new L.Control.Draw({
+         edit: {
+             featureGroup: editableLayers
+         }
+     });
+     map.addControl(drawControl);
 
      //Set bounds for startup
      var startBounds = L.latLngBounds([
@@ -411,7 +474,7 @@
      });
 
      map.on('zoomend', function() {
-         console.log("Zoom level: " + map.getZoom());
+         //console.log("Zoom level: " + map.getZoom());
          var zoom = map.getZoom();
          if (zoom < 14 && (!lastZoom || lastZoom >= 14)) {
              map.eachLayer(function(l) {
@@ -439,9 +502,138 @@
          lastZoom = zoom;
      });
 
+     /*
      map.on('click', function(event) {
          console.log(event.latlng);
+     });*/
+
+     if(! myStorage.getItem('drawId')) {
+         myStorage.setItem('drawId', 1);
+     }
+     var id = myStorage.getItem("drawId");
+
+     controls.addOverlay(editableLayers, "Edit_" + myStorage.getItem("drawId"));
+     updateLayerGroup();
+
+     map.on(L.Draw.Event.CREATED, function (e) {
+         var type = e.layerType,
+             layer = e.layer,
+             feature = layer.feature = layer.feature || {}; //Initialize feature
+         var props = feature.properties = feature.properties || {}; // Initialize feature.properties
+         feature.type = "Feature";
+         layer.bindPopup(function (layer) {
+             string = "<div>";
+             for (var key in props) {
+                if(key == "name" || key == "Name") {
+                    string +="<br><strong>" + props[key] + "</strong><hr>";
+                }
+             }
+             for (var key in props) {
+                 if(key != "name" && key != "Name") {
+                     string += "<br><strong>" + key + ":</strong> " + props[key];
+                 }
+             }
+             string += "<hr><strong>Add feature properties: </strong><br>";
+             string += "<input type='text' placeholder='Property name' id='p_" + L.Util.stamp(layer) + "' class='popupInput'>";
+             string += "<input type='text' placeholder='Value' id='v_" + L.Util.stamp(layer) + "' class='popupInput'>";
+             string += "<button class='popupButton' onclick='popupForm(" + L.Util.stamp(layer) + ")'>Submit</button>";
+             string += "<br><br><br><br></div>";
+             return string;
+         });
+         editableLayers.addLayer(layer);
+
      });
+
+     function popupForm(layerId) {
+         layer = editableLayers.getLayer(layerId);
+         var valueField, propertyField;
+         valueField = document.getElementById("v_" + layerId).value;
+         propertyField = document.getElementById("p_" + layerId).value;
+         layer.feature.properties[propertyField] = valueField;
+         layer.getPopup().update();
+     }
+
+     //Reset storage
+     $("#resetAll").click(function () {
+         myStorage.clear();
+     });
+
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                     LOAD LAYERS                                                       //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     var cityKantoLayer = L.layerGroup();
+     jQuery.getJSON("data/CitiesKanto.geojson", function (json) {
+         L.geoJSON(json, {
+             pointToLayer: function (feature, latlng) {
+                 var pop = feature.properties.Population;
+                 var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
+                 var pokeball = new PokeIcon({
+                     iconSize: [size,size],
+                     iconAnchor: [size/2, size/2],
+                     popupAnchor: [0, -size/2]
+                 });
+                 return L.marker(latlng, {icon: pokeball});
+
+             },
+             onEachFeature: function (feature, layer) {
+                 cityKantoLayer.addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return "<strong><u>" + layer.feature.properties.Name + "</strong></u>" +
+                         "<br><strong>Region:</strong> " + layer.feature.properties.Region +
+                         "<br><strong>Population: </strong>" + layer.feature.properties.Population +
+                         "<br><strong>Description: </strong>" + layer.feature.properties.Description
+                 });
+                 layer.bindTooltip(function (layer) {
+                     return layer.feature.properties.Name;
+                 }, {
+                     permanent:true,
+                     direction: "center",
+                     offset: L.point({x: 0, y: 40}),
+                     className: 'label',
+                     opacity: 0.9
+                 }).openTooltip();
+             }
+         });
+     });
+
+     var roadLayer = L.layerGroup();
+     jQuery.getJSON("data/roads.geojson", function (json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 return {
+                     "stroke": true,
+                     "weight": 5,
+                     "color": "#000000"
+                 };
+             },
+             onEachFeature: function (feature, layer) {
+                 if(feature.properties.type == "route") {
+                     roadLayer.addLayer(layer);
+                     layer.bindPopup(function(layer) {
+                         return "<strong>" + layer.feature.properties.type +
+                             layer.feature.properties.number + "</strong>"
+                     });
+                 }
+             }
+         });
+     });
+
+     var viridianCity = L.layerGroup();
+     jQuery.getJSON("data/Viridian_City.geojson", function (json) {
+         L.geoJSON(json, {
+             pointToLayer: function(feature, latlng) {
+                 return L.circleMarker(latlng);
+             },
+
+             onEachFeature: function (feature, layer) {
+                 viridianCity.addLayer(layer);
+             }
+         });
+     });
+
 
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      //////                                                                                                       //////
@@ -449,7 +641,7 @@
      //////                                                                                                       //////
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-     var removeArray = [];
+     var removeArray = [], addArray;
 
      // Disable locked buttons
      $(".locked").attr("disabled", "disabled");
@@ -463,33 +655,35 @@
 
      //Next page
      $(".next_button").click(function(){
-         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
-         myStorage.setItem("s1_text", Number(myStorage.getItem("s1_text"))+1);
-         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).show();
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+         myStorage.setItem("s" + currentStory + "_text", Number(myStorage.getItem("s" + currentStory + "_text"))+1);
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).show();
+         removeOverlays(removeArray, controls);
      });
 
      //Previous page
      $(".previous_button").click(function(){
-         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
-         myStorage.setItem("s1_text", Number(myStorage.getItem("s1_text"))-1);
-         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).show();
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+         myStorage.setItem("s" + currentStory + "_text", Number(myStorage.getItem("s" + currentStory + "_text"))-1);
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).show();
+         removeOverlays(removeArray, controls);
      });
 
      //Close page
-     $(".menu_button").click(function (event) {
+     $(".menu_button").click(function () {
          $('.story'+currentStory).click();
-         $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
-         while(removeArray) {
-             removeArray.pop().remove();
-         }
-         controls.addTo(map);
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+         removeOverlays(removeArray, controls);
+         addOverlaysFromArray(addArray, controls);
      });
 
      //Reset stories
      $("#reset").click(function () {
-         myStorage.setItem("storyIndex", 1);
-         myStorage.setItem("s1_text", 1);
-         for(var i = Number(myStorage.getItem("storyIndex")) + 1; i < 6; i++) {
+         for(var i = 1; i <= Number(myStorage.getItem("storyIndex")) + 1; i++ ) {
+             myStorage.setItem("s" + i + "_text", 1);
+         }
+         myStorage.setItem("storyIndex", 2);
+         for(var i = 2; i < 6; i++) {
              string = ".story" + i;
              $(string).css("filter", "brightness(50%)");
              $(string).css("pointer-events", "none");
@@ -498,100 +692,41 @@
 
      //Story 1
      $(".story1").click(function () {
+         currentStory = 1;
          if($(".story1").hasClass("active")) {
+             addArray = controls.getOverlays();
              removeOverlays(controls.getOverlays(), controls);
-             controls.remove();
-             currentStory = 1;
              startStory();
          } else {
-             controls.addTo(map);
-             while(removeArray.length > 0) {
-                 removeArray.pop().remove();
-             }
-             $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
+             removeOverlays(removeArray, controls);
+             $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+             addOverlaysFromArray(addArray, controls);
          }
      });
 
-     $("#s1_2n, #s1_4p").click(function () {
-         var cityKantoLayer = L.layerGroup();
-         jQuery.getJSON("data/CitiesKanto.geojson", function (json) {
-             L.geoJSON(json, {
-                 pointToLayer: function (feature, latlng) {
-                     var pop = feature.properties.Population;
-                     var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
-                     var pokeball = new PokeIcon({
-                         iconSize: [size,size],
-                         iconAnchor: [size/2, size/2],
-                         popupAnchor: [0, -size/2]
-                     });
-                     return L.marker(latlng, {icon: pokeball});
 
-                 },
-                 onEachFeature: function (feature, layer) {
-                     cityKantoLayer.addLayer(layer);
-                     layer.bindPopup(function(layer) {
-                         return "<strong><u>" + layer.feature.properties.Name + "</strong></u>" +
-                             "<br><strong>Region:</strong> " + layer.feature.properties.Region +
-                             "<br><strong>Population: </strong>" + layer.feature.properties.Population +
-                             "<br><strong>Description: </strong>" + layer.feature.properties.Description
-                     });
-                     layer.bindTooltip(function (layer) {
-                         return layer.feature.properties.Name;
-                     }, {
-                         permanent:true,
-                         direction: "center",
-                         offset: L.point({x: 0, y: 40}),
-                         className: 'label',
-                         opacity: 0.9
-                     }).openTooltip();
-                 }
-             });
-         });
-         //var c = L.control.layers(null, {"cities": cityKantoLayer}, {collapsed: false}).addTo(map);
+     $("#s1_2n, #s1_4p").click(function () {
          cityKantoLayer.addTo(map);
-         map.fitBounds([
-             [63.38237, 10.37658],
-             [63.34820, 10.47889]
-         ]);
          cityLegend.addTo(map);
-         //removeArray.push(c);
+         controls.addOverlay(cityKantoLayer, "Cities_Kanto");
          removeArray.push(cityKantoLayer);
          removeArray.push(cityLegend);
      });
 
+     /*
      $('#s1_pop_ans').click(function(){
          var number = $('#s1_pop').val();
          if(number == 41) {
              alert("Correct!");
              $('#s1_3n').removeClass("locked");
              $('#s1_3n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!")
          }
      });
 
 
      $("#s1_3n, #s1_5p").click(function () {
-         var roadLayer = L.layerGroup();
-         jQuery.getJSON("data/roads.geojson", function (json) {
-             L.geoJSON(json, {
-                 style: function (feature) {
-                     return {
-                         "stroke": true,
-                         "weight": 3,
-                         "color": "#000000"
-                     };
-                 },
-                 onEachFeature: function (feature, layer) {
-                     //console.log(feature.properties);
-                     if(feature.properties.type == "route") {
-                         roadLayer.addLayer(layer);
-                         layer.bindPopup(function(layer) {
-                             return "<strong>" + layer.feature.properties.type +
-                                 layer.feature.properties.number + "</strong>"
-                         });
-                     }
-                 }
-             });
-         });
          //var c = L.control.layers(null, {"cities": cityKantoLayer}, {collapsed: false}).addTo(map);
          roadLayer.addTo(map);
          map.fitBounds([
@@ -608,6 +743,8 @@
              alert("Correct!");
              $('#s1_4n').removeClass("locked");
              $('#s1_4n').attr("disabled", false);
+         } else {
+         alert("Shoot! It was so close too!")
          }
      });
 
@@ -627,26 +764,64 @@
              alert("Correct!");
              $('.story2').removeClass("locked");
              $(".story2").css("pointer-events", "");
-             $(".story2").css("filter", "brightness(100%)")
+             $(".story2").css("filter", "brightness(100%)");
+             $('#s1_5n').removeClass("locked");
+             $('#s1_5n').attr("disabled", false);
+             myStorage.setItem("storyIndex", 2);
+         } else {
+             alert("Shoot! It was so close too!")
          }
-         myStorage.setItem("storyIndex", 2);
      });
 
 
      //Story 2
      $(".story2").click(function () {
+         currentStory = 2;
          if($(".story2").hasClass("active")) {
              controls.remove();
-             currentStory = 2;
              startStory();
+             cityKantoLayer.addTo(map);
+             removeArray.push(cityKantoLayer);
          } else {
-             controls.addTo(map);
-             while(removeArray.length > 0) {
-                 removeArray.pop().remove();
-             }
-             $('.s'+currentStory+'_' + myStorage.getItem("s1_text")).hide();
+             removeOverlays(removeArray, controls);
+             $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+             controls.addOverlay(politicalLayer, "Geographical region");
+             controls.addOverlay(cityLayer, "Cities");
          }
      });
+
+     $("#s2_2n, #s2_4p").click(function() {
+         cityKantoLayer.addTo(map);
+         viridianCity.addTo(map);
+         controls.addOverlay(cityKantoLayer, "Cities_Kanto");
+         controls.addOverlay(viridianCity, "Viridian_City");
+         updateLayerGroup();
+         var control2 = L.control.layers(null, {
+             "Cities Kanto": cityKantoLayer,
+             "Viridian City": viridianCity},
+             {collapsed: false}).addTo(map);
+         removeArray.push(cityKantoLayer);
+         removeArray.push(viridianCity);
+         removeArray.push(control2);
+     });
+
+     $("#s2_buf_point").change(function(){
+         if($("#s2_buf_point").val()) {
+             alert("Correct!");
+             $("#s2_3n").removeClass("locked");
+             $('#s2_3n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!");
+         }
+     });
+
+     $("#s2_3n, s2_5p").click(function() {
+
+     });
+
+
+*/
+
 
      function startStory() {
          if(! myStorage.getItem("s" + currentStory + "_text")) {
@@ -654,18 +829,31 @@
          }
          $('story' + currentStory + 'parent').children().hide();
          $('.s' + currentStory + '_' + myStorage.getItem("s" + currentStory + "_text")).show();
-     }
-
-
-
-     function removeOverlays(overlayArray, controlName) {
-         for(var i = 0; i < overlayArray.length; i++) {
-             overlayArray[i].layer.remove();
+         if($("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").length) {
+             $("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").click();
          }
-         controlName.remove();
+         map.fitBounds([
+             [63.38237, 10.37658],
+             [63.34820, 10.47889]
+         ]);
      }
 
-     console.log(myStorage);
+
+
+     function removeOverlays(arr, con) {
+         while(arr.length > 0 ) {
+             lay = arr.pop().layer;
+             con.removeLayer(lay);
+             lay.remove();
+         }
+     }
+
+     function addOverlaysFromArray(arr, con) {
+         while(arr.length > 0 ) {
+             lay = arr.pop();
+             con.addOverlay(lay.layer, lay.name);
+         }
+     }
 
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      //////                                                                                                       //////

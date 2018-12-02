@@ -185,50 +185,6 @@ function getSelectedLayer(layerName) {
     }
 }
 
-
-/*
-function initLayers() {
-    overlays = controls.getOverlays();
-    var el = document.createElement("DIV");
-    el.classList.add("list-group");
-    el.id = "layerList";
-    for(var i = 0; i < overlays.length; i++) {
-        var name = overlays[i].name;
-        el1 = document.createElement("DIV");
-        el1.classList.add("list-group-item");
-        el1.classList.add("my-handle");
-        el1.innerHTML = name;
-        el3 = document.createElement("INPUT");
-        el3.classList.add("drag-layer-select");
-        el3.type = "checkbox";
-        el3.name = "list-group-item layer_name";
-        el.appendChild(el1);
-        el1.appendChild(el3);
-    }
-    document.getElementById("Layers").appendChild(el);
-    console.log(el);
-    Sortable.create(el, {
-        ghostClass: 'ghost'
-    });
-}*/
-
-/*
-function addDragLayer(layer) {
-    console.log("addR");
-    var el = document.getElementById("Layers").firstChild;
-    var name = layer.name;
-    el1 = document.createElement("DIV");
-    el1.classList.add("list-group-item");
-    el1.classList.add("my-handle");
-    el1.innerHTML = name;
-    el3 = document.createElement("INPUT");
-    el3.classList.add("drag-layer-select");
-    el3.type = "checkbox";
-    el3.name = "list-group-item layer_name";
-    el.appendChild(el1);
-    el1.appendChild(el3);
-}*/
-
 /*
 $('.quest1_point').change(function(){
     if($('.quest1_point').val() == 1) {

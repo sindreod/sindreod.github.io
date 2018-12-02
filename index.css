@@ -183,7 +183,7 @@ body {
 }
 
 .leaflet-label-overlay {
-    line-height:0px;
+    line-height:0;
     margin-top: 9px;
     position:absolute;
 }
@@ -270,7 +270,7 @@ body {
     display: block;
 }
 
-#reset {
+.resetButton {
     margin: 0 9px 0 9px;
     position: absolute;
     bottom: 9px;
@@ -301,6 +301,18 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 }
 input[type="color"]::-webkit-color-swatch {
     border: none;
+}
+
+.popupInput {
+    width: 100%;
+    float: right;
+}
+
+.popupButton {
+    width: 100%;
+    margin: 0 2px 0 2px;
+    padding: 1px 0 1px 0;
+    display: inline-block;
 }
 
 

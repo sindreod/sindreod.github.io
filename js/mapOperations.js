@@ -133,7 +133,7 @@ function createFilter(layerId, featureId, signId, valueId) {
     // Get all features from layer
     layerName = layerElement.options[layerElement.selectedIndex].value;
     polygon = getSelectedLayer(layerName);
-    console.log(polygon)
+    console.log(polygon);
     // Get sign
     sign = signElement.options[signElement.selectedIndex].value;
 
@@ -193,8 +193,8 @@ function afterOperation(targetLayer, polygon, name) {
         onEachFeature: function(feature, layer) {
             targetLayer.addLayer(layer);
             layer.bindPopup(function(layer) {
-                console.log(feature.properties);
-                return name;
+                return "<strong><u>" + name + "</u></strong>" + "<br><strong>Area:\t\t</strong> " + getArea(layer) + "km" + "2".sup();
+
             })
         }
     });
@@ -210,6 +210,9 @@ function afterOperation(targetLayer, polygon, name) {
     updateLayerGroup();
 }
 
+function getArea(layer) {
+    return Math.round(turf.area(layer.toGeoJSON())/(1000 * 1000) * 100 * 100) / 100; //Make area 10 times bigger than coordinates
+}
 //Help function
 function addFeaturesToMap(feature, name) {
     var color = "#" + Math.floor(Math.random()*16777216).toString(16);
@@ -227,7 +230,10 @@ function addFeaturesToMap(feature, name) {
         onEachFeature: function(feature, layer) {
             L.layerGroup().addLayer(layer);
             layer.bindPopup(function(layer) {
-                return name;
+                console.log("AFter");
+                return "<strong><u>" + name + "</u></strong>" +
+                    "<br><strong>Area:\t\t</strong> " + getArea(layer) + "km" + "2".sup();
+
             });
             controls.addOverlay(layer, name);
         }
