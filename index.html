@@ -518,11 +518,8 @@
                             <option selected disabled> -- Choose layer -- </option>
                         </select>
                         <span class="dropDownLeft">Distance:</span>
-                        <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
-                        <button id="createBuffer"
-                                onclick="createBuffer('bufferLayerGroup','bufferDistance')">
-                            Create buffer
-                        </button>
+                        <input name="bufferDistance" id="bufferDistanceNormal" type="number" placeholder="km">
+                        <button id="createBufferNormal">Create Buffer</button>
                     </div>
                     <div id="union2" class="dropDown">Union</div>
                     <div class="dropDownContent">
@@ -717,7 +714,7 @@
      updateLayerGroup();
 
      addDropdown();
-     
+
      function getPokeball(pop) {
          var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
          if (size < 200) {

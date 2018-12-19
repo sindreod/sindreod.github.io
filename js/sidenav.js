@@ -36,26 +36,15 @@ function addDropdown() {
     }
 }
 
-function createBlank() {
-    var blank = document.createElement("OPTION");
-    blank.disabled = true;
-    blank.value = "";
-    blank.innerHTML = "-- select something --";
-    return blank;
-}
-
 // Update layerGroup if function is used (buffer, union, intersection etc)
 function updateLayerGroup() {
-    blank = createBlank();
     targets = document.getElementsByClassName("dropDownLayerGroup");
     var overlays = controls.getOverlays();
     for(var i = 0; i< targets.length; i++) {
         //Clear dropdown options
         while(targets[i].length > 1) {
-            targets[i].removeChild(targets[i].firstChild.nextSibling);
+            targets[i].removeChild(targets[i].children[1]);
         }
-        targets[i].add(blank);
-        targets[i].selectedIndex = 0;
         for(var key in overlays) {
             var element = document.createElement("OPTION");
             element.innerHTML = overlays[key].name;
@@ -66,8 +55,8 @@ function updateLayerGroup() {
 
 function updateFilterSelect(targetId, selectId) {
     var target = document.getElementById(targetId);
-    while (target.firstChild) {
-        target.removeChild(target.firstChild);
+    while(target.length > 1) {
+        target.removeChild(target.children[1]);
     }
     var select = document.getElementById(selectId);
     var layerName = select.options[select.selectedIndex].value;
@@ -84,8 +73,6 @@ function updateFilterSelect(targetId, selectId) {
             }
         }
     }
-    target.add(blank);
-    target.selectedIndex = 0;
     for (var i = 0; i < types.length; i++) {
         var element = document.createElement("OPTION");
         element.innerHTML = types[i];
@@ -119,8 +106,6 @@ function updateFilterValue(targetId, selectId1, selectId2) {
     var baseElement;
     if(isNaN(filter[0])) {
         baseElement = document.createElement("SELECT");
-        baseElement.add(blank);
-        baseElement.selectedIndex = 0;
         for (var i = 0; i < filter.length; i++) {
             var element = document.createElement("OPTION");
             element.innerHTML = filter[i];
@@ -139,8 +124,8 @@ function updateFilterValue(targetId, selectId1, selectId2) {
 
 function updateFilterSign(targetId, selectId) {
     var target = document.getElementById(targetId);
-    while(target.firstChild) {
-        target.removeChild(target.firstChild);
+    while(target.length > 1) {
+        target.removeChild(target.children[1]);
     }
     var select = document.getElementById(selectId);
     var tag = select.tagName;
