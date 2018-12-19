@@ -513,7 +513,7 @@
                     <div id="buffer2" class="dropDown">Buffer</div>
                     <div class="dropDownContent">
                         <span class="dropDownLeft">Layer:</span>
-                        <select id="bufferLayerGroupB" class="dropDownLayers dropDownLayerGroup" required>
+                        <select id="bufferLayerB" class="dropDownLayersB" required>
                             <!-- Options here -->
                             <option selected disabled> -- Choose layer -- </option>
                         </select>
@@ -541,7 +541,37 @@
             </ul>
         </div>
         <div id="LayersB" class="tabcontentC">
-
+            <ul>
+                <li>
+                    <div id="importHeaderB" class="dropDown">Import</div>
+                    <div class="dropDownContent">
+                        <h4>Import a geojson or shapefile to the map. If you want to upload a shapefile, zip it together with the rquired files and upload the zip folder. </h4>
+                        <input id="fileImportB" type="file" accept=".geojson,.zip" multiple>
+                        <input id="fileNameB" type="text" required placeholder="Please enter name of layer">
+                        <button id="importB">Import file to map</button>
+                    </div>
+                </li>
+                <li>
+                    <div id="exportHeaderB" class="dropDown">Export</div>
+                    <div class="dropDownContent">
+                        Layer:
+                        <select id="exportSelectB" class="dropDownLayersB" required>
+                            <!-- Options here -->
+                        </select>
+                        <button id="exportB">Export layer to geojson</button>
+                    </div>
+                </li>
+                <li>
+                    <div id="styleHeaderB" class="dropDown">Style layers</div>
+                    <div class="dropDownContent">
+                        <div id="style_layersB">
+                            <select id="styleLayerB" class="dropDownLayersB">
+                                <option selected disabled>-- Choose layer --</option>
+                            </select>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -584,26 +614,6 @@
          minZoom: 11,
          maxZoom: 20
      }).setView([63.366288, 10.4308315]);
-
-     var normalMap = L.map('normalMap').setView([63.42, 10.43], 13);
-     var base = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-         maxZoom: 18,
-         id: 'mapbox.streets',
-         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
-     }).addTo(normalMap);
-
-     var base2 = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-         maxZoom: 18,
-         id: 'mapbox.satellite',
-         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
-     });
-
-     var normalControl = L.control.layers({
-         "Streets": base,
-         "Satellite": base2
-     }, null, {collapsed: true}).addTo(normalMap);
 
      //var incrementControl = L.IncrementEditControl({i: myStorage.getItem('drawId')}).addTo(normalMap);
 
@@ -711,7 +721,6 @@
      controls.addOverlay(politicalLayer, "Geographical region");
      controls.addOverlay(cityLayer, "Cities");
 
-     updateLayerGroup();
 
      addDropdown();
 
@@ -747,32 +756,21 @@
          if(e.name === "Cities") {
              cityLegend.addTo(map);
          }
-         $("#style_layers").append(function () {
-             return "<li><div class='style_layer-item'><input class='input_color' id='" + e.name.split(' ')[0] + "' type='color'><h4>" + e.name + "</h4></div></li>";
-         });
-         id = "#" + e.name.split(' ')[0];
-         $(id).data(e.name, e.layer);
-         $(id).change(function (e) {
-             var layer = $(id).data();
-             var color = e.target.value;
-             /*
-             for(var key in layer) {
-                 console.log(layer[key]);
-                 layer[key]._layers.forEach(function (l) {
-                     l.setStyle({"fillColor": color})
-                 });
-             }*/
-
-             // find some way to change color
-         });
      });
 
      map.on('overlayremove', function (e) {
          if(e.name === "Cities") {
              cityLegend.remove()
          }
-         $("#" + e.name.split(' ')[0]).parent().parent().remove();
 
+     });
+
+     map.on('layeradd', function(e) {
+         updateLayerGroup();
+     });
+
+     map.on('layerremove', function(e) {
+         updateLayerGroup();
      });
 
      map.on('zoomend', function() {
@@ -815,7 +813,6 @@
      var id = myStorage.getItem("drawId");
 
      controls.addOverlay(editableLayers, "Edit_" + myStorage.getItem("drawId"));
-     updateLayerGroup();
 
      map.on(L.Draw.Event.CREATED, function (e) {
          var type = e.layerType,
@@ -1244,7 +1241,6 @@
          viridianCity.addTo(map);
          controls.addOverlay(cityKantoLayer, "Cities_Kanto");
          controls.addOverlay(viridianCity, "Viridian_City");
-         updateLayerGroup();
          removeArray.push(cityKantoLayer);
          removeArray.push(viridianCity);
      });
@@ -1274,7 +1270,6 @@
          rattata.addTo(map);
          controls.addOverlay(pidgey, "Pidgey");
          controls.addOverlay(rattata, "Rattata");
-         updateLayerGroup();
          removeArray.push(pidgey);
          removeArray.push(rattata);
      });
@@ -1307,7 +1302,6 @@
          controls.addOverlay(safariZone, "Safari Zone");
          controls.addOverlay(chansey, "Chansey");
          controls.addOverlay(rhyhorn, "Rhyhorn");
-         updateLayerGroup();
          removeArray.push(rhyhorn);
          removeArray.push(chansey);
          removeArray.push(safariZone);
@@ -1343,7 +1337,6 @@
          controls.addOverlay(magneton, "Magneton");
          controls.addOverlay(raichu, "Raichu");
          controls.addOverlay(mewtwo, "Mewtwo");
-         updateLayerGroup();
          removeArray.push(ceruleanCave);
          removeArray.push(mewtwo);
          removeArray.push(raichu);
@@ -1376,7 +1369,6 @@
          cityLayer.addTo(map);
          cityLegend.addTo(map);
          controls.addOverlay(cityLayer, "Cities");
-         updateLayerGroup();
          removeArray.push(cityLayer);
          removeArray.push(cityLegend);
          cityLayer.eachLayer(function(obj) {
@@ -1487,7 +1479,6 @@
                          }
                      });
                      controls.addOverlay(newLayer, "SHP");
-                     updateLayerGroup();
                  });
              }
              else if (f.name.split(".").pop() == "geojson"){
@@ -1529,7 +1520,6 @@
                                  });
                              });
                              controls.addOverlay(newLayer, theFile.name);
-                             updateLayerGroup();
                          } else {
                              afterOperation(newLayer, geojson, theFile.name);
                          }
@@ -1621,6 +1611,103 @@
              });
          };
      })(jQuery);
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                          NORMAL MAP                                                   //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     var normalMap = L.map('normalMap').setView([63.42, 10.43], 13);
+     var base = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         maxZoom: 18,
+         id: 'mapbox.streets',
+         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
+     }).addTo(normalMap);
+
+     var base2 = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         maxZoom: 18,
+         id: 'mapbox.satellite',
+         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
+     });
+
+     var normalControl = L.control.layers({
+         "Streets": base,
+         "Satellite": base2
+     }, null, {collapsed: true}).addTo(normalMap);
+
+     normalMap.on('layeradd', function(e) {
+         updateLayers();
+     });
+
+     normalMap.on('layerremove', function(e) {
+         updateLayers();
+     });
+
+     // file import from normal map tab
+     $("#importB").click(function() {
+         var files = $("#fileImportB").prop('files'); // FileList object
+
+         // Loop through the FileList and render image files as thumbnails.
+         for (var i = 0, f; f = files[i]; i++) {
+
+             if (f.name.split(".").pop() != "geojson" && f.name.split(".").pop() != "zip") {
+                 continue;
+             }
+             var reader = new FileReader();
+
+             if (f.name.split(".").pop() == "zip") {
+                 loadshp({
+                     url: f,
+                     encoding: 'utf-8',
+                     EPSG: 4326
+                 }, function (geojson) {
+                     newLayer = L.layerGroup().addTo(normalMap);
+                     L.geoJSON(geojson, {
+                         onEachFeature: function (feature, layer) {
+                             for (var key in feature.properties) {
+                                 res = "";
+                                 res = res.concat("<strong>", key, ": </strong>", feature.properties[key], "<br>");
+                             }
+                             layer.bindPopup(res);
+                             newLayer.addLayer(layer);
+                         }
+                     });
+                     normalControl.addOverlay(newLayer, $("#fileNameB").val());
+                     updateLayers();
+                 });
+             }
+             else if (f.name.split(".").pop() == "geojson") {
+                 // Closure to capture the file information.
+                 reader.onload = (function (theFile) {
+                     return function (e) {
+                         geojson = JSON.parse(e.target.result);
+                         newLayer = L.layerGroup().addTo(normalMap);
+                         L.geoJSON(geojson, {
+                             pointToLayer: function (feature, latlng) {
+                                 return L.circleMarker(latlng);
+                             },
+                             onEachFeature: function (feature, layer) {
+                                 res = "";
+                                 for (var key in feature.properties) {
+                                     res += "<strong>" + key + ":</strong>  " + feature.properties[key] + "<br>";
+                                 }
+                                 res += "<strong>Area:\t\t</strong> " + getArea(layer, 1) + "km" + "2".sup();
+                                 layer.bindPopup(res);
+                                 newLayer.addLayer(layer);
+                             }
+                         });
+                         normalControl.addOverlay(newLayer, $("#fileNameB").val()).addTo(normalMap);
+                         updateLayers();
+                     }
+                 })(f);
+             }
+             // Read in the file as a data URL.
+             reader.readAsText(f);
+         }
+     });
 
  </script>
 

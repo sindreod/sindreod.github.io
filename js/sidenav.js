@@ -160,3 +160,22 @@ function getSelectedLayer(layerName) {
         }
     }
 }
+
+/* For the normal map */
+function updateLayers() {
+    var i, selectElements, layers;
+    layers = normalControl.getOverlays();
+
+    selectElements = $(".dropDownLayersB");
+    for (i = 0; i < selectElements.length; i++) {
+        while (selectElements[i].length > 1) {
+            selectElements[i].removeChild(selectElements[i].children[1]);
+        }
+    }
+
+    for(i = 0; i < layers.length; i++) {
+        $(".dropDownLayersB").append($('<option></option>')
+        .html(layers[i].name)
+        .val(L.Util.stamp(layers[i])));
+    }
+}

@@ -177,7 +177,6 @@ function createFilter(layerId, featureId, signId, valueId) {
     overlay[name] = filterLayer;
     filterLayer.addTo(map);
     controls.addOverlay(filterLayer, name);
-    updateLayerGroup();
 
 }
 
@@ -197,7 +196,7 @@ function afterOperation(targetLayer, polygon, name) {
         onEachFeature: function(feature, layer) {
             targetLayer.addLayer(layer);
             layer.bindPopup(function(layer) {
-                return "<strong><u>" + name + "</u></strong>" + "<br><strong>Area:\t\t</strong> " + getArea(layer) + "km" + "2".sup();
+                return "<strong><u>" + name + "</u></strong>" + "<br><strong>Area:\t\t</strong> " + getArea(layer, 10) + "km" + "2".sup();
 
             })
         }
@@ -211,12 +210,12 @@ function afterOperation(targetLayer, polygon, name) {
         });
     });
     controls.addOverlay(targetLayer, name);
-    updateLayerGroup();
 }
 
-function getArea(layer) {
-    return Math.round(turf.area(layer.toGeoJSON())/(1000 * 1000) * 100 * 100) / 100; //Make area 10 times bigger than coordinates
+function getArea(layer, factor) {
+    return Math.round(turf.area(layer.toGeoJSON())/(1000 * 1000) * (factor^2) * 100) / 100; //Make area 10 times bigger than coordinates
 }
+
 //Help function
 function addFeaturesToMap(feature, name) {
     var color = "#" + Math.floor(Math.random()*16777216).toString(16);
