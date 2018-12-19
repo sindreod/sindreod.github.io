@@ -1,4 +1,3 @@
-@import url(http://fonts.googleapis.com/css?family=Raleway);
 .cssmenu,
 .cssmenu ul,
 .cssmenu ul li,
@@ -31,7 +30,7 @@
 }
 .cssmenu, .tabmenu {
   width: auto;
-  font-family: Raleway, sans-serif;
+  font-family: sans-serif;
   line-height: 1;
 }
 
