@@ -1,0 +1,68 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+html{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    color: floralwhite;
+}
+
+body {
+    background-color: #111; /* Black */
+}
+
+.center {
+    margin: auto;
+    width: 60%;
+    /*border: 1px solid #ffde00;*/
+    padding: 10px;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+p {
+    text-align: left;
+}
+
+.excerpt {
+    text-align: center;
+    font-size: 8pt;
+}
+
+img {
+    padding-top: 10px;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 10px;
+    max-width: 50%;
+}
+
+tr , td {
+    font-size: x-small;
+}
+
+/* SCROLL BAR */
+
+/* width */
+::-webkit-scrollbar {
+    width: 1px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 1px grey;
+    border-radius: 1px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: yellow;
+    border-radius: 1px;
+}

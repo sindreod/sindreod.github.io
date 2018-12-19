@@ -147,23 +147,27 @@ function createFilter(layerId, featureId, signId, valueId) {
         for (var j = 0; j < features.length; j++) {
             if(sign == "=") {
                 if(features[j].feature.properties[filterFeature] == val) {
-                    filter.push(features[j]);
-                    filterLayer.addLayer(features[j]);
+                    new_layer = cloneLayer(features[j]);
+                    filter.push(new_layer);
+                    filterLayer.addLayer(new_layer);
                 }
             } else if (sign == "!=") {
                 if(features[j].feature.properties[filterFeature] != val) {
-                    filter.push(features[j]);
-                    filterLayer.addLayer(features[j]);
+                    new_layer = cloneLayer(features[j]);
+                    filter.push(new_layer);
+                    filterLayer.addLayer(new_layer);
                 }
             } else if (sign == ">") {
                 if(features[j].feature.properties[filterFeature] > val) {
-                    filter.push(features[j]);
-                    filterLayer.addLayer(features[j]);
+                    new_layer = cloneLayer(features[j]);
+                    filter.push(new_layer);
+                    filterLayer.addLayer(new_layer);
                 }
             } else if (sign == "<") {
                 if(features[j].feature.properties[filterFeature] < val) {
-                    filter.push(features[j]);
-                    filterLayer.addLayer(features[j]);
+                    new_layer = cloneLayer(features[j]);
+                    filter.push(new_layer);
+                    filterLayer.addLayer(new_layer);
                 }
             }
 

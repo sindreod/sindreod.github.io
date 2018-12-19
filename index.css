@@ -272,7 +272,7 @@ body {
 
 .resetButton {
     margin: 0 9px 0 9px;
-    position: absolute;
+    position: fixed;
     bottom: 9px;
 }
 
@@ -315,6 +315,45 @@ input[type="color"]::-webkit-color-swatch {
     display: inline-block;
 }
 
+#s6_city {
+    width: 60%;
+    margin: 5px 70px;
+}
+
+#s6_city_ans {
+    width: 100%;
+}
+
+#badge {
+    width: 288px;
+    height: 15px;
+    padding: 4px 0 4px 0;
+    margin: 0px 4px 0px 4px;
+    border-bottom: 1px solid #FFCB05;
+    font-size: medium;
+    color: #FFCB05;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* SCROLL BAR */
+
+/* width */
+::-webkit-scrollbar {
+    width: 1px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 1px grey;
+    border-radius: 1px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: yellow;
+    border-radius: 1px;
+}
 
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {

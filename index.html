@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head> 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +9,17 @@
     <script src="js/fileLoad.js"></script>
     <script src="js/mapOperations.js"></script>
 
-
     <!-- Lib libraries -->
+    <!-- SHP2GEOJSON -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.3/proj4.js"></script>
+    <script src="lib/jszip.js"></script>
+    <script src="lib/jszip-utils.js"></script>
+    <!--[if IE]>
+    <script type="text/javascript" src="lib/jszip-utils-ie.js"></script>
+    <![endif]-->
+
+    <script src="lib/preprocess.js"></script>
+    <script src="lib/preview.js"></script>
     <script src="lib/leaflet.js"></script> <!-- Leaflet osv basemap -->
     <script src="lib/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
     <script src="lib/jquery-3.3.1.min.js"></script> <!-- jQuery API -->
@@ -29,7 +38,7 @@
 <body>
 <!-- Side navigation -->
 <div class="sidenav">
-    <img src="PokeGIS.png" alt="PokéGIS">
+    <a  href="about/index.html"><img src="PokeGIS.png" alt="PokéGIS"></a>
     <!-- Tab links -->
     <div id = "cssmenu" class="tab">
         <ul>
@@ -44,9 +53,10 @@
             <li>
                 <div id="buffer" class="dropDown">Buffer</div>
                 <div class="dropDownContent">
-                    <span class="dropDownLeft">Layergroup:</span>
+                    <span class="dropDownLeft">Layer:</span>
                     <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
                     </select>
                     <span class="dropDownLeft">Distance:</span>
                     <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
@@ -62,10 +72,12 @@
                     <span class="dropDownLeft">Layer1:</span>
                     <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
                     </select>
                     <span class="dropDownLeft">Layer2:</span>
                     <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
                     </select>
                     <button id="createUnion"
                         onclick="createUnion('unionLayerGroup1','unionLayerGroup2')">
@@ -79,10 +91,12 @@
                     <span class="dropDownLeft">Layer1:</span>
                     <select id="intersectionLayerGroup1" name="intersectionSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
                     </select>
                     <span class="dropDownLeft">Layer2:</span>
                     <select id="intersectionLayerGroup2" name="intersectionSelect2" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
                     </select>
                     <button id="createIntersection"
                             onclick="createIntersection('intersectionLayerGroup1','intersectionLayerGroup2')">
@@ -97,10 +111,12 @@
                     <span class="dropDownLeft">Layer:</span>
                     <select id="differenceLayerGroup1" name="differenceSelect1" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
                     </select>
                     <span class="dropDownLeft">Diff. layer:</span>
                     <select id="differenceLayerGroup2" name="differenceSelect2" class="dropDownLayers dropDownLayerGroup" required>
                         <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
                     </select>
                     <button id="createDifference"
                             onclick="createDifference('differenceLayerGroup1','differenceLayerGroup2')">
@@ -116,13 +132,16 @@
                     <select id="filterLayerGroup" class="dropDownLayers dropDownLayerGroup" required
                             onchange="updateFilterSelect('filterSelect','filterLayerGroup')">
                         <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
                     </select>
                     <select id="filterSelect" required
                             onchange="updateFilterValue('filterDiv','filterLayerGroup','filterSelect')">
                         <!-- Options here -->
+                        <option selected disabled> -- Choose attribute -- </option>
                     </select>
                     <select id="filterSign" required>
                         <!-- Option signs -->
+                        <option selected disabled> -- Choose sign -- </option>
                     </select>
                     <br id="break">
                     <button id="createFilter"
@@ -144,15 +163,16 @@
             <li>
                 <div id="importHeader" class="dropDown">Import</div>
                 <div class="dropDownContent">
-                    <input id="fileImport" type="file" accept=".geojson" multiple>
-                    <button id="import">Import geojson to map</button>
+                    <h4>Import a geojson or shapefile to the map. If you want to upload a shapefile, zip it together with the rquired files and upload the zip folder. </h4>
+                    <input id="fileImport" type="file" accept=".geojson,.zip" multiple>
+                    <button id="import">Import file to map</button>
                 </div>
             </li>
             <li>
                 <div id="exportHeader" class="dropDown">Export</div>
                 <div class="dropDownContent">
                     Layer:
-                    <select id="exportSelect" class="dropDownLayers dropDownLayerGroup" required
+                    <select id="exportSelect" class="dropDownLayers dropDownLayerGroup" required>
                     <!-- Options here -->
                     </select>
                     <button id="export">Export layer to geojson</button>
@@ -181,14 +201,12 @@
                     <div style="display: none" class="s1_1">
                         <h4>Hello there! Welcome to the world of pokémon. My name is Oak! People call me the pokémon Prof! This world is inhabited by creatures called pokémon! For some people, pokémon are pets. Others use them for fights. Myself...I study pokémon as a profession using GIS-tools to master it. <br><br> First we will have a look at the basics of GIS.</h4>
                         <button class="story_button next_button" style="float: right">Next Page</button>
-                        <button class="story_button menu_button" style="float: right">Close Page</button>
                     </div>
                     <div style="display: none" class="s1_2">
                         <h4>Maps consist of different layers. Each layer can take up different forms; points, lines and polygons. <br><br> Now you will learn a little about each type of layer.</h4>
                         <img src="points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
                         <button class="story_button previous_button">Prev Page</button>
-                        <button class="story_button menu_button">Close Page</button>
-                        <button id="s1_2n" class="story_button next_button">Next Page</button>
+                        <button id="s1_2n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
                     <div style="display: none" class="s1_3">
                         <h4>Now, you can see a point layer is added to the map. Points are single data values that can have data assigned to them.
@@ -198,8 +216,7 @@
                         <input class="story_input" type="number" id="s1_pop" placeholder="population">
                         <button class="story_answer" id="s1_pop_ans">Check answer</button>
                         <button class="story_button previous_button">Prev Page</button>
-                        <button class="story_button menu_button">Close Page</button>
-                        <button id="s1_3n" class="story_button next_button locked">Next Page</button>
+                        <button id="s1_3n" class="story_button next_button locked" style="float: right">Next Page</button>
                     </div>
                     <div style="display: none" class="s1_4">
                         <h4>
@@ -212,8 +229,7 @@
                         <input class="story_input" type="number" id="s1_line" placeholder="route number">
                         <button class="story_answer" id="s1_line_ans">Check answer</button>
                         <button id="s1_4p" class="story_button previous_button">Prev Page</button>
-                        <button class="story_button menu_button">Close Page</button>
-                        <button id="s1_4n" class="story_button next_button locked">Next Page</button>
+                        <button id="s1_4n" class="story_button next_button locked" style="float: right">Next Page</button>
                     </div>
                     <div style="display: none" class="s1_5">
                         <h4>
@@ -227,27 +243,25 @@
                         <input class="story_input" type="number" id="s1_pol" placeholder="number of islands">
                         <button class="story_answer" id="s1_pol_ans">Check answer</button>
                         <button id="s1_5p" class="story_button previous_button">Prev Page</button>
-                        <button class="story_button menu_button">Close Page</button>
-                        <button id="s1_5n" class="story_button next_button locked">Next Page</button>
+                        <button id="s1_5n" class="story_button next_button locked" style="float: right">Next Page</button>
                     </div>
                     <div style="display: none" class="s1_6">
                         <h4>
-                            Congratulations! You have now finished your first story line. You can now go on to the buffer story.
+                            Congratulations! You have now finished your first story line and earned the Boulder badge. You can now go on to the buffer story.
                         </h4>
+                        <img src="badge1.png" height="50px" width="50px"; style="display: block; margin: auto">
                         <button class="story_button previous_button">Prev Page</button>
-                        <button class="story_button menu_button">Close Page</button>
                     </div>
                 </div>
             </li>
             <li>
-                <div class="dropDown storyHeader story2 locked">Story2: Buffer</div>
+                <div class="dropDown storyHeader story2 locked">Story 2: Buffer</div>
                 <div class="dropDownContent">
                     <div style="display: none" class="s2_1">
                         <h4>
                             You have started your pokémon adventure and reached Viridian City. Trying to buy pokéballs at the Poké Mart, the clerk gives you a parcel. A note on the parcel says: <br>"To be delivered to Professor Oak in Pallet Town" <br>
                         </h4>
                         <button class="story_button next_button" style="float: right">Next Page</button>
-                        <button class="story_button menu_button" style="float: right">Close Page</button>
                     </div>
                     <div style="display: none" class="s2_2">
                         <h4>
@@ -256,8 +270,7 @@
                         </h4>
                         <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
                         <button class="story_button previous_button">Prev Page</button>
-                        <button class="story_button menu_button">Close Page</button>
-                        <button id="s2_2n" class="story_button next_button">Next Page</button>
+                        <button id="s2_2n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
                     <div style="display: none" class="s2_3">
                         <h4>
@@ -271,39 +284,213 @@
                             <option value="true">No</option>
                         </select>
                         <button class="story_button previous_button">Prev Page</button>
-                        <button class="story_button menu_button">Close Page</button>
-                        <button id="s2_3n" class="story_button next_button locked">Next Page</button>
+                        <button id="s2_3n" class="story_button next_button locked" style="float: right">Next Page</button>
                     </div>
                     <div style="display: none" class="s2_4">
-                        <button id="s2_4p" class="story_button previous_button">Prev Page</button>
-                        <button class="story_button menu_button">Close Page</button>
-                        <button id="s2_4n" class="story_button next_button locked">Next Page</button>
+                        <h4>
+                            Congratulations! You are a buffer master. You have earned the Cascade badge. You can now go on to the union story.
+                        </h4>
+                        <img src="badge2.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
                     </div>
                 </div>
             </li>
             <li>
-                <div class="dropDown storyHeader story3 locked">Story3</div>
+                <div class="dropDown storyHeader story3 locked">Story 3: Union</div>
                 <div class="dropDownContent">
-
+                    <div style="display: none" class="s3_1">
+                        <h4>
+                            Your pokemon adventure continues. Having delivered Oak's parcel in Pallet Town you are on your way to Viridian City. <br>
+                            You are in need of a pokemon and have heard there is a lot of Pidgeys and Rattatas between the cities.
+                        </h4>
+                        <button id="s3_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s3_2">
+                        <h4>
+                            Two layers have now showed up on the map. One containing grass areas where Pidgey can be caught, and one where Rattata can be caught.
+                            Calculate the area where you can hunt for either a Pidgey or a Rattata.
+                        </h4>
+                        <button id="s3_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s3_3">
+                        <h4>
+                            The union operation can give you the answer to this. The union operation extracts all features of the two datasets and merges them into a new one.
+                        </h4>
+                        <img src="union.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s3_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_3n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s3_4">
+                        <h4>
+                            Create a union of the Pidgey and Rattata layers to find the size of the area where you can hunt for either of them.
+                        </h4>
+                        <input class="story_input" type="number" id="s3_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s3_pokemonArea_ans">Check answer</button>
+                        <button id="s3_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_4n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s3_5">
+                        <h4>
+                            Congratulations! You are a union master. You have earned the Thunder badge. You can now go on to the intersection story.
+                        </h4>
+                        <img src="badge3.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story4 locked">Story 4: Intersection</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s4_1">
+                        <h4>
+                            Your pokemon adventure continues. Your pokemon grow stronger but you want more. <br>
+                            Some trainer have told you about the rare pokemon Chansey. Some have seen it in the Safari zone, located just north of Fuschia City. When you first are there, you can try to catch a Rhyhorn as well.
+                        </h4>
+                        <button id="s4_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_2">
+                        <h4>
+                            Three layers have now showed up on the map. One with the boundaries for the Safari zone, one containing areas where Rhyhorn can be caught and one where Chansey can be caught.
+                            Calculate the area where you can hunt for both a Chansey and a Rhyhorn.
+                        </h4>
+                        <button id="s4_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_3">
+                        <h4>
+                            The intersection operation can give you the answer to this. The intersection operation extracts the features where the two datasets overlaps and merges them into a new one.
+                        </h4>
+                        <img src="intersection.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s4_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_3n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_4">
+                        <h4>
+                            Create an intersection of the Chansey and Rhyhorn layers to find the size of the area where you can hunt for both of them.
+                        </h4>
+                        <input class="story_input" type="number" id="s4_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s4_pokemonArea_ans">Check answer</button>
+                        <button id="s4_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_4n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_5">
+                        <h4>
+                            Congratulations! You are an intersection master. You have earned the Soul badge. You can now go on to the difference story.
+                        </h4>
+                        <img src="badge4.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
                 </div>
 
             </li>
             <li>
-                <div class="dropDown storyHeader story4 locked">Story4</div>
+                <div class="dropDown storyHeader story5 locked">Story 5: Difference</div>
                 <div class="dropDownContent">
-
+                    <div style="display: none" class="s5_1">
+                        <h4>
+                            Your pokemon adventure continues. You have just beaten the Kanto Pokemon League. <br>
+                            A rumour says that a mysterious pokemon, called Mewtwo, prowl in the cave Cerulean Cave just outside Cerulean City. It is said to be the most powerful pokemon.
+                        </h4>
+                        <button id="s5_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_2">
+                        <h4>
+                            But other powerful pokemon also prowl around in the cave. Your party of pokemon consists mainly of water-type pokemon.
+                            You are worried about encountering the electric-type pokemons Raichu and Magneton.
+                            Your task is to avoid them at all costs, while still having a chance to enocunter Mewtwo.
+                        </h4>
+                        <button id="s5_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_3">
+                        <h4>
+                            Four layers have now showed up on the map. They represent Cerulean cave, and the areas where Raichu, Magneton and Mewtwo prowls around.
+                            Calculate the area where you can encounter only Mewtwo.
+                        </h4>
+                        <button id="s5_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_3n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_4">
+                        <h4>
+                            The difference operation can give you the answer to this. The difference operation extracts the features of one dataset which do not overlap with the other dataset.
+                        </h4>
+                        <img src="difference.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s5_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_4n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_5">
+                        <h4>
+                            Use the difference operation to find the size of the area where you can only encounter Mewtwo.
+                        </h4>
+                        <input class="story_input" type="number" id="s5_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s5_pokemonArea_ans">Check answer</button>
+                        <button id="s5_5p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_5n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_6">
+                        <h4>
+                            Congratulations! You are a difference master. You have earned the Marsh badge. You can now go on to the filter story.
+                        </h4>
+                        <img src="badge5.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
                 </div>
-
             </li>
             <li>
-                <div class="dropDown storyHeader story5 locked">Story5</div>
-                <div class="dropDownContent"></div>
+                <div class="dropDown storyHeader story6 locked">Story 6: Filter</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s6_1">
+                        <h4>
+                            You have completed the tasks for the Kanto Region. But your journey doesn't stop here. You want to visit all cities with a population of more than 100 in the region Hoenn.
+                        </h4>
+                        <button id="s6_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s6_2">
+                        <h4>
+                            The filter operation can give you the answer to this. The filter operation extracts all features from a dataset that fulfills the condition given to it. You can set a condition to all the attributes of the dataset. <br>
+                            </h4>
+                        <button id="s6_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s6_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s6_3">
+                        <h4>
+                           Use the filter operation and select the city(ies) in the box below if it(they) fulfills the condition (Population > 100 && Region==Hoenn).
+                        </h4>
+                        <select id="s6_city" size="8" multiple>
+                            <!-- Options here (Added dynamically)-->
+                        </select>
+                        <button class="story_answer" id="s6_city_ans">Check answer</button>
+                        <button id="s6_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s6_3n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s6_4">
+                        <h4>
+                            Congratulations! You have finished all stories. You have earned the last badge: the Volcano badge. Now you can have some fun on your own with the datasets already on the map.
+                        </h4>
+                        <img src="badge6.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button id="s6_4p" class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
             </li>
             <li>
-                <div style="border-bottom: 3px solid #FFCB05"></div>
+                <div style="border-bottom: 3px solid #FFCB05; margin-bottom: 38px;"></div>
             </li>
+            <div style="margin-bottom: 126px">
         </ul>
-        <button class="resetButton" id="reset">Reset stories</button>
+        <div style="border-top: 3px solid #FFCB05; position: fixed; bottom: 0; width: 100%; margin-bottom: 38px; background-color: #111; z-index: 10">
+            <div id="badge">Badges</div>
+            <img src="badge1.png" alt="badge1" style="display: none; margin-left: 20px;" width="40px"; height="40px"; id="badge1" >
+            <img src="badge2.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge2" >
+            <img src="badge3.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge3" >
+            <img src="badge4.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge4" >
+            <img src="badge5.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge5" >
+            <img src="badge6.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge6" >
+        </div>
+        <div style="background-color: #111; border-top: 3px solid #FFCB05; height: 35px; width: 100%; position: fixed; bottom: 0; z-index: 100;">
+            <button class="resetButton" id="reset">Reset stories</button>
+        </div>
+
     </div>
 
 </div>
@@ -337,6 +524,18 @@
      //////                                                                                                       //////
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+     /*L.DrawToolbar.include({
+         getModeHandlers: function (map) {
+             return [
+                 {
+                     enabled: true,
+                     handler: incrementDrawLayer(),
+                     title: 'Create new layer to edit/draw'
+                 }
+             ];
+         }
+     });*/
+
      // FeatureGroup is to store editable layers
      var editableLayers = new L.FeatureGroup();
      map.addLayer(editableLayers);
@@ -347,6 +546,17 @@
          }
      });
      map.addControl(drawControl);
+
+     function incrementDrawLayer() {
+         var i, layer;
+         console.log("hi");
+         i = Number(myStorage.getItem('drawId'));
+         layer = new L.featureGroup();
+         map.addLayer(layer);
+         layer.addTo(map);
+         drawControl.setDrawingOptions({edit: {featureGroup: layer}});
+         myStorage.setItem('drawId', i+1);
+     }
 
      //Set bounds for startup
      var startBounds = L.latLngBounds([
@@ -634,6 +844,150 @@
          });
      });
 
+     var pidgey = L.layerGroup();
+     var rattata = L.layerGroup();
+     jQuery.getJSON("data/pokemon.geojson", function(json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 if(feature.properties.Pokemon == "Rattata") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 1,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#A6652E"
+                     };
+                 }
+                 else if (feature.properties.Pokemon == "Pidgey") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 1,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#A180B1"
+                     };
+                 }
+             },
+             onEachFeature: function (feature, layer) {
+                 if(feature.properties.Pokemon == "Rattata") {
+                     rattata.addLayer(layer);
+                 } else if (feature.properties.Pokemon == "Pidgey") {
+                     pidgey.addLayer(layer);
+                 }
+             }
+         })
+     });
+
+     var chansey = L.layerGroup();
+     var rhyhorn = L.layerGroup();
+     var safariZone = L.layerGroup();
+     jQuery.getJSON("data/pokemon2.geojson", function(json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 if(feature.properties.Pokemon == "Rhyhorn") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 1,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#6B737B"
+                     };
+                 }
+                 else if (feature.properties.Pokemon == "Chansey") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 1,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#FFCCE0"
+                     };
+                 } else if (feature.properties.Area == "Safari Zone") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.4,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#00aa00"
+                     };
+                 }
+             },
+             onEachFeature: function (feature, layer) {
+                 if(feature.properties.Pokemon == "Chansey") {
+                     chansey.addLayer(layer);
+                 } else if (feature.properties.Pokemon == "Rhyhorn") {
+                     rhyhorn.addLayer(layer);
+                 } else {
+                     safariZone.addLayer(layer);
+                 }
+             }
+         })
+     });
+
+     var magneton = L.layerGroup();
+     var mewtwo = L.layerGroup();
+     var raichu = L.layerGroup();
+     var ceruleanCave = L.layerGroup();
+     jQuery.getJSON("data/pokemon3.geojson", function(json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 if(feature.properties.Pokemon == "Magneton") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.8,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#6B737B"
+                     };
+                 }
+                 else if (feature.properties.Pokemon == "Mewtwo") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.8,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#FFCCE0"
+                     };
+                 } else if (feature.properties.Pokemon == "Raichu") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.8,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#ffff00"
+                     };
+                 } else if (feature.properties.Area == "Cerulean Cave") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.4,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#888888"
+                     };
+                 }
+             },
+             onEachFeature: function (feature, layer) {
+                 if(feature.properties.Pokemon == "Mewtwo") {
+                     mewtwo.addLayer(layer);
+                 } else if (feature.properties.Pokemon == "Magneton") {
+                     magneton.addLayer(layer);
+                 } else if (feature.properties.Pokemon == "Raichu") {
+                    raichu.addLayer(layer);
+                 } else {
+                     ceruleanCave.addLayer(layer);
+                 }
+             }
+         })
+     });
+
 
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      //////                                                                                                       //////
@@ -641,16 +995,22 @@
      //////                                                                                                       //////
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-     var removeArray = [], addArray;
+     var removeArray = [], addArray = [];
 
      // Disable locked buttons
      $(".locked").attr("disabled", "disabled");
 
      // Set css for locked stories
-     for(var i = Number(myStorage.getItem("storyIndex")) + 1; i < 6; i++) {
+     for(var i = Number(myStorage.getItem("storyIndex")) + 1; i <= 6; i++) {
          string = ".story" + i;
          $(string).css("filter", "brightness(50%)");
          $(string).css("pointer-events", "none");
+     }
+
+     // Set css for badges
+     for(var i = 2; i <= Number(myStorage.getItem("storyIndex")); i++) {
+         string = "#badge" + (i - 1);
+         $(string).css("display", "");
      }
 
      //Next page
@@ -658,7 +1018,6 @@
          $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
          myStorage.setItem("s" + currentStory + "_text", Number(myStorage.getItem("s" + currentStory + "_text"))+1);
          $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).show();
-         removeOverlays(removeArray, controls);
      });
 
      //Previous page
@@ -666,15 +1025,6 @@
          $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
          myStorage.setItem("s" + currentStory + "_text", Number(myStorage.getItem("s" + currentStory + "_text"))-1);
          $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).show();
-         removeOverlays(removeArray, controls);
-     });
-
-     //Close page
-     $(".menu_button").click(function () {
-         $('.story'+currentStory).click();
-         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
-         removeOverlays(removeArray, controls);
-         addOverlaysFromArray(addArray, controls);
      });
 
      //Reset stories
@@ -682,30 +1032,42 @@
          for(var i = 1; i <= Number(myStorage.getItem("storyIndex")) + 1; i++ ) {
              myStorage.setItem("s" + i + "_text", 1);
          }
-         myStorage.setItem("storyIndex", 2);
-         for(var i = 2; i < 6; i++) {
+         myStorage.setItem("storyIndex", 7);
+         for(var i = 2; i <= 6; i++) {
              string = ".story" + i;
              $(string).css("filter", "brightness(50%)");
              $(string).css("pointer-events", "none");
          }
-     });
-
-     //Story 1
-     $(".story1").click(function () {
-         currentStory = 1;
-         if($(".story1").hasClass("active")) {
-             addArray = controls.getOverlays();
-             removeOverlays(controls.getOverlays(), controls);
-             startStory();
-         } else {
-             removeOverlays(removeArray, controls);
-             $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
-             addOverlaysFromArray(addArray, controls);
+         // Set css for badges
+         for(var i = 2; i <= 7; i++) {
+             string = "#badge" + (i - 1);
+             $(string).css("display", "none");
          }
      });
 
+     // Click on story header
 
-     $("#s1_2n, #s1_4p").click(function () {
+     $(".storyHeader").click(function (e) {
+        currentStory = e.target.innerHTML.split(" ")[1].split(":")[0];
+         if($('.story'+currentStory).hasClass("active")) {
+             if($('.storyHeader.active').length == 1) {
+                 addArray = controls.getOverlays();
+                 removeOverlays(controls.getOverlays(), controls);
+             }
+             startStory();
+         } else {
+             $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+             if($('.storyHeader.active').length == 0) {
+                 addOverlaysFromArray(addArray, controls);
+                 removeOverlays(removeArray, controls);
+             }
+         }
+
+     });
+
+     //Story 1
+
+     $("#s1_2n").click(function () {
          cityKantoLayer.addTo(map);
          cityLegend.addTo(map);
          controls.addOverlay(cityKantoLayer, "Cities_Kanto");
@@ -713,7 +1075,7 @@
          removeArray.push(cityLegend);
      });
 
-     /*
+
      $('#s1_pop_ans').click(function(){
          var number = $('#s1_pop').val();
          if(number == 41) {
@@ -725,14 +1087,9 @@
          }
      });
 
-
-     $("#s1_3n, #s1_5p").click(function () {
-         //var c = L.control.layers(null, {"cities": cityKantoLayer}, {collapsed: false}).addTo(map);
+     $("#s1_3n").click(function () {
          roadLayer.addTo(map);
-         map.fitBounds([
-             [63.38237, 10.37658],
-             [63.34820, 10.47889]
-         ]);
+         controls.addOverlay(roadLayer, "Roads_Kanto");
          removeArray.push(roadLayer);
      });
 
@@ -748,7 +1105,7 @@
          }
      });
 
-     $("#s1_4n, #s1_6p").click(function () {
+     $("#s1_4n").click(function () {
          while (removeArray.length > 0) {
              removeArray.pop().remove();
          }
@@ -767,6 +1124,7 @@
              $(".story2").css("filter", "brightness(100%)");
              $('#s1_5n').removeClass("locked");
              $('#s1_5n').attr("disabled", false);
+             $('#badge1').css("display", "");
              myStorage.setItem("storyIndex", 2);
          } else {
              alert("Shoot! It was so close too!")
@@ -775,34 +1133,14 @@
 
 
      //Story 2
-     $(".story2").click(function () {
-         currentStory = 2;
-         if($(".story2").hasClass("active")) {
-             controls.remove();
-             startStory();
-             cityKantoLayer.addTo(map);
-             removeArray.push(cityKantoLayer);
-         } else {
-             removeOverlays(removeArray, controls);
-             $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
-             controls.addOverlay(politicalLayer, "Geographical region");
-             controls.addOverlay(cityLayer, "Cities");
-         }
-     });
-
-     $("#s2_2n, #s2_4p").click(function() {
+     $("#s2_2n").click(function() {
          cityKantoLayer.addTo(map);
          viridianCity.addTo(map);
          controls.addOverlay(cityKantoLayer, "Cities_Kanto");
          controls.addOverlay(viridianCity, "Viridian_City");
          updateLayerGroup();
-         var control2 = L.control.layers(null, {
-             "Cities Kanto": cityKantoLayer,
-             "Viridian City": viridianCity},
-             {collapsed: false}).addTo(map);
          removeArray.push(cityKantoLayer);
          removeArray.push(viridianCity);
-         removeArray.push(control2);
      });
 
      $("#s2_buf_point").change(function(){
@@ -815,13 +1153,164 @@
          }
      });
 
-     $("#s2_3n, s2_5p").click(function() {
+     $("#s2_3n").click(function() {
+         $('.story3').removeClass("locked");
+         $(".story3").css("pointer-events", "");
+         $(".story3").css("filter", "brightness(100%)");
+         $('#badge2').css("display", "");
+         myStorage.setItem("storyIndex", 3);
+     });
 
+     //Story 3
+
+     $("#s3_1n").click(function() {
+         pidgey.addTo(map);
+         rattata.addTo(map);
+         controls.addOverlay(pidgey, "Pidgey");
+         controls.addOverlay(rattata, "Rattata");
+         updateLayerGroup();
+         removeArray.push(pidgey);
+         removeArray.push(rattata);
+     });
+
+     $('#s3_pokemonArea_ans').click(function(){
+         var number = $('#s3_pokemonArea').val();
+         console.log(number);
+         if(number == 7.09) {
+             alert("Correct!");
+             $("#s3_4n").removeClass("locked");
+             $('#s3_4n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!")
+         }
+     });
+
+     $("#s3_4n").click(function () {
+         $('.story4').removeClass("locked");
+         $(".story4").css("pointer-events", "");
+         $(".story4").css("filter", "brightness(100%)");
+         $('#badge3').css("display", "");
+         myStorage.setItem("storyIndex", 4);
+     });
+
+     //Story 4
+     $("#s4_1n").click(function () {
+         safariZone.addTo(map);
+         chansey.addTo(map);
+         rhyhorn.addTo(map);
+         controls.addOverlay(safariZone, "Safari Zone");
+         controls.addOverlay(chansey, "Chansey");
+         controls.addOverlay(rhyhorn, "Rhyhorn");
+         updateLayerGroup();
+         removeArray.push(rhyhorn);
+         removeArray.push(chansey);
+         removeArray.push(safariZone);
+     });
+
+     $("#s4_pokemonArea_ans").click(function() {
+         var val = $("#s4_pokemonArea").val();
+         if (val == 0.44) {
+             alert("Correct!");
+             $("#s4_4n").removeClass("locked");
+             $('#s4_4n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!")
+         }
+     });
+
+     $("#s4_4n").click(function() {
+         $('.story5').removeClass("locked");
+         $(".story5").css("pointer-events", "");
+         $(".story5").css("filter", "brightness(100%)");
+         $('#badge4').css("display", "");
+         myStorage.setItem("storyIndex", 5);
      });
 
 
-*/
+     //Story 5
+     $("#s5_1n").click(function () {
+         ceruleanCave.addTo(map);
+         magneton.addTo(map);
+         raichu.addTo(map);
+         mewtwo.addTo(map);
+         controls.addOverlay(ceruleanCave, "Cerulean Cave");
+         controls.addOverlay(magneton, "Magneton");
+         controls.addOverlay(raichu, "Raichu");
+         controls.addOverlay(mewtwo, "Mewtwo");
+         updateLayerGroup();
+         removeArray.push(ceruleanCave);
+         removeArray.push(mewtwo);
+         removeArray.push(raichu);
+         removeArray.push(magneton);
+     });
 
+     $("#s5_pokemonArea_ans").click(function() {
+         var val = $("#s5_pokemonArea").val();
+         if (val == 1.29) {
+             alert("Correct!");
+             $("#s5_5n").removeClass("locked");
+             $('#s5_5n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!")
+         }
+     });
+
+     $("#s5_5n").click(function() {
+         $('.story6').removeClass("locked");
+         $(".story6").css("pointer-events", "");
+         $(".story6").css("filter", "brightness(100%)");
+         $('#badge5').css("display", "");
+         myStorage.setItem("storyIndex", 6);
+     });
+
+
+     //Story 6
+
+     $("#s6_2n").click(function () {
+         cityLayer.addTo(map);
+         cityLegend.addTo(map);
+         controls.addOverlay(cityLayer, "Cities");
+         updateLayerGroup();
+         removeArray.push(cityLayer);
+         removeArray.push(cityLegend);
+         cityLayer.eachLayer(function(obj) {
+             obj.eachLayer(function (obj2) {
+                 var reg = obj2.feature.properties["Region"].split(" ")[0];
+                 var s = '#s6_city > #' + reg;
+                 if($(s).length){
+                     $("#" + reg).append($('<option>', {
+                         value: obj2.feature.properties["Name"],
+                         text: obj2.feature.properties["Name"]
+                     }));
+                 } else {
+                     var string;
+                     if(reg === "Sevii") {
+                         string = '<optgroup label="Sevii Islands" id="' + reg + '">';
+                     } else {
+                         string = '<optgroup label="' + reg + '" id="' + reg + '">';
+                     }
+                     $('#s6_city').append($(string));
+                     $("#" + reg).append($('<option>', {
+                         value: obj2.feature.properties["Name"],
+                         text: obj2.feature.properties["Name"]
+                     }));
+                 }
+             });
+         });
+     });
+
+     $('#s6_city_ans').click(function() {
+         ans = $('#s6_city').val();
+         if (ans.includes("Lilycove City") && ans.includes("Mauville City")) {
+             $('#badge6').css("display", "");
+             $("#s6_3n").removeClass("locked");
+             $('#s6_3n').attr("disabled", false);
+             myStorage.setItem("storyIndex", 7);
+             alert("correct");
+         } else {
+             alert("Shoot")
+         }
+     });
 
      function startStory() {
          if(! myStorage.getItem("s" + currentStory + "_text")) {
@@ -829,9 +1318,9 @@
          }
          $('story' + currentStory + 'parent').children().hide();
          $('.s' + currentStory + '_' + myStorage.getItem("s" + currentStory + "_text")).show();
-         if($("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").length) {
+         /*if($("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").length) {
              $("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").click();
-         }
+         }*/
          map.fitBounds([
              [63.38237, 10.37658],
              [63.34820, 10.47889]
@@ -842,16 +1331,19 @@
 
      function removeOverlays(arr, con) {
          while(arr.length > 0 ) {
-             lay = arr.pop().layer;
-             con.removeLayer(lay);
-             lay.remove();
+             var el = arr.pop();
+             if (el.layer) {
+                 con.removeLayer(el.layer);
+                 el.layer.remove();
+             } else {
+                 el.remove();
+             }
          }
      }
 
      function addOverlaysFromArray(arr, con) {
-         while(arr.length > 0 ) {
-             lay = arr.pop();
-             con.addOverlay(lay.layer, lay.name);
+         for (var i = 0; i < arr.length; i++) {
+             con.addOverlay(arr[i].layer, arr[i].name);
          }
      }
 
@@ -883,58 +1375,80 @@
          // Loop through the FileList and render image files as thumbnails.
          for (var i = 0, f; f = files[i]; i++) {
 
-             if(f.name.split(".").pop() != "geojson") {
+             if(f.name.split(".").pop() != "geojson" && f.name.split(".").pop() != "zip") {
                  continue;
              }
-
              var reader = new FileReader();
 
-             // Closure to capture the file information.
-             reader.onload = (function(theFile) {
-                 return function(e) {
-                     geojson = JSON.parse(e.target.result);
+             if(f.name.split(".").pop() == "zip") {
+                 loadshp({
+                     url: f,
+                     encoding: 'utf-8',
+                     EPSG: 4326
+                 }, function(geojson) {
                      newLayer = L.layerGroup().addTo(map);
-                     if(geojson.features[0].geometry.type == "Point") {
-                         var color = "#" + Math.floor(Math.random()*16777216).toString(16);
-                         L.geoJSON(geojson, {
-                             pointToLayer: function (feature, latlng) {
-                                 return L.circleMarker(latlng, {
-                                     "radius": 10,
-                                     "stroke": true,
-                                     "weight": 1,
-                                     "color": "#000000",
-                                     "fill": true,
-                                     "fillColor": color,
-                                     "fillOpacity": 0.9
-                                 });
-                             },
-                             onEachFeature: function(feature, layer) {
-                                 res = "<strong>Layer: <u>" + theFile.name + "</u></strong><br>";
-                                 for(var key in feature.properties) {
-                                     res = res.concat("<strong>", key, ": </strong>",  feature.properties[key],"<br>");
-                                 }
-                                layer.bindPopup(function(layer) {
-                                    return res;
-                                });
-                                 newLayer.addLayer(layer);
+                     L.geoJSON(geojson, {
+                         onEachFeature: function(feature, layer) {
+                             for(var key in feature.properties) {
+                                 res = "";
+                                 res = res.concat("<strong>", key, ": </strong>",  feature.properties[key],"<br>");
                              }
-                         });
-                         overlay[theFile.name] = newLayer;
-                         newLayer.eachLayer(function (layer) {
-                             layer.on({
-                                 mouseover: highlightFeature,
-                                 mouseout: resetHighlight
+                             layer.bindPopup(res);
+                             newLayer.addLayer(layer);
+                         }
+                     });
+                     controls.addOverlay(newLayer, "SHP");
+                     updateLayerGroup();
+                 });
+             }
+             else if (f.name.split(".").pop() == "geojson"){
+                 // Closure to capture the file information.
+                 reader.onload = (function(theFile) {
+                     return function(e) {
+                         geojson = JSON.parse(e.target.result);
+                         newLayer = L.layerGroup().addTo(map);
+                         if(geojson.features[0].geometry.type == "Point") {
+                             var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+                             L.geoJSON(geojson, {
+                                 pointToLayer: function (feature, latlng) {
+                                     return L.circleMarker(latlng, {
+                                         "radius": 10,
+                                         "stroke": true,
+                                         "weight": 1,
+                                         "color": "#000000",
+                                         "fill": true,
+                                         "fillColor": color,
+                                         "fillOpacity": 0.9
+                                     });
+                                 },
+                                 onEachFeature: function(feature, layer) {
+                                     res = "<strong>Layer: <u>" + theFile.name + "</u></strong><br>";
+                                     for(var key in feature.properties) {
+                                         res = res.concat("<strong>", key, ": </strong>",  feature.properties[key],"<br>");
+                                     }
+                                     layer.bindPopup(function(layer) {
+                                         return res;
+                                     });
+                                     newLayer.addLayer(layer);
+                                 }
                              });
-                         });
-                         controls.addOverlay(newLayer, theFile.name);
-                         updateLayerGroup();
-                     } else {
-                         afterOperation(newLayer, geojson, theFile.name);
+                             overlay[theFile.name] = newLayer;
+                             newLayer.eachLayer(function (layer) {
+                                 layer.on({
+                                     mouseover: highlightFeature,
+                                     mouseout: resetHighlight
+                                 });
+                             });
+                             controls.addOverlay(newLayer, theFile.name);
+                             updateLayerGroup();
+                         } else {
+                             afterOperation(newLayer, geojson, theFile.name);
+                         }
                      }
-                 }
-             })(f);
+                 })(f);
+             }
 
-             // Read in the image file as a data URL.
+             // Read in the file as a data URL.
              reader.readAsText(f);
          }
      });
