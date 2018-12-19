@@ -21,7 +21,6 @@ function openTab(evt, tabId, tabcontentString, tablinkString) {
 }
 
 // Create dropdowns in sidenav
-
 function addDropdown() {
     var dropdown = document.getElementsByClassName("dropDown");
     for (var i = 0; i < dropdown.length; i++) {

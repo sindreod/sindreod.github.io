@@ -6,6 +6,11 @@ html, body {
     border: 0px 0px 0px 3px solid black;
 }
 
+#normalMap {
+    height: 100vh;
+    border: 0px 0px 0px 3px solid black;
+}
+
 h4 {
     margin: 0 2px 0 2px;
 }

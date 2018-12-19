@@ -21,7 +21,21 @@ L.Control.Layers.include({
 
         // Return array
         return layers;
+    },
+
+    getLayer: function(id) {
+
+        return this._getLayer(id);
+    },
+
+    getLayerWithId: function(id) {
+
+        this._layers.forEach(function(obj) {
+            return obj.getLayer(id);
+        });
+        return null;
     }
+
 
 });
 
@@ -141,3 +155,43 @@ function cloneLayer (layer) {
 if (typeof exports === 'object') {
     module.exports = cloneLayer;
 }
+
+L.incrementEditControl = L.Control.extend({
+    options: {
+        position: 'topleft'
+    },
+
+    initialize: function(options) {
+        L.Util.setOptions(this, options);
+        //i = myStorage.getItem("drawId");
+        // Continue initializing the control plugin here.
+    },
+
+    onAdd: function(map) {
+        var controlElementTag = 'div';
+        var controlElementClass = 'incrementEdit-leaflet-control';
+        var controlElement = L.DomUtil.create(controlElementTag, controlElementClass);
+
+        var img = 'div';
+        var imgClass = 'increment-Edit-leaflet-control-img';
+        var imgElement = L.DomUtil.create(imgTag, imgClass);
+        controlElement.appendChild(controlElement);
+
+        // Continue implementing the control here.
+
+        return controlElement;
+    },
+
+    onRemove: function(map) {
+        map.remove(this);
+        // Tear down the control.
+    }
+});
+/*
+L.incrementEditControl = function () {
+    return new L.IncrementEditControl({});
+};
+
+L.incrementEditControl = function(options) {
+    return new L.IncrementEditControl(options);
+};*/

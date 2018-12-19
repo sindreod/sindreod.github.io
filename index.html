@@ -5,9 +5,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="lib/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
-    <script src="js/sidenav.js"></script>
-    <script src="js/fileLoad.js"></script>
-    <script src="js/mapOperations.js"></script>
 
     <!-- Lib libraries -->
     <!-- SHP2GEOJSON -->
@@ -26,11 +23,14 @@
     <script src="lib/Sortable.min.js"></script> <!-- Sortable extension -->
     <script src="lib/turf.min.js"></script> <!-- Turf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script> <!-- Leaflet Draw Plugin -->
-    <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
     <link rel="stylesheet" href="index.css"/>
     <link rel="stylesheet" href="lib/tabMenu.css"/>
     <link rel="stylesheet" href="lib/stylesheet.css">
     <link rel="stylesheet" href="lib/leaflet.draw.css">
+    <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
+    <script src="js/sidenav.js"></script>
+    <script src="js/fileLoad.js"></script>
+    <script src="js/mapOperations.js"></script>
     <link rel="icon" href="pika.png">
     <title>PokéGIS</title>
 </head>
@@ -500,13 +500,60 @@
         </div>
 
     </div>
-    <div id="normal" class="tabcontentA">B</div>
+    <div id="normal" class="tabcontentA">
+        <div class="tab cssmenu">
+            <ul>
+                <li class="tablinksC defaultOpen" onclick="openTab(event, 'OperationsB', 'tabcontentC', 'tablinksC')"><a href="#">Operations</a></li>
+                <li class="tablinksC" onclick="openTab(event, 'LayersB', 'tabcontentC', 'tablinksC')"><a href="#">Layers</a></li>
+            </ul>
+        </div>
+        <div id="OperationsB" class="tabcontentC">
+            <ul>
+                <li>
+                    <div id="buffer2" class="dropDown">Buffer</div>
+                    <div class="dropDownContent">
+                        <span class="dropDownLeft">Layer:</span>
+                        <select id="bufferLayerGroupB" class="dropDownLayers dropDownLayerGroup" required>
+                            <!-- Options here -->
+                            <option selected disabled> -- Choose layer -- </option>
+                        </select>
+                        <span class="dropDownLeft">Distance:</span>
+                        <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
+                        <button id="createBuffer"
+                                onclick="createBuffer('bufferLayerGroup','bufferDistance')">
+                            Create buffer
+                        </button>
+                    </div>
+                    <div id="union2" class="dropDown">Union</div>
+                    <div class="dropDownContent">
+                        <!-- Here -->
+                    </div>
+                    <div id="intersection2" class="dropDown">Intersection</div>
+                    <div class="dropDownContent">
+                        <!-- Here -->
+                    </div>
+                    <div id="difference2" class="dropDown">Difference</div>
+                    <div class="dropDownContent">
+                        <!-- Here -->
+                    </div>
+                    <div id="filter2" class="dropDown">Filter</div>
+                    <div class="dropDownContent">
+                        <!-- Here -->
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div id="LayersB" class="tabcontentC">
+
+        </div>
+    </div>
 
 </div>
 
 <!-- Page content -->
 <div class="main">
     <div id="map"></div>
+    <div id="normalMap"></div>
 </div>
  <script type="text/javascript">
 
@@ -518,7 +565,11 @@
      $('.tablinksA').click(function(e) {
          var id = e.target.innerHTML === "Normal Map" ? "normal" : "pokemon";
          if(id === "normal") {
+             $('#map').hide();
+             $('#normalMap').show();
          } else if (id === "pokemon") {
+             $('#normalMap').hide();
+             $('#map').show();
          }
      });
 
@@ -536,6 +587,28 @@
          minZoom: 11,
          maxZoom: 20
      }).setView([63.366288, 10.4308315]);
+
+     var normalMap = L.map('normalMap').setView([63.42, 10.43], 13);
+     var base = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         maxZoom: 18,
+         id: 'mapbox.streets',
+         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
+     }).addTo(normalMap);
+
+     var base2 = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         maxZoom: 18,
+         id: 'mapbox.satellite',
+         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
+     });
+
+     var normalControl = L.control.layers({
+         "Streets": base,
+         "Satellite": base2
+     }, null, {collapsed: true}).addTo(normalMap);
+
+     //var incrementControl = L.IncrementEditControl({i: myStorage.getItem('drawId')}).addTo(normalMap);
 
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      //////                                                                                                       //////
@@ -560,6 +633,9 @@
      map.addLayer(editableLayers);
      editableLayers.addTo(map);
      var drawControl = new L.Control.Draw({
+         draw: {
+             circle: false
+         },
          edit: {
              featureGroup: editableLayers
          }
@@ -641,7 +717,7 @@
      updateLayerGroup();
 
      addDropdown();
-
+     
      function getPokeball(pop) {
          var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
          if (size < 200) {
@@ -1058,8 +1134,8 @@
              $(string).css("pointer-events", "none");
          }
          // Set css for badges
-         for(var i = 2; i <= 7; i++) {
-             string = "#badge" + (i - 1);
+         for(var i = 1; i <= 6; i++) {
+             string = "#badge" + (i);
              $(string).css("display", "none");
          }
      });
@@ -1067,7 +1143,7 @@
      // Click on story header
 
      $(".storyHeader").click(function (e) {
-        currentStory = e.target.innerHTML.split(" ")[1].split(":")[0];
+         currentStory = e.target.innerHTML.split(" ")[1].split(":")[0];
          if($('.story'+currentStory).hasClass("active")) {
              if($('.storyHeader.active').length == 1) {
                  addArray = controls.getOverlays();
@@ -1081,8 +1157,22 @@
                  removeOverlays(removeArray, controls);
              }
          }
-
      });
+
+     function startStory() {
+         if(! myStorage.getItem("s" + currentStory + "_text")) {
+             myStorage.setItem("s" + currentStory + "_text", 1);
+         }
+         $('story' + currentStory + 'parent').children().hide();
+         $('.s' + currentStory + '_' + myStorage.getItem("s" + currentStory + "_text")).show();
+         /*if($("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").length) {
+          $("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").click();
+          }*/
+         map.fitBounds([
+             [63.38237, 10.37658],
+             [63.34820, 10.47889]
+         ]);
+     }
 
      //Story 1
 
@@ -1330,23 +1420,6 @@
              alert("Shoot")
          }
      });
-
-     function startStory() {
-         if(! myStorage.getItem("s" + currentStory + "_text")) {
-             myStorage.setItem("s" + currentStory + "_text", 1);
-         }
-         $('story' + currentStory + 'parent').children().hide();
-         $('.s' + currentStory + '_' + myStorage.getItem("s" + currentStory + "_text")).show();
-         /*if($("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").length) {
-             $("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").click();
-         }*/
-         map.fitBounds([
-             [63.38237, 10.37658],
-             [63.34820, 10.47889]
-         ]);
-     }
-
-
 
      function removeOverlays(arr, con) {
          while(arr.length > 0 ) {
