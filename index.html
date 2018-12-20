@@ -193,13 +193,15 @@
                             <option selected disabled>-- Select Layer --</option>
                         </select></div>
                         <div><span class="dropDownLeft">Set fill color:</span>
-                        <input type="color" id="fillColorPicker"></div>
-                            <div><span class="dropDownLeft">Set outline color:</span>
-                        <input type="color" id="colorPicker"></div>
-                                <div><span class="dropDownLeft">Set opacity:</span>
-                        <input type="range" min="0" max="100" value="50" class="slider" id="opacity"></div>
-                                    <div><span class="dropDownLeft">Set outline weight:</span>
-                        <input type="range" min="0" max="100" value="50" class="slider" id="weight"></div>
+                        <input type="color" id="fillColorPicker" value="#3388ff"></div>
+                        <div><span class="dropDownLeft">Set fill opacity:</span>
+                            <input type="range" min="0" max="100" value="20" class="slider" id="opacity"></div>
+                        <div><span class="dropDownLeft">Set stroke color:</span>
+                        <input type="color" id="colorPicker" value="#3388ff"></div>
+                                    <div><span class="dropDownLeft">Set stroke weight:</span>
+                        <input type="range" min="0" max="100" value="40" class="slider" id="weight"></div>
+                        <div><span class="dropDownLeft">Set stroke opacity:</span>
+                            <input type="range" min="0" max="100" value="50" class="slider" id="strokeOpacity"></div>
                         <button id="applyStyle">Apply style</button>
                     </div>
                 </div>
@@ -786,6 +788,7 @@
          var fillColor = $("#fillColorPicker").val();
          var color = $("#colorPicker").val();
          var opacity = $("#opacity").val()/100;
+         var strokeOpacity = $("#strokeOpacity").val()/100;
          var weight = $("#weight").val()/10;
          var mainLayer = controls.getLayerWithId($("#styleSelect").val()).layer;
          console.log(mainLayer);
@@ -794,7 +797,15 @@
              fillColor: fillColor,
              color: color,
              fillOpacity: opacity,
-             weight: weight
+             weight: weight,
+             opacity: strokeOpacity
+         });
+     });
+
+     $("#opacity").on('change', function () {
+         var mainLayer = controls.getLayerWithId($("#styleSelect").val()).layer;
+         mainLayer.invoke('setStyle', {
+             fillOpacity: $( this ).val()/100
          });
      });
 
