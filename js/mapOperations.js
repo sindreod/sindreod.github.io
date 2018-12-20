@@ -210,10 +210,11 @@ function afterOperation(targetLayer, polygon, name) {
         });
     });
     controls.addOverlay(targetLayer, name);
+    updateLayerGroup();
 }
 
 function getArea(layer, factor) {
-    return Math.round(turf.area(layer.toGeoJSON())/(1000 * 1000) * (factor^2) * 100) / 100; //Make area 10 times bigger than coordinates
+    return Math.round(turf.area(layer.toGeoJSON())/(1000 * 1000) * Math.pow(10,2) * 100) / 100; //Make area 10 times bigger than coordinates
 }
 
 //Help function

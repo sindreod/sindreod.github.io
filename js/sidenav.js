@@ -42,14 +42,30 @@ function updateLayerGroup() {
     var overlays = controls.getOverlays();
     for(var i = 0; i< targets.length; i++) {
         //Clear dropdown options
-        while(targets[i].length > 1) {
+        while (targets[i].length > 1) {
             targets[i].removeChild(targets[i].children[1]);
         }
-        for(var key in overlays) {
-            var element = document.createElement("OPTION");
-            element.innerHTML = overlays[key].name;
-            targets[i].add(element);
-        }
+    }
+    for(var i = 0; i < overlays.length; i++) {
+        var element = document.createElement("OPTION");
+        element.innerHTML = overlays[i].name;
+        //element.value = "" + L.Util.stamp(overlays[i]);
+        $(".dropDownLayerGroup").append(element);
+    }
+}
+
+function updateStyleLayers() {
+    target = document.getElementById("styleSelect");
+    var overlays = controls.getOverlays();
+    //Clear dropdown options
+    while (target.length > 1) {
+        target.removeChild(target.children[1]);
+    }
+    for(var i = 0; i < overlays.length; i++) {
+        var element = document.createElement("OPTION");
+        element.innerHTML = overlays[i].name;
+        element.value = "" + L.Util.stamp(overlays[i]);
+        $("#styleSelect").append(element);
     }
 }
 
@@ -158,24 +174,5 @@ function getSelectedLayer(layerName) {
         if(overlays[i].name == layerName) {
             return overlays[i].layer;
         }
-    }
-}
-
-/* For the normal map */
-function updateLayers() {
-    var i, selectElements, layers;
-    layers = normalControl.getOverlays();
-
-    selectElements = $(".dropDownLayersB");
-    for (i = 0; i < selectElements.length; i++) {
-        while (selectElements[i].length > 1) {
-            selectElements[i].removeChild(selectElements[i].children[1]);
-        }
-    }
-
-    for(i = 0; i < layers.length; i++) {
-        $(".dropDownLayersB").append($('<option></option>')
-        .html(layers[i].name)
-        .val(L.Util.stamp(layers[i])));
     }
 }

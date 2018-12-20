@@ -65,125 +65,53 @@ function loadOverlayData() {
     jQuery.getJSON("data/political.geojson", function (json) {
         L.geoJSON(json, {
             style: function (feature) {
+                var obj = {"fill": true,
+                    "fillOpacity": 0.7,
+                    "stroke": true,
+                    "color": "#000000",
+                    "weight": 1
+                };
                 switch (feature.properties.description) {
                     case "Kanto":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#ff0000"
-                        };
+                        obj["fillColor"] = "#ff0000";
+                        break;
                     case "Johto":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#ffff00"
-                        };
+                        obj["fillColor"] = "#ffff00";
+                        break;
                     case "Holon":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#ff00ff"
-                        };
+                        obj["fillColor"] = "#ff00ff";
+                        break;
                     case "Sinnoh":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#ffffff"
-                        };
+                        obj["fillColor"] = "#ffffff";
+                        break;
                     case "Hoenn":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#ff0000"
-                        };
+                        obj["fillColor"] = "#ff0000";
+                        break;
                     case "Orange Islands":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#ff7700"
-                        };
+                        obj["fillColor"] = "#ff7700";
+                        break;
                     case "Sevii Islands":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#0000ff"
-                        };
+                        obj["fillColor"] = "#0000ff";
+                        break;
                     case "Fiore":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#2CAA40"
-                        };
+                        obj["fillColor"] = "#2CAA40";
+                        break;
                     case "Unova":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#0000ff"
-                        };
+                        obj["fillColor"] = "#0000ff";
+                        break;
                     case "Almia":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#00ff00"
-                        };
+                        obj["fillColor"] = "#00ff00";
+                        break;
                     case "Orre":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#ff0000"
-                        };
+                        obj["fillColor"] = "#ff0000";
+                        break;
                     case "Oblivia":
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#ffffff"
-                        };
+                        obj["fillColor"] = "#ffffff";
+                        break;
                     default:
-                        return {
-                            "fill": true,
-                            "fillOpacity": 1,
-                            "stroke": true,
-                            "color": "#000000",
-                            "weight": 1,
-                            "fillColor": "#555555"
-                        };
-                }
+                        obj["fillColor"] = "#555555";
+                        break;
+                } return obj;
             }, //Add features in dictionary layers
             onEachFeature: function(feature, layer) {
                 if(feature.properties.description in regions) {

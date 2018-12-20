@@ -23,17 +23,19 @@ L.Control.Layers.include({
         return layers;
     },
 
-    getLayer: function(id) {
-
-        return this._getLayer(id);
-    },
-
     getLayerWithId: function(id) {
+        var object = null;
 
         this._layers.forEach(function(obj) {
-            return obj.getLayer(id);
+
+            if(obj.overlay) {
+
+                if(Number(obj._leaflet_id) === Number(id)) {
+                    object = obj;
+                }
+            }
         });
-        return null;
+        return object;
     }
 
 

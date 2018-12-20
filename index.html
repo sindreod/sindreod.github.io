@@ -39,540 +39,469 @@
 <!-- Side navigation -->
 <div class="sidenav">
     <a  href="about/"><img src="PokeGIS.png" alt="PokéGIS"></a>
-    <div class="tab tabmenu">
+    <div class="tab cssmenu">
         <ul>
-            <li class="tablinksA defaultOpen" onclick="openTab(event, 'pokemon', 'tabcontentA', 'tablinksA')"><a href="#">Pokemon Map</a></li>
-            <li class="tablinksA" onclick="openTab(event, 'normal', 'tabcontentA', 'tablinksA')"><a href="#">Normal Map</a></li>
+            <li class="tablinks defaultOpen" onclick="openTab(event, 'Operations', 'tabcontent', 'tablinks')"><a href="#">Operations</a></li>
+            <li class="tablinks" onclick="openTab(event, 'Layers', 'tabcontent', 'tablinks')"><a href="#">Layers</a></li>
+            <li class="tablinks" onclick="openTab(event, 'Story', 'tabcontent', 'tablinks')"><a href="#">Story</a></li>
         </ul>
     </div>
-    <div id="pokemon" class="tabcontentA">
-        <div class="tab cssmenu">
-            <ul>
-                <li class="tablinksB defaultOpen" onclick="openTab(event, 'Operations', 'tabcontentB', 'tablinksB')"><a href="#">Operations</a></li>
-                <li class="tablinksB" onclick="openTab(event, 'Layers', 'tabcontentB', 'tablinksB')"><a href="#">Layers</a></li>
-                <li class="tablinksB" onclick="openTab(event, 'Story', 'tabcontentB', 'tablinksB')"><a href="#">Story</a></li>
-            </ul>
-        </div>
 
-        <div id="Operations" class="tabcontentB">
-            <ul>
-                <li>
-                    <div id="buffer" class="dropDown">Buffer</div>
-                    <div class="dropDownContent">
-                        <span class="dropDownLeft">Layer:</span>
-                        <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required>
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
-                        </select>
-                        <span class="dropDownLeft">Distance:</span>
-                        <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
-                        <button id="createBuffer"
-                                onclick="createBuffer('bufferLayerGroup','bufferDistance')">
-                            Create buffer
-                        </button>
-                    </div>
-                </li>
-                <li>
-                    <div id="Union" class="dropDown">Union</div>
-                    <div class="dropDownContent">
-                        <span class="dropDownLeft">Layer1:</span>
-                        <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required>
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
-                        </select>
-                        <span class="dropDownLeft">Layer2:</span>
-                        <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required>
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
-                        </select>
-                        <button id="createUnion"
-                                onclick="createUnion('unionLayerGroup1','unionLayerGroup2')">
-                            Create union
-                        </button>
-                    </div>
-                </li>
-                <li>
-                    <div id="Intersection" class="dropDown">Intersection</div>
-                    <div class="dropDownContent">
-                        <span class="dropDownLeft">Layer1:</span>
-                        <select id="intersectionLayerGroup1" name="intersectionSelect1" class="dropDownLayers dropDownLayerGroup" required>
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
-                        </select>
-                        <span class="dropDownLeft">Layer2:</span>
-                        <select id="intersectionLayerGroup2" name="intersectionSelect2" class="dropDownLayers dropDownLayerGroup" required>
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
-                        </select>
-                        <button id="createIntersection"
-                                onclick="createIntersection('intersectionLayerGroup1','intersectionLayerGroup2')">
-                            Create intersection
-                        </button>
-                    </div>
+    <div id="Operations" class="tabcontent">
+        <ul>
+            <li>
+                <div id="buffer" class="dropDown">Buffer</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <span class="dropDownLeft">Distance:</span>
+                    <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
+                    <button id="createBuffer"
+                            onclick="createBuffer('bufferLayerGroup','bufferDistance')">
+                        Create buffer
+                    </button>
+                </div>
+            </li>
+            <li>
+                <div id="Union" class="dropDown">Union</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer1:</span>
+                    <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <span class="dropDownLeft">Layer2:</span>
+                    <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <button id="createUnion"
+                            onclick="createUnion('unionLayerGroup1','unionLayerGroup2')">
+                        Create union
+                    </button>
+                </div>
+            </li>
+            <li>
+                <div id="Intersection" class="dropDown">Intersection</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer1:</span>
+                    <select id="intersectionLayerGroup1" name="intersectionSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <span class="dropDownLeft">Layer2:</span>
+                    <select id="intersectionLayerGroup2" name="intersectionSelect2" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <button id="createIntersection"
+                            onclick="createIntersection('intersectionLayerGroup1','intersectionLayerGroup2')">
+                        Create intersection
+                    </button>
+                </div>
 
-                </li>
-                <li>
-                    <div id="Difference" class="dropDown">Difference</div>
-                    <div class="dropDownContent">
-                        <span class="dropDownLeft">Layer:</span>
-                        <select id="differenceLayerGroup1" name="differenceSelect1" class="dropDownLayers dropDownLayerGroup" required>
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
-                        </select>
-                        <span class="dropDownLeft">Diff. layer:</span>
-                        <select id="differenceLayerGroup2" name="differenceSelect2" class="dropDownLayers dropDownLayerGroup" required>
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
-                        </select>
-                        <button id="createDifference"
-                                onclick="createDifference('differenceLayerGroup1','differenceLayerGroup2')">
-                            Create difference
-                        </button>
-                    </div>
+            </li>
+            <li>
+                <div id="Difference" class="dropDown">Difference</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="differenceLayerGroup1" name="differenceSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <span class="dropDownLeft">Diff. layer:</span>
+                    <select id="differenceLayerGroup2" name="differenceSelect2" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <button id="createDifference"
+                            onclick="createDifference('differenceLayerGroup1','differenceLayerGroup2')">
+                        Create difference
+                    </button>
+                </div>
 
-                </li>
-                <li>
-                    <div id="Filter" class="dropDown">Filter</div>
-                    <div class="dropDownContent" id="filterDiv">
-                        <span class="dropDownLeft">Layer:</span>
-                        <select id="filterLayerGroup" class="dropDownLayers dropDownLayerGroup" required
-                                onchange="updateFilterSelect('filterSelect','filterLayerGroup')">
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
-                        </select>
-                        <select id="filterSelect" required
-                                onchange="updateFilterValue('filterDiv','filterLayerGroup','filterSelect')">
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose attribute -- </option>
-                        </select>
-                        <select id="filterSign" required>
-                            <!-- Option signs -->
-                            <option selected disabled> -- Choose sign -- </option>
-                        </select>
-                        <br id="break">
-                        <button id="createFilter"
-                                onclick="createFilter('filterLayerGroup','filterSelect','filterSign','filterValues')">
-                            Extract features
-                        </button>
+            </li>
+            <li>
+                <div id="Filter" class="dropDown">Filter</div>
+                <div class="dropDownContent" id="filterDiv">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="filterLayerGroup" class="dropDownLayers dropDownLayerGroup" required
+                            onchange="updateFilterSelect('filterSelect','filterLayerGroup')">
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <select id="filterSelect" required
+                            onchange="updateFilterValue('filterDiv','filterLayerGroup','filterSelect')">
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose attribute -- </option>
+                    </select>
+                    <select id="filterSign" required>
+                        <!-- Option signs -->
+                        <option selected disabled> -- Choose sign -- </option>
+                    </select>
+                    <br id="break">
+                    <button id="createFilter"
+                            onclick="createFilter('filterLayerGroup','filterSelect','filterSign','filterValues')">
+                        Extract features
+                    </button>
 
-                    </div>
-                </li>
-                <li>
-                    <div style="border-bottom: 3px solid #FFCB05"></div>
-                </li>
-            </ul>
-            <button class="resetButton" id="resetAll">Reset All</button>
-        </div>
+                </div>
+            </li>
+            <li>
+                <div style="border-bottom: 3px solid #FFCB05"></div>
+            </li>
+        </ul>
+        <button class="resetButton" id="resetAll">Reset All</button>
+    </div>
 
-        <div id="Layers" class="tabcontentB">
-            <ul>
-                <li>
-                    <div id="importHeader" class="dropDown">Import</div>
-                    <div class="dropDownContent">
-                        <h4>Import a geojson or shapefile to the map. If you want to upload a shapefile, zip it together with the rquired files and upload the zip folder. </h4>
-                        <input id="fileImport" type="file" accept=".geojson,.zip" multiple>
-                        <button id="import">Import file to map</button>
+    <div id="Layers" class="tabcontent">
+        <ul>
+            <li>
+                <div id="importHeader" class="dropDown">Import</div>
+                <div class="dropDownContent">
+                    <h4>Import a geojson or shapefile to the map. If you want to upload a shapefile, zip it together with the rquired files and upload the zip folder. </h4>
+                    <input id="fileImport" type="file" accept=".geojson,.zip" multiple>
+                    <button id="import">Import file to map</button>
+                </div>
+            </li>
+            <li>
+                <div id="exportHeader" class="dropDown">Export</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="exportSelect" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled>-- Select Layer --</option>
+                    </select>
+                    <button id="export">Export layer to geojson</button>
+                </div>
+            </li>
+            <li>
+                <div id="styleHeader" class="dropDown">Style layers</div>
+                <div class="dropDownContent">
+                    <div id="style_layers">
+                        <div><span class="dropDownLeft">Layer:</span>
+                        <select id="styleSelect" class="dropDownLayers">
+                            <option selected disabled>-- Select Layer --</option>
+                        </select></div>
+                        <div><span class="dropDownLeft">Set fill color:</span>
+                        <input type="color" id="fillColorPicker"></div>
+                            <div><span class="dropDownLeft">Set outline color:</span>
+                        <input type="color" id="colorPicker"></div>
+                                <div><span class="dropDownLeft">Set opacity:</span>
+                        <input type="range" min="0" max="100" value="50" class="slider" id="opacity"></div>
+                                    <div><span class="dropDownLeft">Set outline weight:</span>
+                        <input type="range" min="0" max="100" value="50" class="slider" id="weight"></div>
+                        <button id="applyStyle">Apply style</button>
                     </div>
-                </li>
-                <li>
-                    <div id="exportHeader" class="dropDown">Export</div>
-                    <div class="dropDownContent">
-                        Layer:
-                        <select id="exportSelect" class="dropDownLayers dropDownLayerGroup" required>
-                            <!-- Options here -->
-                        </select>
-                        <button id="export">Export layer to geojson</button>
-                    </div>
-                </li>
-                <li>
-                    <div id="styleHeader" class="dropDown">Style layers</div>
-                    <div class="dropDownContent">
-                        <div id="style_layers">
-                            <h4 style="text-align: center">Active layers appear here: <br></h4>
-                            <!-- Layers here -->
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <div style="border-bottom: 3px solid #FFCB05"></div>
-            <output id="import_list"></output>
-            <div style="border-bottom: 3px solid #FFCB05"></div>
-
-        </div>
-        <div id="Story" class="tabcontentB">
-            <ul>
-                <li>
-                    <div class="dropDown storyHeader story1">Story 1: The Basics</div>
-                    <div class="dropDownContent story1parent">
-                        <div style="display: none" class="s1_1">
-                            <h4>Hello there! Welcome to the world of pokémon. My name is Oak! People call me the pokémon Prof! This world is inhabited by creatures called pokémon! For some people, pokémon are pets. Others use them for fights. Myself...I study pokémon as a profession using GIS-tools to master it. <br><br> First we will have a look at the basics of GIS.</h4>
-                            <button class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s1_2">
-                            <h4>Maps consist of different layers. Each layer can take up different forms; points, lines and polygons. <br><br> Now you will learn a little about each type of layer.</h4>
-                            <img src="points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
-                            <button class="story_button previous_button">Prev Page</button>
-                            <button id="s1_2n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s1_3">
-                            <h4>Now, you can see a point layer is added to the map. Points are single data values that can have data assigned to them.
-                                This layer represents the cities of the region Kanto. Each city is represented by a pokeball. The balls are scaled with the size of the city, but not linear. It uses scaled circles, a logarithmic size expansion. <br>
-                                Click on a city to get more information and find the population of Lavender Town.
-                            </h4>
-                            <input class="story_input" type="number" id="s1_pop" placeholder="population">
-                            <button class="story_answer" id="s1_pop_ans">Check answer</button>
-                            <button class="story_button previous_button">Prev Page</button>
-                            <button id="s1_3n" class="story_button next_button locked" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s1_4">
-                            <h4>
-                                Now we have added the roads in kanto to the map. The roads are represented by lines on the map. Each line consists of multiple points connected to each other. <br>
-                            </h4>
-                            <img src="line.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
-                            <h4>
-                                Click on the road between Viridian City and Pewter City to find the route number.
-                            </h4>
-                            <input class="story_input" type="number" id="s1_line" placeholder="route number">
-                            <button class="story_answer" id="s1_line_ans">Check answer</button>
-                            <button id="s1_4p" class="story_button previous_button">Prev Page</button>
-                            <button id="s1_4n" class="story_button next_button locked" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s1_5">
-                            <h4>
-                                The last type of layers we will have a look at are polygons. Polygons are closed loop of lines. <br>
-                            </h4>
-                            <img src="polygon.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
-                            <h4>
-                                Your task is to find out how many islands the region of Hoenn are made up of. Hover or click a region to get more information about it.
-
-                            </h4>
-                            <input class="story_input" type="number" id="s1_pol" placeholder="number of islands">
-                            <button class="story_answer" id="s1_pol_ans">Check answer</button>
-                            <button id="s1_5p" class="story_button previous_button">Prev Page</button>
-                            <button id="s1_5n" class="story_button next_button locked" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s1_6">
-                            <h4>
-                                Congratulations! You have now finished your first story line and earned the Boulder badge. You can now go on to the buffer story.
-                            </h4>
-                            <img src="badge1.png" height="50px" width="50px"; style="display: block; margin: auto">
-                            <button class="story_button previous_button">Prev Page</button>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="dropDown storyHeader story2 locked">Story 2: Buffer</div>
-                    <div class="dropDownContent">
-                        <div style="display: none" class="s2_1">
-                            <h4>
-                                You have started your pokémon adventure and reached Viridian City. Trying to buy pokéballs at the Poké Mart, the clerk gives you a parcel. A note on the parcel says: <br>"To be delivered to Professor Oak in Pallet Town" <br>
-                            </h4>
-                            <button class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s2_2">
-                            <h4>
-                                It is starting to get dark and you know powerful pokémon sneak around in the grass after sunset. Worried about encountering one you decide to start the walk to Pallet Town, only if it is less than 6 km to walk.
-                                A buffer can give you the answer to this. Use the buffer tool in the operations tab to construct a buffer around Viridian City.
-                            </h4>
-                            <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
-                            <button class="story_button previous_button">Prev Page</button>
-                            <button id="s2_2n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s2_3">
-                            <h4>
-                                Use the buffer tool in the operations tab to construct a buffer around Viridian City with distance 6 km.
-                            </h4>
-                            <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
-                            <h4>Is Pallet Town within 6 km from Viridian City? </h4>
-                            <select id="s2_buf_point" style="display: block; float: left; margin: 0 74px 0 73px">
-                                <option disabled="disabled" selected>-- Select answer --</option>
-                                <option value="false">Yes</option>
-                                <option value="true">No</option>
-                            </select>
-                            <button class="story_button previous_button">Prev Page</button>
-                            <button id="s2_3n" class="story_button next_button locked" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s2_4">
-                            <h4>
-                                Congratulations! You are a buffer master. You have earned the Cascade badge. You can now go on to the union story.
-                            </h4>
-                            <img src="badge2.png" height="50px" width="50px"; style="display: block; margin: auto">
-                            <button class="story_button previous_button">Prev Page</button>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="dropDown storyHeader story3 locked">Story 3: Union</div>
-                    <div class="dropDownContent">
-                        <div style="display: none" class="s3_1">
-                            <h4>
-                                Your pokemon adventure continues. Having delivered Oak's parcel in Pallet Town you are on your way to Viridian City. <br>
-                                You are in need of a pokemon and have heard there is a lot of Pidgeys and Rattatas between the cities.
-                            </h4>
-                            <button id="s3_1n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s3_2">
-                            <h4>
-                                Two layers have now showed up on the map. One containing grass areas where Pidgey can be caught, and one where Rattata can be caught.
-                                Calculate the area where you can hunt for either a Pidgey or a Rattata.
-                            </h4>
-                            <button id="s3_2p" class="story_button previous_button">Prev Page</button>
-                            <button id="s3_2n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s3_3">
-                            <h4>
-                                The union operation can give you the answer to this. The union operation extracts all features of the two datasets and merges them into a new one.
-                            </h4>
-                            <img src="union.png" style="width: 200px; margin: 0 41px 0 41px">
-                            <button id="s3_3p" class="story_button previous_button">Prev Page</button>
-                            <button id="s3_3n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s3_4">
-                            <h4>
-                                Create a union of the Pidgey and Rattata layers to find the size of the area where you can hunt for either of them.
-                            </h4>
-                            <input class="story_input" type="number" id="s3_pokemonArea" placeholder="Area size in km^2">
-                            <button class="story_answer" id="s3_pokemonArea_ans">Check answer</button>
-                            <button id="s3_4p" class="story_button previous_button">Prev Page</button>
-                            <button id="s3_4n" class="story_button next_button locked" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s3_5">
-                            <h4>
-                                Congratulations! You are a union master. You have earned the Thunder badge. You can now go on to the intersection story.
-                            </h4>
-                            <img src="badge3.png" height="50px" width="50px"; style="display: block; margin: auto">
-                            <button class="story_button previous_button">Prev Page</button>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="dropDown storyHeader story4 locked">Story 4: Intersection</div>
-                    <div class="dropDownContent">
-                        <div style="display: none" class="s4_1">
-                            <h4>
-                                Your pokemon adventure continues. Your pokemon grow stronger but you want more. <br>
-                                Some trainer have told you about the rare pokemon Chansey. Some have seen it in the Safari zone, located just north of Fuschia City. When you first are there, you can try to catch a Rhyhorn as well.
-                            </h4>
-                            <button id="s4_1n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s4_2">
-                            <h4>
-                                Three layers have now showed up on the map. One with the boundaries for the Safari zone, one containing areas where Rhyhorn can be caught and one where Chansey can be caught.
-                                Calculate the area where you can hunt for both a Chansey and a Rhyhorn.
-                            </h4>
-                            <button id="s4_2p" class="story_button previous_button">Prev Page</button>
-                            <button id="s4_2n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s4_3">
-                            <h4>
-                                The intersection operation can give you the answer to this. The intersection operation extracts the features where the two datasets overlaps and merges them into a new one.
-                            </h4>
-                            <img src="intersection.png" style="width: 200px; margin: 0 41px 0 41px">
-                            <button id="s4_3p" class="story_button previous_button">Prev Page</button>
-                            <button id="s4_3n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s4_4">
-                            <h4>
-                                Create an intersection of the Chansey and Rhyhorn layers to find the size of the area where you can hunt for both of them.
-                            </h4>
-                            <input class="story_input" type="number" id="s4_pokemonArea" placeholder="Area size in km^2">
-                            <button class="story_answer" id="s4_pokemonArea_ans">Check answer</button>
-                            <button id="s4_4p" class="story_button previous_button">Prev Page</button>
-                            <button id="s4_4n" class="story_button next_button locked" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s4_5">
-                            <h4>
-                                Congratulations! You are an intersection master. You have earned the Soul badge. You can now go on to the difference story.
-                            </h4>
-                            <img src="badge4.png" height="50px" width="50px"; style="display: block; margin: auto">
-                            <button class="story_button previous_button">Prev Page</button>
-                        </div>
-                    </div>
-
-                </li>
-                <li>
-                    <div class="dropDown storyHeader story5 locked">Story 5: Difference</div>
-                    <div class="dropDownContent">
-                        <div style="display: none" class="s5_1">
-                            <h4>
-                                Your pokemon adventure continues. You have just beaten the Kanto Pokemon League. <br>
-                                A rumour says that a mysterious pokemon, called Mewtwo, prowl in the cave Cerulean Cave just outside Cerulean City. It is said to be the most powerful pokemon.
-                            </h4>
-                            <button id="s5_1n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s5_2">
-                            <h4>
-                                But other powerful pokemon also prowl around in the cave. Your party of pokemon consists mainly of water-type pokemon.
-                                You are worried about encountering the electric-type pokemons Raichu and Magneton.
-                                Your task is to avoid them at all costs, while still having a chance to enocunter Mewtwo.
-                            </h4>
-                            <button id="s5_2p" class="story_button previous_button">Prev Page</button>
-                            <button id="s5_2n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s5_3">
-                            <h4>
-                                Four layers have now showed up on the map. They represent Cerulean cave, and the areas where Raichu, Magneton and Mewtwo prowls around.
-                                Calculate the area where you can encounter only Mewtwo.
-                            </h4>
-                            <button id="s5_3p" class="story_button previous_button">Prev Page</button>
-                            <button id="s5_3n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s5_4">
-                            <h4>
-                                The difference operation can give you the answer to this. The difference operation extracts the features of one dataset which do not overlap with the other dataset.
-                            </h4>
-                            <img src="difference.png" style="width: 200px; margin: 0 41px 0 41px">
-                            <button id="s5_4p" class="story_button previous_button">Prev Page</button>
-                            <button id="s5_4n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s5_5">
-                            <h4>
-                                Use the difference operation to find the size of the area where you can only encounter Mewtwo.
-                            </h4>
-                            <input class="story_input" type="number" id="s5_pokemonArea" placeholder="Area size in km^2">
-                            <button class="story_answer" id="s5_pokemonArea_ans">Check answer</button>
-                            <button id="s5_5p" class="story_button previous_button">Prev Page</button>
-                            <button id="s5_5n" class="story_button next_button locked" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s5_6">
-                            <h4>
-                                Congratulations! You are a difference master. You have earned the Marsh badge. You can now go on to the filter story.
-                            </h4>
-                            <img src="badge5.png" height="50px" width="50px"; style="display: block; margin: auto">
-                            <button class="story_button previous_button">Prev Page</button>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="dropDown storyHeader story6 locked">Story 6: Filter</div>
-                    <div class="dropDownContent">
-                        <div style="display: none" class="s6_1">
-                            <h4>
-                                You have completed the tasks for the Kanto Region. But your journey doesn't stop here. You want to visit all cities with a population of more than 100 in the region Hoenn.
-                            </h4>
-                            <button id="s6_1n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s6_2">
-                            <h4>
-                                The filter operation can give you the answer to this. The filter operation extracts all features from a dataset that fulfills the condition given to it. You can set a condition to all the attributes of the dataset. <br>
-                            </h4>
-                            <button id="s6_2p" class="story_button previous_button">Prev Page</button>
-                            <button id="s6_2n" class="story_button next_button" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s6_3">
-                            <h4>
-                                Use the filter operation and select the city(ies) in the box below if it(they) fulfills the condition (Population > 100 && Region==Hoenn).
-                            </h4>
-                            <select id="s6_city" size="8" multiple>
-                                <!-- Options here (Added dynamically)-->
-                            </select>
-                            <button class="story_answer" id="s6_city_ans">Check answer</button>
-                            <button id="s6_3p" class="story_button previous_button">Prev Page</button>
-                            <button id="s6_3n" class="story_button next_button locked" style="float: right">Next Page</button>
-                        </div>
-                        <div style="display: none" class="s6_4">
-                            <h4>
-                                Congratulations! You have finished all stories. You have earned the last badge: the Volcano badge. Now you can have some fun on your own with the datasets already on the map.
-                            </h4>
-                            <img src="badge6.png" height="50px" width="50px"; style="display: block; margin: auto">
-                            <button id="s6_4p" class="story_button previous_button">Prev Page</button>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div style="border-bottom: 3px solid #FFCB05; margin-bottom: 38px;"></div>
-                </li>
-                <div style="margin-bottom: 126px">
-            </ul>
-            <div style="border-top: 3px solid #FFCB05; position: fixed; bottom: 0; width: 100%; margin-bottom: 38px; background-color: #111; z-index: 10">
-                <div id="badge">Badges</div>
-                <img src="badge1.png" alt="badge1" style="display: none; margin-left: 20px;" width="40px"; height="40px"; id="badge1" >
-                <img src="badge2.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge2" >
-                <img src="badge3.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge3" >
-                <img src="badge4.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge4" >
-                <img src="badge5.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge5" >
-                <img src="badge6.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge6" >
-            </div>
-            <div style="background-color: #111; border-top: 3px solid #FFCB05; height: 35px; width: 100%; position: fixed; bottom: 0; z-index: 100;">
-                <button class="resetButton" id="reset">Reset stories</button>
-            </div>
-
-        </div>
+                </div>
+            </li>
+        </ul>
+        <div style="border-bottom: 3px solid #FFCB05"></div>
+        <output id="import_list"></output>
+        <div style="border-bottom: 3px solid #FFCB05"></div>
 
     </div>
-    <div id="normal" class="tabcontentA">
-        <div class="tab cssmenu">
-            <ul>
-                <li class="tablinksC defaultOpen" onclick="openTab(event, 'OperationsB', 'tabcontentC', 'tablinksC')"><a href="#">Operations</a></li>
-                <li class="tablinksC" onclick="openTab(event, 'LayersB', 'tabcontentC', 'tablinksC')"><a href="#">Layers</a></li>
-            </ul>
-        </div>
-        <div id="OperationsB" class="tabcontentC">
-            <ul>
-                <li>
-                    <div id="buffer2" class="dropDown">Buffer</div>
-                    <div class="dropDownContent">
-                        <span class="dropDownLeft">Layer:</span>
-                        <select id="bufferLayerB" class="dropDownLayersB" required>
-                            <!-- Options here -->
-                            <option selected disabled> -- Choose layer -- </option>
+    <div id="Story" class="tabcontent">
+        <ul>
+            <li>
+                <div class="dropDown storyHeader story1">Story 1: The Basics</div>
+                <div class="dropDownContent story1parent">
+                    <div style="display: none" class="s1_1">
+                        <h4>Hello there! Welcome to the world of pokémon. My name is Oak! People call me the pokémon Prof! This world is inhabited by creatures called pokémon! For some people, pokémon are pets. Others use them for fights. Myself...I study pokémon as a profession using GIS-tools to master it. <br><br> First we will have a look at the basics of GIS.</h4>
+                        <button class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_2">
+                        <h4>Maps consist of different layers. Each layer can take up different forms; points, lines and polygons. <br><br> Now you will learn a little about each type of layer.</h4>
+                        <img src="points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button id="s1_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_3">
+                        <h4>Now, you can see a point layer is added to the map. Points are single data values that can have data assigned to them.
+                            This layer represents the cities of the region Kanto. Each city is represented by a pokeball. The balls are scaled with the size of the city, but not linear. It uses scaled circles, a logarithmic size expansion. <br>
+                            Click on a city to get more information and find the population of Lavender Town.
+                        </h4>
+                        <input class="story_input" type="number" id="s1_pop" placeholder="population">
+                        <button class="story_answer" id="s1_pop_ans">Check answer</button>
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button id="s1_3n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_4">
+                        <h4>
+                            Now we have added the roads in kanto to the map. The roads are represented by lines on the map. Each line consists of multiple points connected to each other. <br>
+                        </h4>
+                        <img src="line.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <h4>
+                            Click on the road between Viridian City and Pewter City to find the route number.
+                        </h4>
+                        <input class="story_input" type="number" id="s1_line" placeholder="route number">
+                        <button class="story_answer" id="s1_line_ans">Check answer</button>
+                        <button id="s1_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s1_4n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_5">
+                        <h4>
+                            The last type of layers we will have a look at are polygons. Polygons are closed loop of lines. <br>
+                        </h4>
+                        <img src="polygon.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <h4>
+                            Your task is to find out how many islands the region of Hoenn are made up of. Hover or click a region to get more information about it.
+
+                        </h4>
+                        <input class="story_input" type="number" id="s1_pol" placeholder="number of islands">
+                        <button class="story_answer" id="s1_pol_ans">Check answer</button>
+                        <button id="s1_5p" class="story_button previous_button">Prev Page</button>
+                        <button id="s1_5n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_6">
+                        <h4>
+                            Congratulations! You have now finished your first story line and earned the Boulder badge. You can now go on to the buffer story.
+                        </h4>
+                        <img src="badge1.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story2 locked">Story 2: Buffer</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s2_1">
+                        <h4>
+                            You have started your pokémon adventure and reached Viridian City. Trying to buy pokéballs at the Poké Mart, the clerk gives you a parcel. A note on the parcel says: <br>"To be delivered to Professor Oak in Pallet Town" <br>
+                        </h4>
+                        <button class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s2_2">
+                        <h4>
+                            It is starting to get dark and you know powerful pokémon sneak around in the grass after sunset. Worried about encountering one you decide to start the walk to Pallet Town, only if it is less than 6 km to walk.
+                            A buffer can give you the answer to this. Use the buffer tool in the operations tab to construct a buffer around Viridian City.
+                        </h4>
+                        <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button id="s2_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s2_3">
+                        <h4>
+                            Use the buffer tool in the operations tab to construct a buffer around Viridian City with distance 6 km.
+                        </h4>
+                        <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
+                        <h4>Is Pallet Town within 6 km from Viridian City? </h4>
+                        <select id="s2_buf_point" style="display: block; float: left; margin: 0 74px 0 73px">
+                            <option disabled="disabled" selected>-- Select answer --</option>
+                            <option value="false">Yes</option>
+                            <option value="true">No</option>
                         </select>
-                        <span class="dropDownLeft">Distance:</span>
-                        <input name="bufferDistance" id="bufferDistanceNormal" type="number" placeholder="km">
-                        <button id="createBufferNormal">Create Buffer</button>
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button id="s2_3n" class="story_button next_button locked" style="float: right">Next Page</button>
                     </div>
-                    <div id="union2" class="dropDown">Union</div>
-                    <div class="dropDownContent">
-                        <!-- Here -->
+                    <div style="display: none" class="s2_4">
+                        <h4>
+                            Congratulations! You are a buffer master. You have earned the Cascade badge. You can now go on to the union story.
+                        </h4>
+                        <img src="badge2.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
                     </div>
-                    <div id="intersection2" class="dropDown">Intersection</div>
-                    <div class="dropDownContent">
-                        <!-- Here -->
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story3 locked">Story 3: Union</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s3_1">
+                        <h4>
+                            Your pokemon adventure continues. Having delivered Oak's parcel in Pallet Town you are on your way to Viridian City. <br>
+                            You are in need of a pokemon and have heard there is a lot of Pidgeys and Rattatas between the cities.
+                        </h4>
+                        <button id="s3_1n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
-                    <div id="difference2" class="dropDown">Difference</div>
-                    <div class="dropDownContent">
-                        <!-- Here -->
+                    <div style="display: none" class="s3_2">
+                        <h4>
+                            Two layers have now showed up on the map. One containing grass areas where Pidgey can be caught, and one where Rattata can be caught.
+                            Calculate the area where you can hunt for either a Pidgey or a Rattata.
+                        </h4>
+                        <button id="s3_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_2n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
-                    <div id="filter2" class="dropDown">Filter</div>
-                    <div class="dropDownContent">
-                        <!-- Here -->
+                    <div style="display: none" class="s3_3">
+                        <h4>
+                            The union operation can give you the answer to this. The union operation extracts all features of the two datasets and merges them into a new one.
+                        </h4>
+                        <img src="union.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s3_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_3n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
-                </li>
-            </ul>
-        </div>
-        <div id="LayersB" class="tabcontentC">
-            <ul>
-                <li>
-                    <div id="importHeaderB" class="dropDown">Import</div>
-                    <div class="dropDownContent">
-                        <h4>Import a geojson or shapefile to the map. If you want to upload a shapefile, zip it together with the rquired files and upload the zip folder. </h4>
-                        <input id="fileImportB" type="file" accept=".geojson,.zip" multiple>
-                        <input id="fileNameB" type="text" required placeholder="Please enter name of layer">
-                        <button id="importB">Import file to map</button>
+                    <div style="display: none" class="s3_4">
+                        <h4>
+                            Create a union of the Pidgey and Rattata layers to find the size of the area where you can hunt for either of them.
+                        </h4>
+                        <input class="story_input" type="number" id="s3_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s3_pokemonArea_ans">Check answer</button>
+                        <button id="s3_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_4n" class="story_button next_button locked" style="float: right">Next Page</button>
                     </div>
-                </li>
-                <li>
-                    <div id="exportHeaderB" class="dropDown">Export</div>
-                    <div class="dropDownContent">
-                        Layer:
-                        <select id="exportSelectB" class="dropDownLayersB" required>
-                            <!-- Options here -->
+                    <div style="display: none" class="s3_5">
+                        <h4>
+                            Congratulations! You are a union master. You have earned the Thunder badge. You can now go on to the intersection story.
+                        </h4>
+                        <img src="badge3.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story4 locked">Story 4: Intersection</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s4_1">
+                        <h4>
+                            Your pokemon adventure continues. Your pokemon grow stronger but you want more. <br>
+                            Some trainer have told you about the rare pokemon Chansey. Some have seen it in the Safari zone, located just north of Fuschia City. When you first are there, you can try to catch a Rhyhorn as well.
+                        </h4>
+                        <button id="s4_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_2">
+                        <h4>
+                            Three layers have now showed up on the map. One with the boundaries for the Safari zone, one containing areas where Rhyhorn can be caught and one where Chansey can be caught.
+                            Calculate the area where you can hunt for both a Chansey and a Rhyhorn.
+                        </h4>
+                        <button id="s4_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_3">
+                        <h4>
+                            The intersection operation can give you the answer to this. The intersection operation extracts the features where the two datasets overlaps and merges them into a new one.
+                        </h4>
+                        <img src="intersection.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s4_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_3n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_4">
+                        <h4>
+                            Create an intersection of the Chansey and Rhyhorn layers to find the size of the area where you can hunt for both of them.
+                        </h4>
+                        <input class="story_input" type="number" id="s4_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s4_pokemonArea_ans">Check answer</button>
+                        <button id="s4_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_4n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_5">
+                        <h4>
+                            Congratulations! You are an intersection master. You have earned the Soul badge. You can now go on to the difference story.
+                        </h4>
+                        <img src="badge4.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+
+            </li>
+            <li>
+                <div class="dropDown storyHeader story5 locked">Story 5: Difference</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s5_1">
+                        <h4>
+                            Your pokemon adventure continues. You have just beaten the Kanto Pokemon League. <br>
+                            A rumour says that a mysterious pokemon, called Mewtwo, prowl in the cave Cerulean Cave just outside Cerulean City. It is said to be the most powerful pokemon.
+                        </h4>
+                        <button id="s5_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_2">
+                        <h4>
+                            But other powerful pokemon also prowl around in the cave. Your party of pokemon consists mainly of water-type pokemon.
+                            You are worried about encountering the electric-type pokemons Raichu and Magneton.
+                            Your task is to avoid them at all costs, while still having a chance to enocunter Mewtwo.
+                        </h4>
+                        <button id="s5_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_3">
+                        <h4>
+                            Four layers have now showed up on the map. They represent Cerulean cave, and the areas where Raichu, Magneton and Mewtwo prowls around.
+                            Calculate the area where you can encounter only Mewtwo.
+                        </h4>
+                        <button id="s5_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_3n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_4">
+                        <h4>
+                            The difference operation can give you the answer to this. The difference operation extracts the features of one dataset which do not overlap with the other dataset.
+                        </h4>
+                        <img src="difference.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s5_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_4n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_5">
+                        <h4>
+                            Use the difference operation to find the size of the area where you can only encounter Mewtwo.
+                        </h4>
+                        <input class="story_input" type="number" id="s5_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s5_pokemonArea_ans">Check answer</button>
+                        <button id="s5_5p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_5n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_6">
+                        <h4>
+                            Congratulations! You are a difference master. You have earned the Marsh badge. You can now go on to the filter story.
+                        </h4>
+                        <img src="badge5.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story6 locked">Story 6: Filter</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s6_1">
+                        <h4>
+                            You have completed the tasks for the Kanto Region. But your journey doesn't stop here. You want to visit all cities with a population of more than 100 in the region Hoenn.
+                        </h4>
+                        <button id="s6_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s6_2">
+                        <h4>
+                            The filter operation can give you the answer to this. The filter operation extracts all features from a dataset that fulfills the condition given to it. You can set a condition to all the attributes of the dataset. <br>
+                        </h4>
+                        <button id="s6_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s6_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s6_3">
+                        <h4>
+                            Use the filter operation and select the city(ies) in the box below if it(they) fulfills the condition (Population > 100 && Region==Hoenn).
+                        </h4>
+                        <select id="s6_city" size="8" multiple>
+                            <!-- Options here (Added dynamically)-->
                         </select>
-                        <button id="exportB">Export layer to geojson</button>
+                        <button class="story_answer" id="s6_city_ans">Check answer</button>
+                        <button id="s6_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s6_3n" class="story_button next_button locked" style="float: right">Next Page</button>
                     </div>
-                </li>
-                <li>
-                    <div id="styleHeaderB" class="dropDown">Style layers</div>
-                    <div class="dropDownContent">
-                        <div id="style_layersB">
-                            <select id="styleLayerB" class="dropDownLayersB">
-                                <option selected disabled>-- Choose layer --</option>
-                            </select>
-                        </div>
+                    <div style="display: none" class="s6_4">
+                        <h4>
+                            Congratulations! You have finished all stories. You have earned the last badge: the Volcano badge. Now you can have some fun on your own with the datasets already on the map.
+                        </h4>
+                        <img src="badge6.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <button id="s6_4p" class="story_button previous_button">Prev Page</button>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </li>
+            <li>
+                <div style="border-bottom: 3px solid #FFCB05; margin-bottom: 38px;"></div>
+            </li>
+            <div style="margin-bottom: 126px"></div>
+        </ul>
+        <div style="border-top: 3px solid #FFCB05; position: fixed; bottom: 0; width: 100%; margin-bottom: 38px; background-color: #111; z-index: 10">
+            <div id="badge">Badges</div>
+            <img src="badge1.png" alt="badge1" style="display: none; margin-left: 20px;" width="40px"; height="40px"; id="badge1" >
+            <img src="badge2.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge2" >
+            <img src="badge3.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge3" >
+            <img src="badge4.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge4" >
+            <img src="badge5.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge5" >
+            <img src="badge6.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge6" >
         </div>
+        <div style="background-color: #111; border-top: 3px solid #FFCB05; height: 35px; width: 100%; position: fixed; bottom: 0; z-index: 100;">
+            <button class="resetButton" id="reset">Reset stories</button>
+        </div>
+
     </div>
 
 </div>
@@ -580,7 +509,6 @@
 <!-- Page content -->
 <div class="main">
     <div id="map"></div>
-    <div id="normalMap"></div>
 </div>
  <script type="text/javascript">
 
@@ -588,17 +516,6 @@
      for(var i = 0; i < clicks.length; i++) {
          clicks[i].click();
      }
-
-     $('.tablinksA').click(function(e) {
-         var id = e.target.innerHTML === "Normal Map" ? "normal" : "pokemon";
-         if(id === "normal") {
-             $('#map').hide();
-             $('#normalMap').show();
-         } else if (id === "pokemon") {
-             $('#normalMap').hide();
-             $('#map').show();
-         }
-     });
 
      myStorage = window.localStorage;
      console.log(myStorage);
@@ -721,7 +638,6 @@
      controls.addOverlay(politicalLayer, "Geographical region");
      controls.addOverlay(cityLayer, "Cities");
 
-
      addDropdown();
 
      function getPokeball(pop) {
@@ -756,21 +672,27 @@
          if(e.name === "Cities") {
              cityLegend.addTo(map);
          }
+         updateLayerGroup();
+         updateStyleLayers();
      });
 
      map.on('overlayremove', function (e) {
          if(e.name === "Cities") {
              cityLegend.remove()
          }
+         updateLayerGroup();
+         updateStyleLayers();
 
      });
 
      map.on('layeradd', function(e) {
          updateLayerGroup();
+         updateStyleLayers();
      });
 
      map.on('layerremove', function(e) {
          updateLayerGroup();
+         updateStyleLayers();
      });
 
      map.on('zoomend', function() {
@@ -857,6 +779,23 @@
          myStorage.clear();
      });
 
+
+     $("#applyStyle").click(function() {
+         var fillColor = $("#fillColorPicker").val();
+         var color = $("#colorPicker").val();
+         var opacity = $("#opacity").val()/100;
+         var weight = $("#weight").val()/100;
+         console.log($("#styleSelect").val());
+         var mainLayer = controls.getLayerWithId($("#styleSelect").val()).layer;
+         console.log(mainLayer);
+         //var mainLayer = getPolygon("styleSelect");
+         mainLayer.invoke('setStyle', {
+             fillColor: fillColor,
+             color: color,
+             fillOpacity: opacity,
+             weight: weight
+         });
+     });
 
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      //////                                                                                                       //////
@@ -1121,7 +1060,7 @@
          for(var i = 1; i <= Number(myStorage.getItem("storyIndex")) + 1; i++ ) {
              myStorage.setItem("s" + i + "_text", 1);
          }
-         myStorage.setItem("storyIndex", 7);
+         myStorage.setItem("storyIndex", 1);
          for(var i = 2; i <= 6; i++) {
              string = ".story" + i;
              $(string).css("filter", "brightness(50%)");
@@ -1241,6 +1180,7 @@
          viridianCity.addTo(map);
          controls.addOverlay(cityKantoLayer, "Cities_Kanto");
          controls.addOverlay(viridianCity, "Viridian_City");
+         updateLayerGroup();
          removeArray.push(cityKantoLayer);
          removeArray.push(viridianCity);
      });
@@ -1270,6 +1210,7 @@
          rattata.addTo(map);
          controls.addOverlay(pidgey, "Pidgey");
          controls.addOverlay(rattata, "Rattata");
+         updateLayerGroup();
          removeArray.push(pidgey);
          removeArray.push(rattata);
      });
@@ -1302,6 +1243,7 @@
          controls.addOverlay(safariZone, "Safari Zone");
          controls.addOverlay(chansey, "Chansey");
          controls.addOverlay(rhyhorn, "Rhyhorn");
+         updateLayerGroup();
          removeArray.push(rhyhorn);
          removeArray.push(chansey);
          removeArray.push(safariZone);
@@ -1337,6 +1279,7 @@
          controls.addOverlay(magneton, "Magneton");
          controls.addOverlay(raichu, "Raichu");
          controls.addOverlay(mewtwo, "Mewtwo");
+         updateLayerGroup();
          removeArray.push(ceruleanCave);
          removeArray.push(mewtwo);
          removeArray.push(raichu);
@@ -1368,7 +1311,10 @@
      $("#s6_2n").click(function () {
          cityLayer.addTo(map);
          cityLegend.addTo(map);
+         politicalLayer.addTo(map);
          controls.addOverlay(cityLayer, "Cities");
+         controls.addOverlay(politicalLayer, "Geographical Region");
+         updateLayerGroup();
          removeArray.push(cityLayer);
          removeArray.push(cityLegend);
          cityLayer.eachLayer(function(obj) {
@@ -1532,26 +1478,6 @@
          }
      });
 
-     $("#fileImport").change(function(evt) {
-         var files = evt.target.files; // FileList object
-
-         // files is a FileList of File objects. List some properties.
-         var output = [];
-
-         for (var i = 0, f; f = files[i]; i++) {
-
-             if(f.name.split(".").pop() != "geojson") {
-                 continue;
-             }
-
-             output.push('<li><strong>', escape(f.name), '</strong> last modified: ',
-                 f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-                 '</li>');
-         }
-         $("#import_list").html('<ul>' + output.join('') + '</ul>');
-     });
-
-
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      //////                                                                                                       //////
      //////                                   JQUERY EXTENSION                                                    //////
@@ -1611,104 +1537,6 @@
              });
          };
      })(jQuery);
-
-     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-     //////                                                                                                       //////
-     //////                                          NORMAL MAP                                                   //////
-     //////                                                                                                       //////
-     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-     var normalMap = L.map('normalMap').setView([63.42, 10.43], 13);
-     var base = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-         maxZoom: 18,
-         id: 'mapbox.streets',
-         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
-     }).addTo(normalMap);
-
-     var base2 = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-         maxZoom: 18,
-         id: 'mapbox.satellite',
-         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
-     });
-
-     var normalControl = L.control.layers({
-         "Streets": base,
-         "Satellite": base2
-     }, null, {collapsed: true}).addTo(normalMap);
-
-     normalMap.on('layeradd', function(e) {
-         updateLayers();
-     });
-
-     normalMap.on('layerremove', function(e) {
-         updateLayers();
-     });
-
-     // file import from normal map tab
-     $("#importB").click(function() {
-         var files = $("#fileImportB").prop('files'); // FileList object
-
-         // Loop through the FileList and render image files as thumbnails.
-         for (var i = 0, f; f = files[i]; i++) {
-
-             if (f.name.split(".").pop() != "geojson" && f.name.split(".").pop() != "zip") {
-                 continue;
-             }
-             var reader = new FileReader();
-
-             if (f.name.split(".").pop() == "zip") {
-                 loadshp({
-                     url: f,
-                     encoding: 'utf-8',
-                     EPSG: 4326
-                 }, function (geojson) {
-                     newLayer = L.layerGroup().addTo(normalMap);
-                     L.geoJSON(geojson, {
-                         onEachFeature: function (feature, layer) {
-                             for (var key in feature.properties) {
-                                 res = "";
-                                 res = res.concat("<strong>", key, ": </strong>", feature.properties[key], "<br>");
-                             }
-                             layer.bindPopup(res);
-                             newLayer.addLayer(layer);
-                         }
-                     });
-                     normalControl.addOverlay(newLayer, $("#fileNameB").val());
-                     updateLayers();
-                 });
-             }
-             else if (f.name.split(".").pop() == "geojson") {
-                 // Closure to capture the file information.
-                 reader.onload = (function (theFile) {
-                     return function (e) {
-                         geojson = JSON.parse(e.target.result);
-                         newLayer = L.layerGroup().addTo(normalMap);
-                         L.geoJSON(geojson, {
-                             pointToLayer: function (feature, latlng) {
-                                 return L.circleMarker(latlng);
-                             },
-                             onEachFeature: function (feature, layer) {
-                                 res = "";
-                                 for (var key in feature.properties) {
-                                     res += "<strong>" + key + ":</strong>  " + feature.properties[key] + "<br>";
-                                 }
-                                 res += "<strong>Area:\t\t</strong> " + getArea(layer, 1) + "km" + "2".sup();
-                                 layer.bindPopup(res);
-                                 newLayer.addLayer(layer);
-                             }
-                         });
-                         normalControl.addOverlay(newLayer, $("#fileNameB").val()).addTo(normalMap);
-                         updateLayers();
-                     }
-                 })(f);
-             }
-             // Read in the file as a data URL.
-             reader.readAsText(f);
-         }
-     });
-
  </script>
 
 </body>
