@@ -589,18 +589,26 @@
          [63.171095, 10.784454]
      ]);
 
-     //Start and panning bounds applied
-     map.fitBounds(startBounds);
-     map.on('drag', function() {
-         map.panInsideBounds(worldBounds, { animate: true });
-     });
-
      lastZoom = map.getZoom();
      //Add baseMap layer to map and display it
      var backGroundLayer = L.layerGroup().addTo(map);
+     var streets = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         maxZoom: 18,
+         id: 'mapbox.streets',
+         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
+     });
 
+     var satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         maxZoom: 18,
+         id: 'mapbox.satellite',
+         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
+     });
      var baseLayer = {
-         "Pokemon World": backGroundLayer
+         "Pokemon World": backGroundLayer,
+         "streets": streets,
+         "Satellite": satellite
      };
 
      var overlay = {};
@@ -666,6 +674,24 @@
 
          return div;
      };
+
+     //Start and panning bounds applied
+     map.fitBounds(startBounds, {animate: true});
+     map.on('drag', function() {
+         map.panInsideBounds(worldBounds, { animate: true });
+     });
+     map.on('baselayerchange', function(e) {
+         if(e.name !== "Pokemon World") {
+             map.off('drag');
+             map.setMinZoom(5);
+         } else {
+             map.fitBounds(startBounds, {animate: true});
+             map.on('drag', function() {
+                 map.panInsideBounds(worldBounds, { animate: true });
+             });
+             map.setMinZoom(11);
+         }
+     });
 
      //Add and remove legend when layers are selected or not
      map.on('overlayadd', function(e) {
