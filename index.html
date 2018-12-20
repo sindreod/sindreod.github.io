@@ -179,6 +179,12 @@
                 </div>
             </li>
             <li>
+                <div id="editHeader" class="dropDown">Edit layers</div>
+                <div class="dropDownContent">
+                    <button id="editLayer">Press here to save layer</button>
+                </div>
+            </li>
+            <li>
                 <div id="styleHeader" class="dropDown">Style layers</div>
                 <div class="dropDownContent">
                     <div id="style_layers">
@@ -532,50 +538,25 @@
          maxZoom: 20
      }).setView([63.366288, 10.4308315]);
 
-     //var incrementControl = L.IncrementEditControl({i: myStorage.getItem('drawId')}).addTo(normalMap);
-
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      //////                                                                                                       //////
      //////                            Leaflet.draw                                                               //////
      //////                                                                                                       //////
      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-     /*L.DrawToolbar.include({
-         getModeHandlers: function (map) {
-             return [
-                 {
-                     enabled: true,
-                     handler: incrementDrawLayer(),
-                     title: 'Create new layer to edit/draw'
-                 }
-             ];
-         }
-     });*/
-
      // FeatureGroup is to store editable layers
-     var editableLayers = new L.FeatureGroup();
-     map.addLayer(editableLayers);
-     editableLayers.addTo(map);
+     var editLayer = new L.featureGroup();
+     map.addLayer(editLayer);
+     editLayer.addTo(map);
      var drawControl = new L.Control.Draw({
          draw: {
              circle: false
          },
          edit: {
-             featureGroup: editableLayers
+             featureGroup: editLayer
          }
      });
      map.addControl(drawControl);
-
-     function incrementDrawLayer() {
-         var i, layer;
-         console.log("hi");
-         i = Number(myStorage.getItem('drawId'));
-         layer = new L.featureGroup();
-         map.addLayer(layer);
-         layer.addTo(map);
-         drawControl.setDrawingOptions({edit: {featureGroup: layer}});
-         myStorage.setItem('drawId', i+1);
-     }
 
      //Set bounds for startup
      var startBounds = L.latLngBounds([
@@ -750,18 +731,6 @@
          lastZoom = zoom;
      });
 
-     /*
-     map.on('click', function(event) {
-         console.log(event.latlng);
-     });*/
-
-     if(! myStorage.getItem('drawId')) {
-         myStorage.setItem('drawId', 1);
-     }
-     var id = myStorage.getItem("drawId");
-
-     controls.addOverlay(editableLayers, "Edit_" + myStorage.getItem("drawId"));
-
      map.on(L.Draw.Event.CREATED, function (e) {
          var type = e.layerType,
              layer = e.layer,
@@ -787,12 +756,11 @@
              string += "<br><br><br><br></div>";
              return string;
          });
-         editableLayers.addLayer(layer);
-
+         editLayer.addLayer(layer);
      });
 
      function popupForm(layerId) {
-         layer = editableLayers.getLayer(layerId);
+         layer = editLayer.getLayer(layerId);
          var valueField, propertyField;
          valueField = document.getElementById("v_" + layerId).value;
          propertyField = document.getElementById("p_" + layerId).value;
@@ -805,13 +773,20 @@
          myStorage.clear();
      });
 
+     $("#editLayer").click(function() {
+         if(!myStorage.getItem("Edit")) {
+             myStorage.setItem("Edit",1);
+         }
+         controls.addOverlay(cloneLayer(editLayer), "Edit_" + myStorage.getItem("Edit")).addTo(map);
+         editLayer.clearLayers();
+         myStorage.setItem("Edit", Number(myStorage.getItem("Edit"))+1);
+     });
 
      $("#applyStyle").click(function() {
          var fillColor = $("#fillColorPicker").val();
          var color = $("#colorPicker").val();
          var opacity = $("#opacity").val()/100;
          var weight = $("#weight").val()/100;
-         console.log($("#styleSelect").val());
          var mainLayer = controls.getLayerWithId($("#styleSelect").val()).layer;
          console.log(mainLayer);
          //var mainLayer = getPolygon("styleSelect");
