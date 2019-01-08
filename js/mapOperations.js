@@ -16,7 +16,7 @@ function createBuffer(inputLayer, distanceId) {
     }
     var bufferLayer = L.layerGroup();
     var overlay = getPolygon(inputLayer);
-    var buffered = turf.buffer(overlay.layer.toGeoJSON(), distance/10, {units: 'kilometers'});
+    var buffered = turf.buffer(overlay.layer.toGeoJSON(), distance, {units: 'kilometers'});
     var name = "buffer_" + overlay.name + "_" + distance;
     afterOperation(bufferLayer, buffered, name);
 }
@@ -196,7 +196,7 @@ function afterOperation(targetLayer, polygon, name) {
         onEachFeature: function(feature, layer) {
             targetLayer.addLayer(layer);
             layer.bindPopup(function(layer) {
-                return "<strong><u>" + name + "</u></strong>" + "<br><strong>Area:\t\t</strong> " + getArea(layer, 10) + "km" + "2".sup();
+                return "<strong><u>" + name + "</u></strong>" + "<br><strong>Area:\t\t</strong> " + getArea(layer) + "km" + "2".sup();
 
             })
         }
@@ -213,8 +213,8 @@ function afterOperation(targetLayer, polygon, name) {
     updateLayerGroup();
 }
 
-function getArea(layer, factor) {
-    return Math.round(turf.area(layer.toGeoJSON())/(1000 * 1000) * Math.pow(10,2) * 100) / 100; //Make area 10 times bigger than coordinates
+function getArea(layer) {
+   return Math.round(turf.area(layer.toGeoJSON())/(1000 * 1000)*1000)/ 1000; //Change from m^2 to km^2 and 3 decimals
 }
 
 //Help function

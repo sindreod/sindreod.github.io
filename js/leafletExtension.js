@@ -1,6 +1,6 @@
 var PokeIcon = L.Icon.extend({
     options: {
-        iconUrl: "pokeball.png"
+        iconUrl: "images/pokeball.png"
     }
 });
 

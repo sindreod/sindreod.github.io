@@ -25,20 +25,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script> <!-- Leaflet Draw Plugin -->
     <link rel="stylesheet" href="index.css"/>
     <link rel="stylesheet" href="lib/tabMenu.css"/>
-    <link rel="stylesheet" href="lib/stylesheet.css">
     <link rel="stylesheet" href="lib/leaflet.draw.css">
     <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
     <script src="js/sidenav.js"></script>
     <script src="js/fileLoad.js"></script>
     <script src="js/mapOperations.js"></script>
-    <link rel="icon" href="pika.png">
+    <link rel="icon" href="images/pika.png">
     <title>PokéGIS</title>
 </head>
 
 <body>
 <!-- Side navigation -->
 <div class="sidenav">
-    <a  href="about/"><img src="PokeGIS.png" alt="PokéGIS"></a>
+    <a  href="about/"><img src="images/PokeGIS.png" alt="PokéGIS"></a>
     <div class="tab cssmenu">
         <ul>
             <li class="tablinks defaultOpen" onclick="openTab(event, 'Operations', 'tabcontent', 'tablinks')"><a href="#">Operations</a></li>
@@ -164,6 +163,7 @@
                 <div class="dropDownContent">
                     <h4>Import a geojson or shapefile to the map. If you want to upload a shapefile, zip it together with the rquired files and upload the zip folder. </h4>
                     <input id="fileImport" type="file" accept=".geojson,.zip" multiple>
+                    <input type="text" id="importName" placeholder="Name of layer" style="width: 99%" required>
                     <button id="import">Import file to map</button>
                 </div>
             </li>
@@ -181,6 +181,7 @@
             <li>
                 <div id="editHeader" class="dropDown">Edit layers</div>
                 <div class="dropDownContent">
+                    <h4>When using the editor tool at the left side of the map, press the button below to save your edits. </h4>
                     <button id="editLayer">Press here to save layer</button>
                 </div>
             </li>
@@ -192,6 +193,9 @@
                         <select id="styleSelect" class="dropDownLayers">
                             <option selected disabled>-- Select Layer --</option>
                         </select></div>
+                        <div><span class="dropDownLeft">New name: </span>
+                            <input type="text" id="layerName" placeholder="Empty = no change" style="width: 57%; float: right"></div>
+
                         <div><span class="dropDownLeft">Set fill color:</span>
                         <input type="color" id="fillColorPicker" value="#3388ff"></div>
                         <div><span class="dropDownLeft">Set fill opacity:</span>
@@ -223,7 +227,7 @@
                     </div>
                     <div style="display: none" class="s1_2">
                         <h4>Maps consist of different layers. Each layer can take up different forms; points, lines and polygons. <br><br> Now you will learn a little about each type of layer.</h4>
-                        <img src="points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <img src="images/points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
                         <button class="story_button previous_button">Prev Page</button>
                         <button id="s1_2n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
@@ -241,7 +245,7 @@
                         <h4>
                             Now we have added the roads in kanto to the map. The roads are represented by lines on the map. Each line consists of multiple points connected to each other. <br>
                         </h4>
-                        <img src="line.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <img src="images/line.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
                         <h4>
                             Click on the road between Viridian City and Pewter City to find the route number.
                         </h4>
@@ -254,7 +258,7 @@
                         <h4>
                             The last type of layers we will have a look at are polygons. Polygons are closed loop of lines. <br>
                         </h4>
-                        <img src="polygon.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <img src="images/polygon.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
                         <h4>
                             Your task is to find out how many islands the region of Hoenn are made up of. Hover or click a region to get more information about it.
 
@@ -268,7 +272,7 @@
                         <h4>
                             Congratulations! You have now finished your first story line and earned the Boulder badge. You can now go on to the buffer story.
                         </h4>
-                        <img src="badge1.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <img src="images/badge1.png" height="50px" width="50px"; style="display: block; margin: auto">
                         <button class="story_button previous_button">Prev Page</button>
                     </div>
                 </div>
@@ -284,19 +288,19 @@
                     </div>
                     <div style="display: none" class="s2_2">
                         <h4>
-                            It is starting to get dark and you know powerful pokémon sneak around in the grass after sunset. Worried about encountering one you decide to start the walk to Pallet Town, only if it is less than 6 km to walk.
+                            It is starting to get dark and you know powerful pokémon sneak around in the grass after sunset. Worried about encountering one you decide to start the walk to Pallet Town, only if it is less than 0.6 km to walk.
                             A buffer can give you the answer to this. Use the buffer tool in the operations tab to construct a buffer around Viridian City.
                         </h4>
-                        <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
+                        <img src="images/buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
                         <button class="story_button previous_button">Prev Page</button>
                         <button id="s2_2n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
                     <div style="display: none" class="s2_3">
                         <h4>
-                            Use the buffer tool in the operations tab to construct a buffer around Viridian City with distance 6 km.
+                            Use the buffer tool in the operations tab to construct a buffer around Viridian City with distance 0.6 km.
                         </h4>
-                        <img src="buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
-                        <h4>Is Pallet Town within 6 km from Viridian City? </h4>
+                        <img src="images/buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
+                        <h4>Is Pallet Town within 0.6 km from Viridian City? </h4>
                         <select id="s2_buf_point" style="display: block; float: left; margin: 0 74px 0 73px">
                             <option disabled="disabled" selected>-- Select answer --</option>
                             <option value="false">Yes</option>
@@ -309,7 +313,7 @@
                         <h4>
                             Congratulations! You are a buffer master. You have earned the Cascade badge. You can now go on to the union story.
                         </h4>
-                        <img src="badge2.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <img src="images/badge2.png" height="50px" width="50px"; style="display: block; margin: auto">
                         <button class="story_button previous_button">Prev Page</button>
                     </div>
                 </div>
@@ -336,7 +340,7 @@
                         <h4>
                             The union operation can give you the answer to this. The union operation extracts all features of the two datasets and merges them into a new one.
                         </h4>
-                        <img src="union.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <img src="images/union.png" style="width: 200px; margin: 0 41px 0 41px">
                         <button id="s3_3p" class="story_button previous_button">Prev Page</button>
                         <button id="s3_3n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
@@ -353,7 +357,7 @@
                         <h4>
                             Congratulations! You are a union master. You have earned the Thunder badge. You can now go on to the intersection story.
                         </h4>
-                        <img src="badge3.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <img src="images/badge3.png" height="50px" width="50px"; style="display: block; margin: auto">
                         <button class="story_button previous_button">Prev Page</button>
                     </div>
                 </div>
@@ -380,7 +384,7 @@
                         <h4>
                             The intersection operation can give you the answer to this. The intersection operation extracts the features where the two datasets overlaps and merges them into a new one.
                         </h4>
-                        <img src="intersection.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <img src="images/intersection.png" style="width: 200px; margin: 0 41px 0 41px">
                         <button id="s4_3p" class="story_button previous_button">Prev Page</button>
                         <button id="s4_3n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
@@ -397,7 +401,7 @@
                         <h4>
                             Congratulations! You are an intersection master. You have earned the Soul badge. You can now go on to the difference story.
                         </h4>
-                        <img src="badge4.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <img src="images/badge4.png" height="50px" width="50px"; style="display: block; margin: auto">
                         <button class="story_button previous_button">Prev Page</button>
                     </div>
                 </div>
@@ -434,7 +438,7 @@
                         <h4>
                             The difference operation can give you the answer to this. The difference operation extracts the features of one dataset which do not overlap with the other dataset.
                         </h4>
-                        <img src="difference.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <img src="images/difference.png" style="width: 200px; margin: 0 41px 0 41px">
                         <button id="s5_4p" class="story_button previous_button">Prev Page</button>
                         <button id="s5_4n" class="story_button next_button" style="float: right">Next Page</button>
                     </div>
@@ -451,7 +455,7 @@
                         <h4>
                             Congratulations! You are a difference master. You have earned the Marsh badge. You can now go on to the filter story.
                         </h4>
-                        <img src="badge5.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <img src="images/badge5.png" height="50px" width="50px"; style="display: block; margin: auto">
                         <button class="story_button previous_button">Prev Page</button>
                     </div>
                 </div>
@@ -487,7 +491,7 @@
                         <h4>
                             Congratulations! You have finished all stories. You have earned the last badge: the Volcano badge. Now you can have some fun on your own with the datasets already on the map.
                         </h4>
-                        <img src="badge6.png" height="50px" width="50px"; style="display: block; margin: auto">
+                        <img src="images/badge6.png" height="50px" width="50px"; style="display: block; margin: auto">
                         <button id="s6_4p" class="story_button previous_button">Prev Page</button>
                     </div>
                 </div>
@@ -499,12 +503,12 @@
         </ul>
         <div style="border-top: 3px solid #FFCB05; position: fixed; bottom: 0; width: 100%; margin-bottom: 38px; background-color: #111; z-index: 10">
             <div id="badge">Badges</div>
-            <img src="badge1.png" alt="badge1" style="display: none; margin-left: 20px;" width="40px"; height="40px"; id="badge1" >
-            <img src="badge2.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge2" >
-            <img src="badge3.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge3" >
-            <img src="badge4.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge4" >
-            <img src="badge5.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge5" >
-            <img src="badge6.png" alt="badge1" style="display: none" width="40px"; height="40px"; id="badge6" >
+            <img src="images/badge1.png" alt="badge1" style="display: none; margin-left: 20px;" width="40px"; height="40px"; id="badge1" >
+            <img src="images/badge2.png" alt="badge2" style="display: none" width="40px"; height="40px"; id="badge2" >
+            <img src="images/badge3.png" alt="badge3" style="display: none" width="40px"; height="40px"; id="badge3" >
+            <img src="images/badge4.png" alt="badge4" style="display: none" width="40px"; height="40px"; id="badge4" >
+            <img src="images/badge5.png" alt="badge5" style="display: none" width="40px"; height="40px"; id="badge5" >
+            <img src="images/badge6.png" alt="badge6" style="display: none" width="40px"; height="40px"; id="badge6" >
         </div>
         <div style="background-color: #111; border-top: 3px solid #FFCB05; height: 35px; width: 100%; position: fixed; bottom: 0; z-index: 100;">
             <button class="resetButton" id="reset">Reset stories</button>
@@ -559,6 +563,12 @@
          }
      });
      map.addControl(drawControl);
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                     Map                                                               //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
      //Set bounds for startup
      var startBounds = L.latLngBounds([
@@ -634,9 +644,9 @@
      function getPokeball(pop) {
          var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
          if (size < 200) {
-             return "<img src=pokeball.png width=" + size + " height=" + size + " style: {margin: 10px}>";
+             return "<img src='images/pokeball.png' width=" + size + " height=" + size + " style: {margin: 10px}>";
          } else {
-             return "<img src=pokeball.png width=10 height=10 style: {margin: 10px}>";
+             return "<img src='images/pokeball.png' width=10 height=10 style: {margin: 10px}>";
          }
      }
 
@@ -663,6 +673,8 @@
      map.on('drag', function() {
          map.panInsideBounds(worldBounds, { animate: true });
      });
+
+     //If change to normal map, remove bounds
      map.on('baselayerchange', function(e) {
          if(e.name !== "Pokemon World") {
              map.off('drag');
@@ -791,8 +803,9 @@
          var strokeOpacity = $("#strokeOpacity").val()/100;
          var weight = $("#weight").val()/10;
          var mainLayer = controls.getLayerWithId($("#styleSelect").val()).layer;
+         var name = $("#layerName").val();
          console.log(mainLayer);
-         //var mainLayer = getPolygon("styleSelect");
+
          mainLayer.invoke('setStyle', {
              fillColor: fillColor,
              color: color,
@@ -1198,7 +1211,8 @@
      });
 
      $("#s2_buf_point").change(function(){
-         if($("#s2_buf_point").val()) {
+         console.log($("#s2_buf_point").val());
+         if($("#s2_buf_point").val() == "true") {
              alert("Correct!");
              $("#s2_3n").removeClass("locked");
              $('#s2_3n').attr("disabled", false);
@@ -1230,7 +1244,7 @@
      $('#s3_pokemonArea_ans').click(function(){
          var number = $('#s3_pokemonArea').val();
          console.log(number);
-         if(number == 7.09) {
+         if(number == 0.071) {
              alert("Correct!");
              $("#s3_4n").removeClass("locked");
              $('#s3_4n').attr("disabled", false);
@@ -1263,7 +1277,7 @@
 
      $("#s4_pokemonArea_ans").click(function() {
          var val = $("#s4_pokemonArea").val();
-         if (val == 0.44) {
+         if (val == 0.004) {
              alert("Correct!");
              $("#s4_4n").removeClass("locked");
              $('#s4_4n').attr("disabled", false);
@@ -1300,7 +1314,7 @@
 
      $("#s5_pokemonArea_ans").click(function() {
          var val = $("#s5_pokemonArea").val();
-         if (val == 1.29) {
+         if (val == 0.013) {
              alert("Correct!");
              $("#s5_5n").removeClass("locked");
              $('#s5_5n').attr("disabled", false);
@@ -1409,6 +1423,10 @@
      }
 
      $("#import").click(function() {
+         if($("#importName").val().length < 1) {
+             alert("Please give a name for the imported layer");
+             return;
+         }
          var files = $("#fileImport").prop('files'); // FileList object
 
          // Loop through the FileList and render image files as thumbnails.
@@ -1428,15 +1446,15 @@
                      newLayer = L.layerGroup().addTo(map);
                      L.geoJSON(geojson, {
                          onEachFeature: function(feature, layer) {
-                             for(var key in feature.properties) {
-                                 res = "";
-                                 res = res.concat("<strong>", key, ": </strong>",  feature.properties[key],"<br>");
+                             res = "";
+                             for (var key in feature.properties) {
+                                 res += "<strong>" + key + ":</strong>  " + feature.properties[key] + "<br>";
                              }
                              layer.bindPopup(res);
                              newLayer.addLayer(layer);
                          }
                      });
-                     controls.addOverlay(newLayer, "SHP");
+                     controls.addOverlay(newLayer, $("#importName").val());
                  });
              }
              else if (f.name.split(".").pop() == "geojson"){
@@ -1460,13 +1478,11 @@
                                      });
                                  },
                                  onEachFeature: function(feature, layer) {
-                                     res = "<strong>Layer: <u>" + theFile.name + "</u></strong><br>";
-                                     for(var key in feature.properties) {
-                                         res = res.concat("<strong>", key, ": </strong>",  feature.properties[key],"<br>");
+                                     res = "";
+                                     for (var key in feature.properties) {
+                                         res += "<strong>" + key + ":</strong>  " + feature.properties[key] + "<br>";
                                      }
-                                     layer.bindPopup(function(layer) {
-                                         return res;
-                                     });
+                                     layer.bindPopup(res);
                                      newLayer.addLayer(layer);
                                  }
                              });
@@ -1477,9 +1493,9 @@
                                      mouseout: resetHighlight
                                  });
                              });
-                             controls.addOverlay(newLayer, theFile.name);
+                             controls.addOverlay(newLayer, $("#importName").val());
                          } else {
-                             afterOperation(newLayer, geojson, theFile.name);
+                             afterOperation(newLayer, geojson,  $("#importName").val());
                          }
                      }
                  })(f);
