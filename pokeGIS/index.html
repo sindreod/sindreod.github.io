@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="lib/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+
+    <!-- Lib libraries -->
+    <!-- SHP2GEOJSON -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.3/proj4.js"></script>
+    <script src="lib/jszip.js"></script>
+    <script src="lib/jszip-utils.js"></script>
+    <!--[if IE]>
+    <script type="text/javascript" src="lib/jszip-utils-ie.js"></script>
+    <![endif]-->
+
+    <script src="lib/preprocess.js"></script>
+    <script src="lib/preview.js"></script>
+    <script src="lib/leaflet.js"></script> <!-- Leaflet osv basemap -->
+    <script src="lib/leaflet.ajax.min.js"></script> <!-- Read external GeoJSON-files -->
+    <script src="lib/jquery-3.3.1.min.js"></script> <!-- jQuery API -->
+    <script src="lib/Sortable.min.js"></script> <!-- Sortable extension -->
+    <script src="lib/turf.min.js"></script> <!-- Turf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script> <!-- Leaflet Draw Plugin -->
+    <link rel="stylesheet" href="index.css"/>
+    <link rel="stylesheet" href="lib/tabMenu.css"/>
+    <link rel="stylesheet" href="lib/leaflet.draw.css">
+    <script src="js/leafletExtension.js"></script> <!-- Leaflet extension -->
+    <script src="js/sidenav.js"></script>
+    <script src="js/fileLoad.js"></script>
+    <script src="js/mapOperations.js"></script>
+    <link rel="icon" href="images/pika.png">
+    <title>PokéGIS</title>
+</head>
+
+<body>
+<!-- Side navigation -->
+<div class="sidenav">
+    <a  href="about"><img src="images/PokeGIS.png" alt="PokéGIS"></a>
+    <div class="tab cssmenu">
+        <ul>
+            <li class="tablinks defaultOpen" onclick="openTab(event, 'Operations', 'tabcontent', 'tablinks')"><a href="#">Operations</a></li>
+            <li class="tablinks" onclick="openTab(event, 'Layers', 'tabcontent', 'tablinks')"><a href="#">Layers</a></li>
+            <li class="tablinks" onclick="openTab(event, 'Story', 'tabcontent', 'tablinks')"><a href="#">Story</a></li>
+        </ul>
+    </div>
+
+    <div id="Operations" class="tabcontent">
+        <ul>
+            <li>
+                <div id="buffer" class="dropDown">Buffer</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="bufferLayerGroup" name="bufferSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <span class="dropDownLeft">Distance:</span>
+                    <input name="bufferDistance" id="bufferDistance" type="number" placeholder="km">
+                    <button id="createBuffer"
+                            onclick="createBuffer('bufferLayerGroup','bufferDistance')">
+                        Create buffer
+                    </button>
+                </div>
+            </li>
+            <li>
+                <div id="Union" class="dropDown">Union</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer1:</span>
+                    <select id="unionLayerGroup1" name="unionSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <span class="dropDownLeft">Layer2:</span>
+                    <select id="unionLayerGroup2" name="unionSelect2" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <button id="createUnion"
+                            onclick="createUnion('unionLayerGroup1','unionLayerGroup2')">
+                        Create union
+                    </button>
+                </div>
+            </li>
+            <li>
+                <div id="Intersection" class="dropDown">Intersection</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer1:</span>
+                    <select id="intersectionLayerGroup1" name="intersectionSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <span class="dropDownLeft">Layer2:</span>
+                    <select id="intersectionLayerGroup2" name="intersectionSelect2" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <button id="createIntersection"
+                            onclick="createIntersection('intersectionLayerGroup1','intersectionLayerGroup2')">
+                        Create intersection
+                    </button>
+                </div>
+
+            </li>
+            <li>
+                <div id="Difference" class="dropDown">Difference</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="differenceLayerGroup1" name="differenceSelect1" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <span class="dropDownLeft">Diff. layer:</span>
+                    <select id="differenceLayerGroup2" name="differenceSelect2" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <button id="createDifference"
+                            onclick="createDifference('differenceLayerGroup1','differenceLayerGroup2')">
+                        Create difference
+                    </button>
+                </div>
+
+            </li>
+            <li>
+                <div id="Filter" class="dropDown">Filter</div>
+                <div class="dropDownContent" id="filterDiv">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="filterLayerGroup" class="dropDownLayers dropDownLayerGroup" required
+                            onchange="updateFilterSelect('filterSelect','filterLayerGroup')">
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose layer -- </option>
+                    </select>
+                    <select id="filterSelect" required
+                            onchange="updateFilterValue('filterDiv','filterLayerGroup','filterSelect')">
+                        <!-- Options here -->
+                        <option selected disabled> -- Choose attribute -- </option>
+                    </select>
+                    <select id="filterSign" required>
+                        <!-- Option signs -->
+                        <option selected disabled> -- Choose sign -- </option>
+                    </select>
+                    <br id="break">
+                    <button id="createFilter"
+                            onclick="createFilter('filterLayerGroup','filterSelect','filterSign','filterValues')">
+                        Extract features
+                    </button>
+
+                </div>
+            </li>
+            <li>
+                <div style="border-bottom: 3px solid #FFCB05"></div>
+            </li>
+        </ul>
+        <button class="resetButton" id="resetAll">Reset All</button>
+    </div>
+
+    <div id="Layers" class="tabcontent">
+        <ul>
+            <li>
+                <div id="importHeader" class="dropDown">Import</div>
+                <div class="dropDownContent">
+                    <h4>Import a geojson or shapefile to the map. If you want to upload a shapefile, zip it together with the rquired files and upload the zip folder. </h4>
+                    <input id="fileImport" type="file" accept=".geojson,.zip" multiple>
+                    <input type="text" id="importName" placeholder="Name of layer" style="width: 99%" required>
+                    <button id="import">Import file to map</button>
+                </div>
+            </li>
+            <li>
+                <div id="exportHeader" class="dropDown">Export</div>
+                <div class="dropDownContent">
+                    <span class="dropDownLeft">Layer:</span>
+                    <select id="exportSelect" class="dropDownLayers dropDownLayerGroup" required>
+                        <!-- Options here -->
+                        <option selected disabled>-- Select Layer --</option>
+                    </select>
+                    <button id="export">Export layer to geojson</button>
+                </div>
+            </li>
+            <li>
+                <div id="editHeader" class="dropDown">Edit layers</div>
+                <div class="dropDownContent">
+                    <h4>When using the editor tool at the left side of the map, press the button below to save your edits. </h4>
+                    <button id="editLayer">Press here to save layer</button>
+                </div>
+            </li>
+            <li>
+                <div id="styleHeader" class="dropDown">Style layers</div>
+                <div class="dropDownContent">
+                    <div id="style_layers">
+                        <div><span class="dropDownLeft">Layer:</span>
+                        <select id="styleSelect" class="dropDownLayers">
+                            <option selected disabled>-- Select Layer --</option>
+                        </select></div>
+                        <div><span class="dropDownLeft">New name: </span>
+                            <input type="text" id="layerName" placeholder="Empty = no change" style="width: 57%; float: right"></div>
+
+                        <div><span class="dropDownLeft">Set fill color:</span>
+                        <input type="color" id="fillColorPicker" value="#3388ff"></div>
+                        <div><span class="dropDownLeft">Set fill opacity:</span>
+                            <input type="range" min="0" max="100" value="20" class="slider" id="opacity"></div>
+                        <div><span class="dropDownLeft">Set stroke color:</span>
+                        <input type="color" id="colorPicker" value="#3388ff"></div>
+                                    <div><span class="dropDownLeft">Set stroke weight:</span>
+                        <input type="range" min="0" max="100" value="40" class="slider" id="weight"></div>
+                        <div><span class="dropDownLeft">Set stroke opacity:</span>
+                            <input type="range" min="0" max="100" value="50" class="slider" id="strokeOpacity"></div>
+                        <button id="applyStyle">Apply style</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div style="border-bottom: 3px solid #FFCB05"></div>
+        <output id="import_list"></output>
+        <div style="border-bottom: 3px solid #FFCB05"></div>
+
+    </div>
+    <div id="Story" class="tabcontent">
+        <ul>
+            <li>
+                <div class="dropDown storyHeader story1">Story 1: The Basics</div>
+                <div class="dropDownContent story1parent">
+                    <div style="display: none" class="s1_1">
+                        <h4>Hello there! Welcome to the world of pokémon. My name is Oak! People call me the pokémon Prof! This world is inhabited by creatures called pokémon! For some people, pokémon are pets. Others use them for fights. Myself...I study pokémon as a profession using GIS-tools to master it. <br><br> First we will have a look at the basics of GIS.</h4>
+                        <button class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_2">
+                        <h4>Maps consist of different layers. Each layer can take up different forms; points, lines and polygons. <br><br> Now you will learn a little about each type of layer.</h4>
+                        <img src="images/points.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button id="s1_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_3">
+                        <h4>Now, you can see a point layer is added to the map. Points are single data values that can have data assigned to them.
+                            This layer represents the cities of the region Kanto. Each city is represented by a pokeball. The balls are scaled with the size of the city, but not linear. It uses scaled circles, a logarithmic size expansion. <br>
+                            Click on a city to get more information and find the population of Lavender Town.
+                        </h4>
+                        <input class="story_input" type="number" id="s1_pop" placeholder="population">
+                        <button class="story_answer" id="s1_pop_ans">Check answer</button>
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button id="s1_3n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_4">
+                        <h4>
+                            Now we have added the roads in kanto to the map. The roads are represented by lines on the map. Each line consists of multiple points connected to each other. <br>
+                        </h4>
+                        <img src="images/line.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <h4>
+                            Click on the road between Viridian City and Pewter City to find the route number.
+                        </h4>
+                        <input class="story_input" type="number" id="s1_line" placeholder="route number">
+                        <button class="story_answer" id="s1_line_ans">Check answer</button>
+                        <button id="s1_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s1_4n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_5">
+                        <h4>
+                            The last type of layers we will have a look at are polygons. Polygons are closed loop of lines. <br>
+                        </h4>
+                        <img src="images/polygon.png" style="width: 230px; padding:0; margin: 0 27px 0 27px">
+                        <h4>
+                            Your task is to find out how many islands the region of Hoenn are made up of. Hover or click a region to get more information about it.
+
+                        </h4>
+                        <input class="story_input" type="number" id="s1_pol" placeholder="number of islands">
+                        <button class="story_answer" id="s1_pol_ans">Check answer</button>
+                        <button id="s1_5p" class="story_button previous_button">Prev Page</button>
+                        <button id="s1_5n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s1_6">
+                        <h4>
+                            Congratulations! You have now finished your first story line and earned the Boulder badge. You can now go on to the buffer story.
+                        </h4>
+                        <img src="images/badge1.png" height="50px" width="50px" ; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story2 locked">Story 2: Buffer</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s2_1">
+                        <h4>
+                            You have started your pokémon adventure and reached Viridian City. Trying to buy pokéballs at the Poké Mart, the clerk gives you a parcel. A note on the parcel says: <br>"To be delivered to Professor Oak in Pallet Town" <br>
+                        </h4>
+                        <button class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s2_2">
+                        <h4>
+                            It is starting to get dark and you know powerful pokémon sneak around in the grass after sunset. Worried about encountering one you decide to start the walk to Pallet Town, only if it is less than 0.6 km to walk.
+                            A buffer can give you the answer to this. Use the buffer tool in the operations tab to construct a buffer around Viridian City.
+                        </h4>
+                        <img src="images/buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button id="s2_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s2_3">
+                        <h4>
+                            Use the buffer tool in the operations tab to construct a buffer around Viridian City with distance 0.6 km.
+                        </h4>
+                        <img src="images/buffer_point.png" style="width: 50px; margin: 0 116px 0 116px">
+                        <h4>Is Pallet Town within 0.6 km from Viridian City? </h4>
+                        <select id="s2_buf_point" style="display: block; float: left; margin: 0 74px 0 73px">
+                            <option disabled="disabled" selected>-- Select answer --</option>
+                            <option value="false">Yes</option>
+                            <option value="true">No</option>
+                        </select>
+                        <button class="story_button previous_button">Prev Page</button>
+                        <button id="s2_3n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s2_4">
+                        <h4>
+                            Congratulations! You are a buffer master. You have earned the Cascade badge. You can now go on to the union story.
+                        </h4>
+                        <img src="images/badge2.png" height="50px" width="50px" ; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story3 locked">Story 3: Union</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s3_1">
+                        <h4>
+                            Your pokemon adventure continues. Having delivered Oak's parcel in Pallet Town you are on your way to Viridian City. <br>
+                            You are in need of a pokemon and have heard there is a lot of Pidgeys and Rattatas between the cities.
+                        </h4>
+                        <button id="s3_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s3_2">
+                        <h4>
+                            Two layers have now showed up on the map. One containing grass areas where Pidgey can be caught, and one where Rattata can be caught.
+                            Calculate the area where you can hunt for either a Pidgey or a Rattata.
+                        </h4>
+                        <button id="s3_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s3_3">
+                        <h4>
+                            The union operation can give you the answer to this. The union operation extracts all features of the two datasets and merges them into a new one.
+                        </h4>
+                        <img src="images/union.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s3_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_3n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s3_4">
+                        <h4>
+                            Create a union of the Pidgey and Rattata layers to find the size of the area where you can hunt for either of them.
+                        </h4>
+                        <input class="story_input" type="number" id="s3_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s3_pokemonArea_ans">Check answer</button>
+                        <button id="s3_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s3_4n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s3_5">
+                        <h4>
+                            Congratulations! You are a union master. You have earned the Thunder badge. You can now go on to the intersection story.
+                        </h4>
+                        <img src="images/badge3.png" height="50px" width="50px" ; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story4 locked">Story 4: Intersection</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s4_1">
+                        <h4>
+                            Your pokemon adventure continues. Your pokemon grow stronger but you want more. <br>
+                            Some trainer have told you about the rare pokemon Chansey. Some have seen it in the Safari zone, located just north of Fuschia City. When you first are there, you can try to catch a Rhyhorn as well.
+                        </h4>
+                        <button id="s4_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_2">
+                        <h4>
+                            Three layers have now showed up on the map. One with the boundaries for the Safari zone, one containing areas where Rhyhorn can be caught and one where Chansey can be caught.
+                            Calculate the area where you can hunt for both a Chansey and a Rhyhorn.
+                        </h4>
+                        <button id="s4_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_3">
+                        <h4>
+                            The intersection operation can give you the answer to this. The intersection operation extracts the features where the two datasets overlaps and merges them into a new one.
+                        </h4>
+                        <img src="images/intersection.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s4_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_3n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_4">
+                        <h4>
+                            Create an intersection of the Chansey and Rhyhorn layers to find the size of the area where you can hunt for both of them.
+                        </h4>
+                        <input class="story_input" type="number" id="s4_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s4_pokemonArea_ans">Check answer</button>
+                        <button id="s4_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s4_4n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s4_5">
+                        <h4>
+                            Congratulations! You are an intersection master. You have earned the Soul badge. You can now go on to the difference story.
+                        </h4>
+                        <img src="images/badge4.png" height="50px" width="50px" ; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+
+            </li>
+            <li>
+                <div class="dropDown storyHeader story5 locked">Story 5: Difference</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s5_1">
+                        <h4>
+                            Your pokemon adventure continues. You have just beaten the Kanto Pokemon League. <br>
+                            A rumour says that a mysterious pokemon, called Mewtwo, prowl in the cave Cerulean Cave just outside Cerulean City. It is said to be the most powerful pokemon.
+                        </h4>
+                        <button id="s5_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_2">
+                        <h4>
+                            But other powerful pokemon also prowl around in the cave. Your party of pokemon consists mainly of water-type pokemon.
+                            You are worried about encountering the electric-type pokemons Raichu and Magneton.
+                            Your task is to avoid them at all costs, while still having a chance to enocunter Mewtwo.
+                        </h4>
+                        <button id="s5_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_3">
+                        <h4>
+                            Four layers have now showed up on the map. They represent Cerulean cave, and the areas where Raichu, Magneton and Mewtwo prowls around.
+                            Calculate the area where you can encounter only Mewtwo.
+                        </h4>
+                        <button id="s5_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_3n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_4">
+                        <h4>
+                            The difference operation can give you the answer to this. The difference operation extracts the features of one dataset which do not overlap with the other dataset.
+                        </h4>
+                        <img src="images/difference.png" style="width: 200px; margin: 0 41px 0 41px">
+                        <button id="s5_4p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_4n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_5">
+                        <h4>
+                            Use the difference operation to find the size of the area where you can only encounter Mewtwo.
+                        </h4>
+                        <input class="story_input" type="number" id="s5_pokemonArea" placeholder="Area size in km^2">
+                        <button class="story_answer" id="s5_pokemonArea_ans">Check answer</button>
+                        <button id="s5_5p" class="story_button previous_button">Prev Page</button>
+                        <button id="s5_5n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s5_6">
+                        <h4>
+                            Congratulations! You are a difference master. You have earned the Marsh badge. You can now go on to the filter story.
+                        </h4>
+                        <img src="images/badge5.png" height="50px" width="50px" ; style="display: block; margin: auto">
+                        <button class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropDown storyHeader story6 locked">Story 6: Filter</div>
+                <div class="dropDownContent">
+                    <div style="display: none" class="s6_1">
+                        <h4>
+                            You have completed the tasks for the Kanto Region. But your journey doesn't stop here. You want to visit all cities with a population of more than 100 in the region Hoenn.
+                        </h4>
+                        <button id="s6_1n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s6_2">
+                        <h4>
+                            The filter operation can give you the answer to this. The filter operation extracts all features from a dataset that fulfills the condition given to it. You can set a condition to all the attributes of the dataset. <br>
+                        </h4>
+                        <button id="s6_2p" class="story_button previous_button">Prev Page</button>
+                        <button id="s6_2n" class="story_button next_button" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s6_3">
+                        <h4>
+                            Use the filter operation and select the city(ies) in the box below if it(they) fulfills the condition (Population > 100 && Region==Hoenn).
+                        </h4>
+                        <select id="s6_city" size="8" multiple>
+                            <!-- Options here (Added dynamically)-->
+                        </select>
+                        <button class="story_answer" id="s6_city_ans">Check answer</button>
+                        <button id="s6_3p" class="story_button previous_button">Prev Page</button>
+                        <button id="s6_3n" class="story_button next_button locked" style="float: right">Next Page</button>
+                    </div>
+                    <div style="display: none" class="s6_4">
+                        <h4>
+                            Congratulations! You have finished all stories. You have earned the last badge: the Volcano badge. Now you can have some fun on your own with the datasets already on the map.
+                        </h4>
+                        <img src="images/badge6.png" height="50px" width="50px" ; style="display: block; margin: auto">
+                        <button id="s6_4p" class="story_button previous_button">Prev Page</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div style="border-bottom: 3px solid #FFCB05; margin-bottom: 38px;"></div>
+            </li>
+            <div style="margin-bottom: 126px"></div>
+        </ul>
+        <div style="border-top: 3px solid #FFCB05; position: fixed; bottom: 0; width: 100%; margin-bottom: 38px; background-color: #111; z-index: 10">
+            <div id="badge">Badges</div>
+            <img src="images/badge1.png" alt="badge1" style="display: none; margin-left: 20px;" width="40px" ; height="40px" ; id="badge1" >
+            <img src="images/badge2.png" alt="badge2" style="display: none" width="40px" ; height="40px" ; id="badge2" >
+            <img src="images/badge3.png" alt="badge3" style="display: none" width="40px" ; height="40px" ; id="badge3" >
+            <img src="images/badge4.png" alt="badge4" style="display: none" width="40px" ; height="40px" ; id="badge4" >
+            <img src="images/badge5.png" alt="badge5" style="display: none" width="40px" ; height="40px" ; id="badge5" >
+            <img src="images/badge6.png" alt="badge6" style="display: none" width="40px" ; height="40px" ; id="badge6" >
+        </div>
+        <div style="background-color: #111; border-top: 3px solid #FFCB05; height: 35px; width: 100%; position: fixed; bottom: 0; z-index: 100;">
+            <button class="resetButton" id="reset">Reset stories</button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Page content -->
+<div class="main">
+    <div id="map"></div>
+</div>
+ <script type="text/javascript">
+
+     var clicks = document.getElementsByClassName("defaultOpen");
+     for(var i = 0; i < clicks.length; i++) {
+         clicks[i].click();
+     }
+
+     myStorage = window.localStorage;
+     console.log(myStorage);
+     if(! myStorage.getItem('storyIndex')) {
+         myStorage.setItem('storyIndex', 1);
+     }
+
+     var storyIndex = myStorage.getItem('storyIndex');
+
+     // Set background map
+     var map = L.map('map', {
+         //drawControl: true,
+         minZoom: 11,
+         maxZoom: 20
+     }).setView([63.366288, 10.4308315]);
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                            Leaflet.draw                                                               //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     // FeatureGroup is to store editable layers
+     var editLayer = new L.featureGroup();
+     map.addLayer(editLayer);
+     editLayer.addTo(map);
+     var drawControl = new L.Control.Draw({
+         draw: {
+             circle: false
+         },
+         edit: {
+             featureGroup: editLayer
+         }
+     });
+     map.addControl(drawControl);
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                     Map                                                               //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     //Set bounds for startup
+     var startBounds = L.latLngBounds([
+         [63.381063, 10.393066],
+         [63.351513, 10.468597]
+     ]);
+
+     //Set bounds for panning
+     var worldBounds = L.latLngBounds([
+         [63.430860, 10.055237],
+         [63.171095, 10.784454]
+     ]);
+
+     lastZoom = map.getZoom();
+     //Add baseMap layer to map and display it
+     var backGroundLayer = L.layerGroup().addTo(map);
+     var streets = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         maxZoom: 18,
+         id: 'mapbox.streets',
+         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
+     });
+
+     var satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         maxZoom: 18,
+         id: 'mapbox.satellite',
+         accessToken: 'pk.eyJ1Ijoic2RlaXN6IiwiYSI6ImNqY2tnb2I2MjBwNTUzM3BnbHpsOXJvcXMifQ.OobHveMvjS38PDfcHpXJDw'
+     });
+     var baseLayer = {
+         "Pokemon World": backGroundLayer,
+         "streets": streets,
+         "Satellite": satellite
+     };
+
+     var overlay = {};
+
+     var controls = L.control.layers(baseLayer, overlay, {collapsed:false}).addTo(map);
+
+     //Add a region layer to map
+     var politicalLayer = L.layerGroup();
+
+     //Make a region dictionary and collect in featureGroups
+     var regions = {};
+     regionNames = ["Hoenn", "Sinnoh", "Orange Islands", "Orre", "Johto", "Kanto", "Sevii Islands", "Fiore", "Oblivia", "Almia", "Holon", "Unova", "Distant land", "Rest"];
+     for (var i = 0; i < regionNames.length; i++) {
+         regions[regionNames[i]] = L.featureGroup();
+         politicalLayer.addLayer(regions[regionNames[i]]);
+     }
+
+     //Make a layer for all cities on the map
+     var cityLayer = L.layerGroup();
+
+     var cities = {};
+
+     //Add hightlighting on hover
+     politicalLayer.eachLayer(function (layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight
+        });
+     });
+
+
+     loadBackgroundData();
+     loadOverlayData();
+
+     controls.addOverlay(politicalLayer, "Geographical region");
+     controls.addOverlay(cityLayer, "Cities");
+
+     addDropdown();
+
+     function getPokeball(pop) {
+         var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
+         if (size < 200) {
+             return "<img src='images/pokeball.png' width=" + size + " height=" + size + " style: {margin: 10px}>";
+         } else {
+             return "<img src='images/pokeball.png' width=10 height=10 style: {margin: 10px}>";
+         }
+     }
+
+     var cityLegend = L.control({position: 'bottomright'});
+
+     cityLegend.onAdd = function(map) {
+         var div = L.DomUtil.create('div', 'info legend'),
+             pop = [25, 50, 75, 100],
+             labels = [];
+
+         div.innerHTML += "<strong>Population: </strong><br><br>";
+         // loop through our density intervals and generate a icon for each interval
+         for (var i = 0; i < pop.length; i++) {
+             div.innerHTML +=
+                 '' + getPokeball(pop[i] + 1) + "<strong>" +
+                 pop[i] + "<br>" + "</strong>"
+         }
+
+         return div;
+     };
+
+     //Start and panning bounds applied
+     map.fitBounds(startBounds, {animate: true});
+     map.on('drag', function() {
+         map.panInsideBounds(worldBounds, { animate: true });
+     });
+
+     //If change to normal map, remove bounds
+     map.on('baselayerchange', function(e) {
+         if(e.name !== "Pokemon World") {
+             map.off('drag');
+             map.setMinZoom(5);
+         } else {
+             map.fitBounds(startBounds, {animate: true});
+             map.on('drag', function() {
+                 map.panInsideBounds(worldBounds, { animate: true });
+             });
+             map.setMinZoom(11);
+         }
+     });
+
+     //Add and remove legend when layers are selected or not
+     map.on('overlayadd', function(e) {
+         if(e.name === "Cities") {
+             cityLegend.addTo(map);
+         }
+         updateLayerGroup();
+         updateStyleLayers();
+     });
+
+     map.on('overlayremove', function (e) {
+         if(e.name === "Cities") {
+             cityLegend.remove()
+         }
+         updateLayerGroup();
+         updateStyleLayers();
+
+     });
+
+     map.on('layeradd', function(e) {
+         updateLayerGroup();
+         updateStyleLayers();
+     });
+
+     map.on('layerremove', function(e) {
+         updateLayerGroup();
+         updateStyleLayers();
+     });
+
+     map.on('zoomend', function() {
+         //console.log("Zoom level: " + map.getZoom());
+         var zoom = map.getZoom();
+         if (zoom < 14 && (!lastZoom || lastZoom >= 14)) {
+             map.eachLayer(function(l) {
+                 if (l.getTooltip()) {
+                     var tooltip = l.getTooltip();
+                     if(tooltip.options.className != "labelRegion")  {
+                        l.unbindTooltip().bindTooltip(tooltip, {
+                            permanent: false
+                        })
+                     }
+                 }
+             })
+         } else if (zoom >= 14 && (!lastZoom || lastZoom < 14)) {
+             map.eachLayer(function(l) {
+                 if (l.getTooltip()) {
+                     var tooltip = l.getTooltip();
+                     if(tooltip.options.className != "labelRegion")  {
+                         l.unbindTooltip().bindTooltip(tooltip, {
+                             permanent: true
+                         })
+                     }
+                 }
+             });
+         }
+         lastZoom = zoom;
+     });
+
+     map.on(L.Draw.Event.CREATED, function (e) {
+         var type = e.layerType,
+             layer = e.layer,
+             feature = layer.feature = layer.feature || {}; //Initialize feature
+         var props = feature.properties = feature.properties || {}; // Initialize feature.properties
+         feature.type = "Feature";
+         layer.bindPopup(function (layer) {
+             string = "<div>";
+             for (var key in props) {
+                if(key == "name" || key == "Name") {
+                    string +="<br><strong>" + props[key] + "</strong><hr>";
+                }
+             }
+             for (var key in props) {
+                 if(key != "name" && key != "Name") {
+                     string += "<br><strong>" + key + ":</strong> " + props[key];
+                 }
+             }
+             string += "<hr><strong>Add feature properties: </strong><br>";
+             string += "<input type='text' placeholder='Property name' id='p_" + L.Util.stamp(layer) + "' class='popupInput'>";
+             string += "<input type='text' placeholder='Value' id='v_" + L.Util.stamp(layer) + "' class='popupInput'>";
+             string += "<button class='popupButton' onclick='popupForm(" + L.Util.stamp(layer) + ")'>Submit</button>";
+             string += "<br><br><br><br></div>";
+             return string;
+         });
+         editLayer.addLayer(layer);
+     });
+
+     function popupForm(layerId) {
+         layer = editLayer.getLayer(layerId);
+         var valueField, propertyField;
+         valueField = document.getElementById("v_" + layerId).value;
+         propertyField = document.getElementById("p_" + layerId).value;
+         layer.feature.properties[propertyField] = valueField;
+         layer.getPopup().update();
+     }
+
+     //Reset storage
+     $("#resetAll").click(function () {
+         myStorage.clear();
+     });
+
+     $("#editLayer").click(function() {
+         if(!myStorage.getItem("Edit")) {
+             myStorage.setItem("Edit",1);
+         }
+         controls.addOverlay(cloneLayer(editLayer), "Edit_" + myStorage.getItem("Edit")).addTo(map);
+         editLayer.clearLayers();
+         myStorage.setItem("Edit", Number(myStorage.getItem("Edit"))+1);
+     });
+
+     $("#applyStyle").click(function() {
+         var fillColor = $("#fillColorPicker").val();
+         var color = $("#colorPicker").val();
+         var opacity = $("#opacity").val()/100;
+         var strokeOpacity = $("#strokeOpacity").val()/100;
+         var weight = $("#weight").val()/10;
+         var mainLayer = controls.getLayerWithId($("#styleSelect").val()).layer;
+         var name = $("#layerName").val();
+         console.log(mainLayer);
+
+         mainLayer.invoke('setStyle', {
+             fillColor: fillColor,
+             color: color,
+             fillOpacity: opacity,
+             weight: weight,
+             opacity: strokeOpacity
+         });
+     });
+
+     $("#opacity").on('change', function () {
+         var mainLayer = controls.getLayerWithId($("#styleSelect").val()).layer;
+         mainLayer.invoke('setStyle', {
+             fillOpacity: $( this ).val()/100
+         });
+     });
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                     LOAD LAYERS                                                       //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     var cityKantoLayer = L.layerGroup();
+     jQuery.getJSON("data/CitiesKanto.geojson", function (json) {
+         L.geoJSON(json, {
+             pointToLayer: function (feature, latlng) {
+                 var pop = feature.properties.Population;
+                 var size = Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1))) < 10 ? 10 : Math.pow(Math.E, 0.57*(Math.log(pop)-Math.log(0.1)));
+                 var pokeball = new PokeIcon({
+                     iconSize: [size,size],
+                     iconAnchor: [size/2, size/2],
+                     popupAnchor: [0, -size/2]
+                 });
+                 return L.marker(latlng, {icon: pokeball});
+
+             },
+             onEachFeature: function (feature, layer) {
+                 cityKantoLayer.addLayer(layer);
+                 layer.bindPopup(function(layer) {
+                     return "<strong><u>" + layer.feature.properties.Name + "</strong></u>" +
+                         "<br><strong>Region:</strong> " + layer.feature.properties.Region +
+                         "<br><strong>Population: </strong>" + layer.feature.properties.Population +
+                         "<br><strong>Description: </strong>" + layer.feature.properties.Description
+                 });
+                 layer.bindTooltip(function (layer) {
+                     return layer.feature.properties.Name;
+                 }, {
+                     permanent:true,
+                     direction: "center",
+                     offset: L.point({x: 0, y: 40}),
+                     className: 'label',
+                     opacity: 0.9
+                 }).openTooltip();
+             }
+         });
+     });
+
+     var roadLayer = L.layerGroup();
+     jQuery.getJSON("data/roads.geojson", function (json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 return {
+                     "stroke": true,
+                     "weight": 5,
+                     "color": "#000000"
+                 };
+             },
+             onEachFeature: function (feature, layer) {
+                 if(feature.properties.type == "route") {
+                     roadLayer.addLayer(layer);
+                     layer.bindPopup(function(layer) {
+                         return "<strong>" + layer.feature.properties.type +
+                             layer.feature.properties.number + "</strong>"
+                     });
+                 }
+             }
+         });
+     });
+
+     var viridianCity = L.layerGroup();
+     jQuery.getJSON("data/Viridian_City.geojson", function (json) {
+         L.geoJSON(json, {
+             pointToLayer: function(feature, latlng) {
+                 return L.circleMarker(latlng);
+             },
+
+             onEachFeature: function (feature, layer) {
+                 viridianCity.addLayer(layer);
+             }
+         });
+     });
+
+     var pidgey = L.layerGroup();
+     var rattata = L.layerGroup();
+     jQuery.getJSON("data/pokemon.geojson", function(json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 if(feature.properties.Pokemon == "Rattata") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 1,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#A6652E"
+                     };
+                 }
+                 else if (feature.properties.Pokemon == "Pidgey") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 1,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#A180B1"
+                     };
+                 }
+             },
+             onEachFeature: function (feature, layer) {
+                 if(feature.properties.Pokemon == "Rattata") {
+                     rattata.addLayer(layer);
+                 } else if (feature.properties.Pokemon == "Pidgey") {
+                     pidgey.addLayer(layer);
+                 }
+             }
+         })
+     });
+
+     var chansey = L.layerGroup();
+     var rhyhorn = L.layerGroup();
+     var safariZone = L.layerGroup();
+     jQuery.getJSON("data/pokemon2.geojson", function(json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 if(feature.properties.Pokemon == "Rhyhorn") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 1,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#6B737B"
+                     };
+                 }
+                 else if (feature.properties.Pokemon == "Chansey") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 1,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#FFCCE0"
+                     };
+                 } else if (feature.properties.Area == "Safari Zone") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.4,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#00aa00"
+                     };
+                 }
+             },
+             onEachFeature: function (feature, layer) {
+                 if(feature.properties.Pokemon == "Chansey") {
+                     chansey.addLayer(layer);
+                 } else if (feature.properties.Pokemon == "Rhyhorn") {
+                     rhyhorn.addLayer(layer);
+                 } else {
+                     safariZone.addLayer(layer);
+                 }
+             }
+         })
+     });
+
+     var magneton = L.layerGroup();
+     var mewtwo = L.layerGroup();
+     var raichu = L.layerGroup();
+     var ceruleanCave = L.layerGroup();
+     jQuery.getJSON("data/pokemon3.geojson", function(json) {
+         L.geoJSON(json, {
+             style: function (feature) {
+                 if(feature.properties.Pokemon == "Magneton") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.8,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#6B737B"
+                     };
+                 }
+                 else if (feature.properties.Pokemon == "Mewtwo") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.8,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#FFCCE0"
+                     };
+                 } else if (feature.properties.Pokemon == "Raichu") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.8,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#ffff00"
+                     };
+                 } else if (feature.properties.Area == "Cerulean Cave") {
+                     return {
+                         "fill": true,
+                         "fillOpacity": 0.4,
+                         "stroke": true,
+                         "color": "#000000",
+                         "weight": 1,
+                         "fillColor": "#888888"
+                     };
+                 }
+             },
+             onEachFeature: function (feature, layer) {
+                 if(feature.properties.Pokemon == "Mewtwo") {
+                     mewtwo.addLayer(layer);
+                 } else if (feature.properties.Pokemon == "Magneton") {
+                     magneton.addLayer(layer);
+                 } else if (feature.properties.Pokemon == "Raichu") {
+                    raichu.addLayer(layer);
+                 } else {
+                     ceruleanCave.addLayer(layer);
+                 }
+             }
+         })
+     });
+
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                         STORIES                                                       //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     var removeArray = [], addArray = [];
+
+     // Disable locked buttons
+     $(".locked").attr("disabled", "disabled");
+
+     // Set css for locked stories
+     for(var i = Number(myStorage.getItem("storyIndex")) + 1; i <= 6; i++) {
+         string = ".story" + i;
+         $(string).css("filter", "brightness(50%)");
+         $(string).css("pointer-events", "none");
+     }
+
+     // Set css for badges
+     for(var i = 2; i <= Number(myStorage.getItem("storyIndex")); i++) {
+         string = "#badge" + (i - 1);
+         $(string).css("display", "");
+     }
+
+     //Next page
+     $(".next_button").click(function(){
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+         myStorage.setItem("s" + currentStory + "_text", Number(myStorage.getItem("s" + currentStory + "_text"))+1);
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).show();
+     });
+
+     //Previous page
+     $(".previous_button").click(function(){
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+         myStorage.setItem("s" + currentStory + "_text", Number(myStorage.getItem("s" + currentStory + "_text"))-1);
+         $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).show();
+     });
+
+     //Reset stories
+     $("#reset").click(function () {
+         for(var i = 1; i <= Number(myStorage.getItem("storyIndex")) + 1; i++ ) {
+             myStorage.setItem("s" + i + "_text", 1);
+         }
+         myStorage.setItem("storyIndex", 1);
+         for(var i = 2; i <= 6; i++) {
+             string = ".story" + i;
+             $(string).css("filter", "brightness(50%)");
+             $(string).css("pointer-events", "none");
+         }
+         // Set css for badges
+         for(var i = 1; i <= 6; i++) {
+             string = "#badge" + (i);
+             $(string).css("display", "none");
+         }
+     });
+
+     // Click on story header
+
+     $(".storyHeader").click(function (e) {
+         currentStory = e.target.innerHTML.split(" ")[1].split(":")[0];
+         if($('.story'+currentStory).hasClass("active")) {
+             if($('.storyHeader.active').length == 1) {
+                 addArray = controls.getOverlays();
+                 removeOverlays(controls.getOverlays(), controls);
+             }
+             startStory();
+         } else {
+             $('.s'+currentStory+'_' + myStorage.getItem("s" + currentStory + "_text")).hide();
+             if($('.storyHeader.active').length == 0) {
+                 addOverlaysFromArray(addArray, controls);
+                 removeOverlays(removeArray, controls);
+             }
+         }
+     });
+
+     function startStory() {
+         if(! myStorage.getItem("s" + currentStory + "_text")) {
+             myStorage.setItem("s" + currentStory + "_text", 1);
+         }
+         $('story' + currentStory + 'parent').children().hide();
+         $('.s' + currentStory + '_' + myStorage.getItem("s" + currentStory + "_text")).show();
+         /*if($("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").length) {
+          $("#s" + currentStory + "_" + (Number(myStorage.getItem("s" + currentStory + "_text"))-1) + "n").click();
+          }*/
+         map.fitBounds([
+             [63.38237, 10.37658],
+             [63.34820, 10.47889]
+         ]);
+     }
+
+     //Story 1
+
+     $("#s1_2n").click(function () {
+         cityKantoLayer.addTo(map);
+         cityLegend.addTo(map);
+         controls.addOverlay(cityKantoLayer, "Cities_Kanto");
+         removeArray.push(cityKantoLayer);
+         removeArray.push(cityLegend);
+     });
+
+
+     $('#s1_pop_ans').click(function(){
+         var number = $('#s1_pop').val();
+         if(number == 41) {
+             alert("Correct!");
+             $('#s1_3n').removeClass("locked");
+             $('#s1_3n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!")
+         }
+     });
+
+     $("#s1_3n").click(function () {
+         roadLayer.addTo(map);
+         controls.addOverlay(roadLayer, "Roads_Kanto");
+         removeArray.push(roadLayer);
+     });
+
+
+     $('#s1_line_ans').click(function(){
+         var number = $('#s1_line').val();
+         if(number == 2) {
+             alert("Correct!");
+             $('#s1_4n').removeClass("locked");
+             $('#s1_4n').attr("disabled", false);
+         } else {
+         alert("Shoot! It was so close too!")
+         }
+     });
+
+     $("#s1_4n").click(function () {
+         while (removeArray.length > 0) {
+             removeArray.pop().remove();
+         }
+         politicalLayer.addTo(map);
+         map.setZoom(11);
+         map.setView([63.28861, 10.38139]);
+         removeArray.push(politicalLayer);
+     });
+
+     $('#s1_pol_ans').click(function(){
+         var number = $('#s1_pol').val();
+         if(number == 11) {
+             alert("Correct!");
+             $('.story2').removeClass("locked");
+             $(".story2").css("pointer-events", "");
+             $(".story2").css("filter", "brightness(100%)");
+             $('#s1_5n').removeClass("locked");
+             $('#s1_5n').attr("disabled", false);
+             $('#badge1').css("display", "");
+             myStorage.setItem("storyIndex", 2);
+         } else {
+             alert("Shoot! It was so close too!")
+         }
+     });
+
+
+     //Story 2
+     $("#s2_2n").click(function() {
+         cityKantoLayer.addTo(map);
+         viridianCity.addTo(map);
+         controls.addOverlay(cityKantoLayer, "Cities_Kanto");
+         controls.addOverlay(viridianCity, "Viridian_City");
+         updateLayerGroup();
+         removeArray.push(cityKantoLayer);
+         removeArray.push(viridianCity);
+     });
+
+     $("#s2_buf_point").change(function(){
+         console.log($("#s2_buf_point").val());
+         if($("#s2_buf_point").val() == "true") {
+             alert("Correct!");
+             $("#s2_3n").removeClass("locked");
+             $('#s2_3n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!");
+         }
+     });
+
+     $("#s2_3n").click(function() {
+         $('.story3').removeClass("locked");
+         $(".story3").css("pointer-events", "");
+         $(".story3").css("filter", "brightness(100%)");
+         $('#badge2').css("display", "");
+         myStorage.setItem("storyIndex", 3);
+     });
+
+     //Story 3
+
+     $("#s3_1n").click(function() {
+         pidgey.addTo(map);
+         rattata.addTo(map);
+         controls.addOverlay(pidgey, "Pidgey");
+         controls.addOverlay(rattata, "Rattata");
+         updateLayerGroup();
+         removeArray.push(pidgey);
+         removeArray.push(rattata);
+     });
+
+     $('#s3_pokemonArea_ans').click(function(){
+         var number = $('#s3_pokemonArea').val();
+         console.log(number);
+         if(number == 0.071) {
+             alert("Correct!");
+             $("#s3_4n").removeClass("locked");
+             $('#s3_4n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!")
+         }
+     });
+
+     $("#s3_4n").click(function () {
+         $('.story4').removeClass("locked");
+         $(".story4").css("pointer-events", "");
+         $(".story4").css("filter", "brightness(100%)");
+         $('#badge3').css("display", "");
+         myStorage.setItem("storyIndex", 4);
+     });
+
+     //Story 4
+     $("#s4_1n").click(function () {
+         safariZone.addTo(map);
+         chansey.addTo(map);
+         rhyhorn.addTo(map);
+         controls.addOverlay(safariZone, "Safari Zone");
+         controls.addOverlay(chansey, "Chansey");
+         controls.addOverlay(rhyhorn, "Rhyhorn");
+         updateLayerGroup();
+         removeArray.push(rhyhorn);
+         removeArray.push(chansey);
+         removeArray.push(safariZone);
+     });
+
+     $("#s4_pokemonArea_ans").click(function() {
+         var val = $("#s4_pokemonArea").val();
+         if (val == 0.004) {
+             alert("Correct!");
+             $("#s4_4n").removeClass("locked");
+             $('#s4_4n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!")
+         }
+     });
+
+     $("#s4_4n").click(function() {
+         $('.story5').removeClass("locked");
+         $(".story5").css("pointer-events", "");
+         $(".story5").css("filter", "brightness(100%)");
+         $('#badge4').css("display", "");
+         myStorage.setItem("storyIndex", 5);
+     });
+
+
+     //Story 5
+     $("#s5_1n").click(function () {
+         ceruleanCave.addTo(map);
+         magneton.addTo(map);
+         raichu.addTo(map);
+         mewtwo.addTo(map);
+         controls.addOverlay(ceruleanCave, "Cerulean Cave");
+         controls.addOverlay(magneton, "Magneton");
+         controls.addOverlay(raichu, "Raichu");
+         controls.addOverlay(mewtwo, "Mewtwo");
+         updateLayerGroup();
+         removeArray.push(ceruleanCave);
+         removeArray.push(mewtwo);
+         removeArray.push(raichu);
+         removeArray.push(magneton);
+     });
+
+     $("#s5_pokemonArea_ans").click(function() {
+         var val = $("#s5_pokemonArea").val();
+         if (val == 0.013) {
+             alert("Correct!");
+             $("#s5_5n").removeClass("locked");
+             $('#s5_5n').attr("disabled", false);
+         } else {
+             alert("Shoot! It was so close too!")
+         }
+     });
+
+     $("#s5_5n").click(function() {
+         $('.story6').removeClass("locked");
+         $(".story6").css("pointer-events", "");
+         $(".story6").css("filter", "brightness(100%)");
+         $('#badge5').css("display", "");
+         myStorage.setItem("storyIndex", 6);
+     });
+
+
+     //Story 6
+
+     $("#s6_2n").click(function () {
+         cityLayer.addTo(map);
+         cityLegend.addTo(map);
+         politicalLayer.addTo(map);
+         controls.addOverlay(cityLayer, "Cities");
+         controls.addOverlay(politicalLayer, "Geographical Region");
+         updateLayerGroup();
+         removeArray.push(cityLayer);
+         removeArray.push(cityLegend);
+         cityLayer.eachLayer(function(obj) {
+             obj.eachLayer(function (obj2) {
+                 var reg = obj2.feature.properties["Region"].split(" ")[0];
+                 var s = '#s6_city > #' + reg;
+                 if($(s).length){
+                     $("#" + reg).append($('<option>', {
+                         value: obj2.feature.properties["Name"],
+                         text: obj2.feature.properties["Name"]
+                     }));
+                 } else {
+                     var string;
+                     if(reg === "Sevii") {
+                         string = '<optgroup label="Sevii Islands" id="' + reg + '">';
+                     } else {
+                         string = '<optgroup label="' + reg + '" id="' + reg + '">';
+                     }
+                     $('#s6_city').append($(string));
+                     $("#" + reg).append($('<option>', {
+                         value: obj2.feature.properties["Name"],
+                         text: obj2.feature.properties["Name"]
+                     }));
+                 }
+             });
+         });
+     });
+
+     $('#s6_city_ans').click(function() {
+         ans = $('#s6_city').val();
+         if (ans.includes("Lilycove City") && ans.includes("Mauville City")) {
+             $('#badge6').css("display", "");
+             $("#s6_3n").removeClass("locked");
+             $('#s6_3n').attr("disabled", false);
+             myStorage.setItem("storyIndex", 7);
+             alert("correct");
+         } else {
+             alert("Shoot")
+         }
+     });
+
+     function removeOverlays(arr, con) {
+         while(arr.length > 0 ) {
+             var el = arr.pop();
+             if (el.layer) {
+                 con.removeLayer(el.layer);
+                 el.layer.remove();
+             } else {
+                 el.remove();
+             }
+         }
+     }
+
+     function addOverlaysFromArray(arr, con) {
+         for (var i = 0; i < arr.length; i++) {
+             con.addOverlay(arr[i].layer, arr[i].name);
+         }
+     }
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                   FILE IMPORT/EXPORT                                                  //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     // Export layer to geojson-file for later use
+
+     $("#export").click(function () {
+         var name = $("#exportSelect").val();
+         layer = getSelectedLayer(name);
+         myStorage.setItem(name, JSON.stringify(layer.toGeoJSON()));
+         download(name, JSON.stringify(layer.toGeoJSON()));
+     });
+
+     function download(filename, content) {
+         var pom = document.createElement('a');
+         pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+         pom.setAttribute('download', filename + ".geojson");
+         pom.click();
+     }
+
+     $("#import").click(function() {
+         if($("#importName").val().length < 1) {
+             alert("Please give a name for the imported layer");
+             return;
+         }
+         var files = $("#fileImport").prop('files'); // FileList object
+
+         // Loop through the FileList and render image files as thumbnails.
+         for (var i = 0, f; f = files[i]; i++) {
+
+             if(f.name.split(".").pop() != "geojson" && f.name.split(".").pop() != "zip") {
+                 continue;
+             }
+             var reader = new FileReader();
+
+             if(f.name.split(".").pop() == "zip") {
+                 loadshp({
+                     url: f,
+                     encoding: 'utf-8',
+                     EPSG: 4326
+                 }, function(geojson) {
+                     newLayer = L.layerGroup().addTo(map);
+                     L.geoJSON(geojson, {
+                         onEachFeature: function(feature, layer) {
+                             res = "";
+                             for (var key in feature.properties) {
+                                 res += "<strong>" + key + ":</strong>  " + feature.properties[key] + "<br>";
+                             }
+                             layer.bindPopup(res);
+                             newLayer.addLayer(layer);
+                         }
+                     });
+                     controls.addOverlay(newLayer, $("#importName").val());
+                 });
+             }
+             else if (f.name.split(".").pop() == "geojson"){
+                 // Closure to capture the file information.
+                 reader.onload = (function(theFile) {
+                     return function(e) {
+                         geojson = JSON.parse(e.target.result);
+                         newLayer = L.layerGroup().addTo(map);
+                         if(geojson.features[0].geometry.type == "Point") {
+                             var color = "#" + Math.floor(Math.random()*16777216).toString(16);
+                             L.geoJSON(geojson, {
+                                 pointToLayer: function (feature, latlng) {
+                                     return L.circleMarker(latlng, {
+                                         "radius": 10,
+                                         "stroke": true,
+                                         "weight": 1,
+                                         "color": "#000000",
+                                         "fill": true,
+                                         "fillColor": color,
+                                         "fillOpacity": 0.9
+                                     });
+                                 },
+                                 onEachFeature: function(feature, layer) {
+                                     res = "";
+                                     for (var key in feature.properties) {
+                                         res += "<strong>" + key + ":</strong>  " + feature.properties[key] + "<br>";
+                                     }
+                                     layer.bindPopup(res);
+                                     newLayer.addLayer(layer);
+                                 }
+                             });
+                             overlay[theFile.name] = newLayer;
+                             newLayer.eachLayer(function (layer) {
+                                 layer.on({
+                                     mouseover: highlightFeature,
+                                     mouseout: resetHighlight
+                                 });
+                             });
+                             controls.addOverlay(newLayer, $("#importName").val());
+                         } else {
+                             afterOperation(newLayer, geojson,  $("#importName").val());
+                         }
+                     }
+                 })(f);
+             }
+
+             // Read in the file as a data URL.
+             reader.readAsText(f);
+         }
+     });
+
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     //////                                                                                                       //////
+     //////                                   JQUERY EXTENSION                                                    //////
+     //////                                                                                                       //////
+     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     (function ($) {
+         var _oldShow = $.fn.show;
+
+         $.fn.show = function (/*speed, easing, callback*/) {
+             var argsArray = Array.prototype.slice.call(arguments),
+                 duration = argsArray[0],
+                 easing,
+                 callback,
+                 callbackArgIndex;
+
+             // jQuery recursively calls show sometimes; we shouldn't
+             //  handle such situations. Pass it to original show method.
+             if (!this.selector) {
+                 _oldShow.apply(this, argsArray);
+                 return this;
+             }
+
+             if (argsArray.length === 2) {
+                 if ($.isFunction(argsArray[1])) {
+                     callback = argsArray[1];
+                     callbackArgIndex = 1;
+                 } else {
+                     easing = argsArray[1];
+                 }
+             } else if (argsArray.length === 3) {
+                 easing = argsArray[1];
+                 callback = argsArray[2];
+                 callbackArgIndex = 2;
+             }
+
+             return $(this).each(function () {
+                 var obj = $(this),
+                     oldCallback = callback,
+                     newCallback = function () {
+                         if ($.isFunction(oldCallback)) {
+                             oldCallback.apply(obj);
+                         }
+
+                         obj.trigger('afterShow');
+                     };
+
+                 if (callback) {
+                     argsArray[callbackArgIndex] = newCallback;
+                 } else {
+                     argsArray.push(newCallback);
+                 }
+
+                 obj.trigger('beforeShow');
+
+                 _oldShow.apply(obj, argsArray);
+             });
+         };
+     })(jQuery);
+ </script>
+
+</body>
+</html>
