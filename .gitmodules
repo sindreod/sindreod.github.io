@@ -1,0 +1,3 @@
+[submodule "TreeSegmentation"]
+	path = TreeSegmentation
+	url = https://github.com/sindreod/TreeSegmentation.git

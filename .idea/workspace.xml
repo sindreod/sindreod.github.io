@@ -1,78 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5ff07f5d-21c9-4720-8ec0-ba498024d4cc" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pokeGIS/index.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pokeGIS/index.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/pokeGIS/.gitignore" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/about/index.css" afterPath="$PROJECT_DIR$/pokeGIS/about/index.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/about/index.html" afterPath="$PROJECT_DIR$/pokeGIS/about/index.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/CitiesKanto.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/CitiesKanto.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/Ocean.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/Ocean.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/Viridian_City.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/Viridian_City.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/cities4.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/cities4.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/land2.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/land2.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/pokemon.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/pokemon.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/pokemon2.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/pokemon2.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/pokemon3.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/pokemon3.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/political.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/political.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/roads.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/roads.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/water2.geojson" afterPath="$PROJECT_DIR$/pokeGIS/data/water2.geojson" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/PokeGIS.png" afterPath="$PROJECT_DIR$/pokeGIS/images/PokeGIS.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/badge1.png" afterPath="$PROJECT_DIR$/pokeGIS/images/badge1.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/badge2.png" afterPath="$PROJECT_DIR$/pokeGIS/images/badge2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/badge3.png" afterPath="$PROJECT_DIR$/pokeGIS/images/badge3.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/badge4.png" afterPath="$PROJECT_DIR$/pokeGIS/images/badge4.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/badge5.png" afterPath="$PROJECT_DIR$/pokeGIS/images/badge5.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/badge6.png" afterPath="$PROJECT_DIR$/pokeGIS/images/badge6.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/badges.jpg" afterPath="$PROJECT_DIR$/pokeGIS/images/badges.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/buffer_point.png" afterPath="$PROJECT_DIR$/pokeGIS/images/buffer_point.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/bulbasaur.png" afterPath="$PROJECT_DIR$/pokeGIS/images/bulbasaur.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/charmander.png" afterPath="$PROJECT_DIR$/pokeGIS/images/charmander.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/difference.png" afterPath="$PROJECT_DIR$/pokeGIS/images/difference.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/greatball.png" afterPath="$PROJECT_DIR$/pokeGIS/images/greatball.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/handle.png" afterPath="$PROJECT_DIR$/pokeGIS/images/handle.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/intersection.png" afterPath="$PROJECT_DIR$/pokeGIS/images/intersection.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/line.png" afterPath="$PROJECT_DIR$/pokeGIS/images/line.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/masterball.png" afterPath="$PROJECT_DIR$/pokeGIS/images/masterball.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/pika.png" afterPath="$PROJECT_DIR$/pokeGIS/images/pika.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/plus.png" afterPath="$PROJECT_DIR$/pokeGIS/lib/images/plus.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/points.png" afterPath="$PROJECT_DIR$/pokeGIS/images/points.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/pokeball.png" afterPath="$PROJECT_DIR$/pokeGIS/images/pokeball.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/pokemonWorld.png" afterPath="$PROJECT_DIR$/pokeGIS/images/pokemonWorld.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/polygon.png" afterPath="$PROJECT_DIR$/pokeGIS/images/polygon.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/squirtle.png" afterPath="$PROJECT_DIR$/pokeGIS/images/squirtle.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/tut1.JPG" afterPath="$PROJECT_DIR$/pokeGIS/images/tut1.JPG" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/ultraball.png" afterPath="$PROJECT_DIR$/pokeGIS/images/ultraball.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/images/union.png" afterPath="$PROJECT_DIR$/pokeGIS/images/union.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/js/fileLoad.js" afterPath="$PROJECT_DIR$/pokeGIS/js/fileLoad.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/js/leafletExtension.js" afterPath="$PROJECT_DIR$/pokeGIS/js/leafletExtension.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/js/mapOperations.js" afterPath="$PROJECT_DIR$/pokeGIS/js/mapOperations.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/js/sidenav.js" afterPath="$PROJECT_DIR$/pokeGIS/js/sidenav.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/Leaflet.draw.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/Leaflet.draw.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/Sortable.min.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/Sortable.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/images/layers-2x.png" afterPath="$PROJECT_DIR$/pokeGIS/lib/images/layers-2x.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/images/layers.png" afterPath="$PROJECT_DIR$/pokeGIS/lib/images/layers.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/images/marker-icon-2x.png" afterPath="$PROJECT_DIR$/pokeGIS/lib/images/marker-icon-2x.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/images/marker-icon.png" afterPath="$PROJECT_DIR$/pokeGIS/lib/images/marker-icon.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/images/marker-shadow.png" afterPath="$PROJECT_DIR$/pokeGIS/lib/images/marker-shadow.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/images/plus.png" afterPath="$PROJECT_DIR$/pokeGIS/images/plus.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/images/spritesheet.svg" afterPath="$PROJECT_DIR$/pokeGIS/lib/images/spritesheet.svg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/jquery-3.3.1.min.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/jquery-3.3.1.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/jszip-utils-ie.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/jszip-utils-ie.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/jszip-utils.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/jszip-utils.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/jszip.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/jszip.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/leaflet.ajax.min.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/leaflet.ajax.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/leaflet.css" afterPath="$PROJECT_DIR$/pokeGIS/lib/leaflet.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/leaflet.draw.css" afterPath="$PROJECT_DIR$/pokeGIS/lib/leaflet.draw.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/leaflet.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/leaflet.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/preprocess.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/preprocess.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/preview.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/preview.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/tabMenu.css" afterPath="$PROJECT_DIR$/pokeGIS/lib/tabMenu.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/turf.min.js" afterPath="$PROJECT_DIR$/pokeGIS/lib/turf.min.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.css" afterPath="$PROJECT_DIR$/index.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-    </list>
+    <list default="true" id="5ff07f5d-21c9-4720-8ec0-ba498024d4cc" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -90,7 +19,7 @@
         <entry file="file://$PROJECT_DIR$/pokeGIS/index.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="85">
-              <caret line="5" column="4" lean-forward="true" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="51" />
+              <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="51" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#li#5;n#ul#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#input#1;n#div#1;n#li#0;n#ul#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -196,8 +125,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="12" column="7" lean-forward="true" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
+            <state relative-caret-position="221">
+              <caret line="13" column="7" lean-forward="false" selection-start-line="13" selection-start-column="7" selection-end-line="13" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -217,7 +146,7 @@
         <entry file="file://$PROJECT_DIR$/pokeGIS/about/index.css">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="357">
-              <caret line="21" column="1" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="21" selection-end-column="1" />
+              <caret line="21" column="1" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="21" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -227,7 +156,7 @@
         <entry file="file://$PROJECT_DIR$/pokeGIS/index.css">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="748">
-              <caret line="44" column="4" lean-forward="true" selection-start-line="44" selection-start-column="4" selection-end-line="46" selection-end-column="20" />
+              <caret line="44" column="4" lean-forward="false" selection-start-line="44" selection-start-column="4" selection-end-line="46" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -391,7 +320,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js.eslint.eslintPackage" value="" />
     <property name="SearchEverywhereHistoryKey" value="pD&#9;null&#9;null&#10;console.log&#9;null&#9;null" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/TreeSegmetation" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
@@ -493,12 +422,12 @@
       <workItem from="1547062154593" duration="55000" />
       <workItem from="1554749644196" duration="12000" />
       <workItem from="1573654910912" duration="683000" />
-      <workItem from="1574077584860" duration="830000" />
+      <workItem from="1574077584860" duration="2049000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="518908000" />
+    <option name="totallyTimeSpent" value="520127000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -804,7 +733,7 @@
     <entry file="file://$PROJECT_DIR$/pokeGIS/index.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="748">
-          <caret line="44" column="4" lean-forward="true" selection-start-line="44" selection-start-column="4" selection-end-line="46" selection-end-column="20" />
+          <caret line="44" column="4" lean-forward="false" selection-start-line="44" selection-start-column="4" selection-end-line="46" selection-end-column="20" />
           <folding />
         </state>
       </provider>
@@ -820,7 +749,7 @@
     <entry file="file://$PROJECT_DIR$/pokeGIS/about/index.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
-          <caret line="21" column="1" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="21" selection-end-column="1" />
+          <caret line="21" column="1" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="21" selection-end-column="1" />
           <folding />
         </state>
       </provider>
@@ -836,7 +765,7 @@
     <entry file="file://$PROJECT_DIR$/pokeGIS/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
-          <caret line="5" column="4" lean-forward="true" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="51" />
+          <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="51" />
           <folding>
             <element signature="n#style#0;n#div#0;n#li#5;n#ul#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#input#1;n#div#1;n#li#0;n#ul#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -930,8 +859,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="7" lean-forward="true" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
+        <state relative-caret-position="221">
+          <caret line="13" column="7" lean-forward="false" selection-start-line="13" selection-start-column="7" selection-end-line="13" selection-end-column="7" />
           <folding />
         </state>
       </provider>
